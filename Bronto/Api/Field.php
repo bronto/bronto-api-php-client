@@ -14,19 +14,19 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
      * @var string
      */
     protected $_name = 'Fields';
-    
+
     /**
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Field_Row';
-    
+
     /**
      * Classname for exceptions
      *
      * @var string
      */
     protected $_exceptionClass = 'Bronto_Api_Field_Exception';
-    
+
     /**
      * @param array $filter
      * @param int $pageNumber
@@ -39,7 +39,7 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
         $params['pageNumber'] = (int) $pageNumber;
         return parent::readAll($params);
     }
-    
+
     /**
      * @param array $data
      * @return Bronto_Api_Field_Row

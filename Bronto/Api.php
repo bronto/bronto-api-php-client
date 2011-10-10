@@ -5,28 +5,28 @@ class Bronto_Api
     const BASE_WSDL     = 'https://api.bronto.com/v4?wsdl';
     const BASE_LOCATION = 'https://api.bronto.com/v4';
     const BASE_URL      = 'http://api.bronto.com/v4';
-       
+
     /**
      * SoapClient object
      *
      * @var SoapClient
      */
     protected $_soapClient;
-    
+
     /**
      * API token
-     * 
+     *
      * @var string
      */
     protected $_token;
-    
+
     /**
      * Cache of class objects
-     * 
+     *
      * @var array
      */
     protected $_classCache = array();
-    
+
     /**
      * Constructor
      *
@@ -39,18 +39,16 @@ class Bronto_Api
             require_once 'Bronto/Api/Exception.php';
             throw new Bronto_Api_Exception('SOAP extension is not loaded.');
         }
-        
+
         if ($token !== null) {
             $this->setToken($token);
         }
-        
-        date_default_timezone_set('America/New_York');
     }
-    
+
     /**
      * Login with API token
-     * 
-     * @return Bronto_Api 
+     *
+     * @return Bronto_Api
      */
     public function login()
     {
@@ -62,14 +60,14 @@ class Bronto_Api
                 throw new Bronto_Api_Exception("Authentication failed for token: {$this->getToken()}");
             }
         }
-        
+
         $client->__setSoapHeaders(array(
             new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
         ));
 
         return $this;
     }
-       
+
     /**
      * Set API token
      *
@@ -91,50 +89,50 @@ class Bronto_Api
     {
         return $this->_token;
     }
-    
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_Activity
      */
     public function getActivityObject()
     {
         return $this->getObject('activity');
     }
-    
+
     /**
      * Proxy for intellisense
-     * 
-     * @return Bronto_Api_Contact 
+     *
+     * @return Bronto_Api_Contact
      */
     public function getContactObject()
     {
         return $this->getObject('contact');
     }
-    
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_Delivery
      */
     public function getDeliveryObject()
     {
         return $this->getObject('delivery');
     }
-    
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_Deliverygroup
      */
     public function getDeliveryGroupObject()
     {
         return $this->getObject('deliverygroup');
     }
-    
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_Field
      */
     public function getFieldObject()
@@ -161,27 +159,27 @@ class Bronto_Api
     {
         return $this->getObject('messagerule');
     }
-    
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_List
      */
     public function getListObject()
     {
         return $this->getObject('list');
     }
-    
+
     /**
      * Lazy loads our API objects
-     * 
+     *
      * @param string $object
-     * @return Bronto_Api_Abstract 
+     * @return Bronto_Api_Abstract
      */
     public function getObject($object)
     {
         $object = ucfirst($object);
-     
+
         if (!isset($this->_classCache[$object])) {
             $className = "Bronto_Api_{$object}";
             if (class_exists($className)) {
@@ -190,10 +188,10 @@ class Bronto_Api
                 throw new Exception("Unable to load class: {$className}");
             }
         }
-        
+
         return $this->_classCache[$object];
     }
-    
+
     /**
      * @return SoapClient
      */
