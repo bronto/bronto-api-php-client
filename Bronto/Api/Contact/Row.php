@@ -28,18 +28,18 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
     const STATUS_BOUNCE        = 'bounce';
     const STATUS_UNCONFIRMED   = 'unconfirmed';
     const STATUS_UNSUBSCRIBED  = 'unsub';
-    
+
     /** MsgPref */
     const MSGPREF_TEXT = 'text';
     const MSGPREF_HTML = 'html';
-    
+
     /** Source */
     const SOURCE_MANUAL     = 'manual';
     const SOURCE_IMPORT     = 'import';
     const SOURCE_API        = 'api';
     const SOURCE_WEBFORM    = 'webform';
     const SOURCE_SALESFORCE = 'sforcereport';
-      
+
     /**
      * @var array
      */
@@ -64,7 +64,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             self::SOURCE_SALESFORCE,
         ),
     );
-    
+
     /**
      * @param bool $returnData
      * @return Bronto_Api_Contact_Row|array
@@ -81,10 +81,10 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
                 )
             );
         }
-        
+
         return parent::_read($params, $returnData);
     }
-    
+
     /**
      * @param bool $upsert
      * @return Bronto_Api_Contact_Row
@@ -94,7 +94,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         if (!$upsert) {
             return parent::save();
         }
-        
+
         try {
             return parent::save();
         } catch (Bronto_Api_Contact_Exception $e) {
@@ -105,21 +105,21 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             throw $e;
         }
     }
-    
+
     /**
-     * @return bool 
+     * @return bool
      */
     public function delete()
     {
         return parent::_delete(array('id' => $this->id));
     }
-    
+
     /**
      * Sets a value for a custom Field
-     * 
+     *
      * @param string|Bronto_Api_Field_Row $field
      * @param mixed $value
-     * @return Bronto_Api_Contact_Row 
+     * @return Bronto_Api_Contact_Row
      */
     public function setField($field, $value)
     {
@@ -130,27 +130,35 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             }
             $fieldId = $field->id;
         }
-        
+
         $field = array(
             'fieldId' => $fieldId,
             'content' => $value,
         );
-        
+
         if (!isset($this->_data['fields']) || !is_array($this->_data['fields'])) {
             $this->_data['fields'] = array();
+        } else {
+            // Check for dupes
+            foreach ($this->_data['fields'] as $i => $_field) {
+                if ($_field['fieldId'] == $field['fieldId']) {
+                    $this->_data['fields'][$i] = $field;
+                    return $this;
+                }
+            }
         }
-        
+
         $this->_data['fields'][] = $field;
         $this->_modifiedFields['fields'] = true;
         return $this;
     }
-    
+
     /**
      * Retreives a value for a custom field
      * NOTE: Loads the field for you if it hasn't been requested
-     * 
+     *
      * @param string|Bronto_Api_Field_Row $field $field
-     * @return mixed 
+     * @return mixed
      */
     public function getField($field)
     {
@@ -161,14 +169,14 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             }
             $fieldId = $field->id;
         }
-        
+
         // Determine if we have the field already
         if (isset($this->fields) && is_array($this->fields)) {
             foreach ($this->fields as $i => $fieldRow) {
                 if ($fieldRow->fieldId == $fieldId) {
                     return $fieldRow->content;
                 }
-            }            
+            }
         }
 
         // We don't, so request it
@@ -184,20 +192,20 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
                 $this->_cleanData = $this->_data;
             }
         }
-        
+
         // Try the traverse again
         if (isset($this->fields) && is_array($this->fields)) {
             foreach ($this->fields as $i => $fieldRow) {
                 if ($fieldRow->fieldId == $fieldId) {
                     return $fieldRow->content;
                 }
-            }            
+            }
         }
 
         // Something went horribly wrong
         return null;
     }
-    
+
 //    public function addToList($list)
 //    {
 //        $listId = $list;
@@ -208,7 +216,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
 //            $listId = $list->id;
 //        }
 //    }
-    
+
 //    public function removeFromList($list)
 //    {
 //        $listId = $list;
@@ -219,10 +227,10 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
 //            $listId = $list->id;
 //        }
 //    }
-          
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_Contact
      */
     public function getApiObject()

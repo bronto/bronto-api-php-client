@@ -14,19 +14,26 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
      * @var string
      */
     protected $_name = 'Contacts';
-    
+
     /**
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Contact_Row';
-    
+
     /**
      * Classname for exceptions
      *
      * @var string
      */
     protected $_exceptionClass = 'Bronto_Api_Contact_Exception';
-    
+
+    /**
+     * Temporarily set to false
+     * 
+     * @var bool
+     */
+    protected $_hasUpsert = false;
+
     /**
      * @param array $filter
      * @param array $fields
@@ -43,7 +50,7 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
         $params['pageNumber']   = (int)  $pageNumber;
         return parent::readAll($params);
     }
-     
+
     /**
      * @param array $data
      * @return Bronto_Api_Contact_Row
