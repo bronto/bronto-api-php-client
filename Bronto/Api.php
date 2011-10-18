@@ -21,6 +21,11 @@ class Bronto_Api
     protected $_token;
 
     /**
+     * @var array
+     */
+    protected $_options = array();
+
+    /**
      * Cache of class objects
      *
      * @var array
@@ -88,6 +93,52 @@ class Bronto_Api
     public function getToken()
     {
         return $this->_token;
+    }
+
+    /**
+     * @param array $options
+     * @return Bronto_Api
+     */
+    public function setOptions(array $options = array())
+    {
+        foreach ($options as $name => $value) {
+            $this->setOption($name, $value);
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return Bronto_Api
+     */
+    public function setOption($name, $value)
+    {
+        switch (strtolower($name)) {
+            case 'norefresh':
+                $this->_options['norefresh'] = (bool) $value;
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        switch (strtolower($name)) {
+            case 'norefresh':
+                if (isset($this->_options[$name])) {
+                    return (bool) $this->_options[$name];
+                } else {
+                    return false;
+                }
+                break;
+        }
+
+        return null;
     }
 
     /**

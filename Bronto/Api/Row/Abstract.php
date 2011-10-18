@@ -180,9 +180,11 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
      *
      * @return void
      */
-    protected function _refresh()
+    protected function _refresh($pull = true)
     {
-        $this->_data           = $this->read(true);
+        if ($pull) {
+            $this->_data       = $this->read(true);
+        }
         $this->_cleanData      = $this->_data;
         $this->_modifiedFields = array();
     }
@@ -254,16 +256,17 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
      * properties with fresh data from the table on success.
      *
      * @param bool $upsert
+     * @param bool $refresh
      * @return array
      */
-    public function save($upsert = true)
+    public function save($upsert = true, $refresh = true)
     {
         if (!$this->getApiObject()->hasUpsert()) {
             $upsert = false;
         }
 
         if ($upsert) {
-            return $this->_add(true);
+            return $this->_add(true, $refresh);
         } else {
             /**
              * If the _cleanData array is empty,
@@ -271,9 +274,9 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
              * Otherwise it is an UPDATE.
              */
             if (empty($this->_cleanData)) {
-                return $this->_add();
+                return $this->_add(false, $refresh);
             } else {
-                return $this->_update();
+                return $this->_update($refresh);
             }
         }
     }
@@ -303,7 +306,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         return $this;
     }
 
-    protected function _add($upsert = false)
+    protected function _add($upsert = false, $refresh = true)
     {
         /**
          * A read-only row cannot be saved.
@@ -357,12 +360,17 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         /**
          * Update the _cleanData to reflect that the data has been inserted.
          */
-        $this->_refresh();
+        $noRefresh = $this->getApiObject()->getApi()->getOption('noRefresh');
+        if ($noRefresh == true || $refresh == false) {
+            $this->_refresh(false);
+        } else {
+            $this->_refresh();
+        }
 
         return $primaryKey;
     }
 
-    protected function _update()
+    protected function _update($refresh = true)
     {
         /**
          * A read-only row cannot be saved.
@@ -405,7 +413,12 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          * Refresh the data just in case triggers in the API changed
          * any columns.  Also this resets the _cleanData.
          */
-        $this->_refresh();
+        $noRefresh = $this->getApiObject()->getApi()->getOption('noRefresh');
+        if ($noRefresh == true || $refresh == false) {
+            $this->_refresh(false);
+        } else {
+            $this->_refresh();
+        }
 
         return $primaryKey;
     }

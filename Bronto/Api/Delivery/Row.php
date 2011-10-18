@@ -73,13 +73,13 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     const STATUS_UNSENT   = 'unsent';
     const STATUS_ARCHIVED = 'archived';
     const STATUS_SKIPPED  = 'skipped';
-    
+
     /** Type */
     const TYPE_NORMAL        = 'normal';
     const TYPE_TEST          = 'test';
     const TYPE_TRANSACTIONAL = 'transactional';
     const TYPE_AUTOMATED     = 'automated';
-    
+
     /**
      * @var array
      */
@@ -98,7 +98,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
             self::TYPE_AUTOMATED,
         ),
     );
-    
+
     /**
      * @return array
      */
@@ -123,7 +123,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
         }
         return $recipients;
     }
-    
+
     /**
      * @param Bronto_Api_Deliverygroup_Row|string $deliveryGroup
      * @return bool
@@ -134,7 +134,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
             $exceptionClass = $this->getExceptionClass();
             throw new $exceptionClass("This Delivery has not been saved yet (has no DeliveryId)");
         }
-        
+
         $deliveryGroupId = $deliveryGroup;
         if ($deliveryGroup instanceOf Bronto_Api_Deliverygroup_Row) {
             if (!$deliveryGroup->id) {
@@ -142,36 +142,36 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
             }
             $deliveryGroupId = $deliveryGroup->id;
         }
-        
+
         $deliveryGroupObject = $this->getApiObject()->getApi()->getDeliveryGroupObject();
         return $deliveryGroupObject->addToDeliveryGroup($deliveryGroupId, array($this->id));
     }
-    
+
     /**
      * Sets a value for a Message Field
-     * 
+     *
      * @param string $field
      * @param mixed $value
      * @param string $type
-     * @return Bronto_Api_Delivery_Row 
+     * @return Bronto_Api_Delivery_Row
      */
     public function setField($field, $value, $type = 'html')
-    {       
+    {
         $messageField = array(
             'name'    => $field,
             'type'    => $type,
             'content' => $value,
         );
-        
+
         if (!isset($this->_data['fields']) || !is_array($this->_data['fields'])) {
             $this->_data['fields'] = array();
         }
-        
+
         $this->_data['fields'][] = $messageField;
         $this->_modifiedFields['fields'] = true;
         return $this;
     }
-    
+
     /**
      * @param bool $returnData
      * @return Bronto_Api_Delivery_Row|array
@@ -181,12 +181,12 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
         $params = array('id' => $this->id);
         return parent::_read($params, $returnData);
     }
-       
+
     /**
      * @param bool $upsert
      * @return Bronto_Api_Delivery_Row
      */
-    public function save()
+    public function save($upsert = false, $refresh = true)
     {
         /**
          * If the _cleanData array is empty,
@@ -194,16 +194,16 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
          * Otherwise it is an UPDATE.
          */
         if (empty($this->_cleanData)) {
-            return parent::save();
+            return parent::save(false, $refresh);
         } else {
             $exceptionClass = $this->getExceptionClass();
             throw new $exceptionClass('Cannot update a delivery record');
-        }        
+        }
     }
-       
+
     /**
      * Proxy for intellisense
-     * 
+     *
      * @return Bronto_Api_Delivery
      */
     public function getApiObject()

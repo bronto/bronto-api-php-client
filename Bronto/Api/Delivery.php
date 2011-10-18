@@ -19,7 +19,7 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Delivery_Row';
-    
+
     /**
      * Classname for exceptions
      *
@@ -33,7 +33,7 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
      * @param bool $includeContent
      * @param int $pageNumber
      * @throws Bronto_Api_Delivery_Exception
-     * @return Bronto_Api_Rowset 
+     * @return Bronto_Api_Rowset
      */
     public function readAll(array $filter = array(), $includeRecipients = false, $includeContent = false, $pageNumber = 1)
     {
@@ -44,7 +44,7 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
         $params['pageNumber']        = (int)  $pageNumber;
         return parent::readAll($params);
     }
-    
+
     /**
      * @param string $startDate
      * @param bool $includeRecipients
@@ -52,7 +52,7 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
      * @param int $pageNumber
      * @param array $additionalFilter
      * @throws Bronto_Api_Delivery_Exception
-     * @return Bronto_Api_Rowset 
+     * @return Bronto_Api_Rowset
      */
     public function readAllAfterDate($startDate, $includeRecipients = false, $includeContent = false, $pageNumber = 1, array $additionalFilter = array())
     {
