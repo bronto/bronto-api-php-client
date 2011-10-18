@@ -183,10 +183,10 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     }
 
     /**
-     * @param bool $upsert
+     * @param bool $refresh
      * @return Bronto_Api_Delivery_Row
      */
-    public function save($upsert = false, $refresh = true)
+    public function save($refresh = false)
     {
         /**
          * If the _cleanData array is empty,
