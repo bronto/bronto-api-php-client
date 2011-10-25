@@ -143,6 +143,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             foreach ($this->_data['fields'] as $i => $_field) {
                 if ($_field['fieldId'] == $field['fieldId']) {
                     $this->_data['fields'][$i] = $field;
+                    $this->_modifiedFields['fields'] = true;
                     return $this;
                 }
             }
