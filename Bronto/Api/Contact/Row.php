@@ -66,6 +66,23 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
     );
 
     /**
+     * Initialize object
+     *
+     * Called from {@link __construct()} as final step of object instantiation.
+     *
+     * @return void
+     */
+    public function init()
+    {
+        if (isset($this->_data['fields']) && is_array($this->_data['fields'])) {
+            foreach ($this->_data['fields'] as $i => $fieldRow) {
+                $this->_data['fields'][$i] = (array) $fieldRow;
+            }
+            $this->_cleanData = $this->_data;
+        }
+    }
+
+    /**
      * @param bool $returnData
      * @return Bronto_Api_Contact_Row|array
      */
