@@ -189,10 +189,10 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         }
 
         // Determine if we have the field already
-        if (isset($this->fields) && is_array($this->fields)) {
-            foreach ($this->fields as $i => $fieldRow) {
-                if ($fieldRow->fieldId == $fieldId) {
-                    return $fieldRow->content;
+        if (isset($this->_data['fields']) && is_array($this->_data['fields'])) {
+            foreach ($this->_data['fields'] as $i => $fieldRow) {
+                if ($fieldRow['fieldId'] == $fieldId) {
+                    return $fieldRow['content'];
                 }
             }
         }
@@ -212,10 +212,10 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         }
 
         // Try the traverse again
-        if (isset($this->fields) && is_array($this->fields)) {
-            foreach ($this->fields as $i => $fieldRow) {
-                if ($fieldRow->fieldId == $fieldId) {
-                    return $fieldRow->content;
+        if (isset($this->_data['fields']) && is_array($this->_data['fields'])) {
+            foreach ($this->_data['fields'] as $i => $fieldRow) {
+                if ($fieldRow['fieldId'] == $fieldId) {
+                    return $fieldRow['content'];
                 }
             }
         }
