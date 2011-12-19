@@ -49,12 +49,13 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
     
     /**
      * @param bool $upsert
+     * @param bool $refresh
      * @return Bronto_Api_List_Row
      */
-    public function save($upsert = true)
+    public function save($upsert = true, $refresh = true)
     {
         if (!$upsert) {
-            return parent::save();
+            return parent::save($upsert, $refresh);
         }
         
         try {

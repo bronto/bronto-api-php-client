@@ -60,15 +60,14 @@ class Bronto_Api
         try {
             $client    = $this->getSoapClient();
             $sessionId = $client->login(array('apiToken' => $this->getToken()))->return;
+            $client->__setSoapHeaders(array(
+                new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
+            ));
         } catch (SoapFault $e) {
             if (strpos($e->getMessage(), 'Authentication failed for token') !== false) {
                 throw new Bronto_Api_Exception("Authentication failed for token: {$this->getToken()}");
             }
         }
-
-        $client->__setSoapHeaders(array(
-            new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
-        ));
 
         return $this;
     }
