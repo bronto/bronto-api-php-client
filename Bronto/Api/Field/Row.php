@@ -62,16 +62,17 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
     
     /**
      * @param bool $upsert
+     * @param bool $refresh
      * @return Bronto_Api_List_Row
      */
-    public function save($upsert = true)
+    public function save($upsert = true, $refresh = true)
     {
         if (!$upsert) {
-            return parent::save();
+            return parent::save($upsert, $refresh);
         }
         
         try {
-            return parent::save();
+            return parent::save($upsert, $refresh);
         } catch (Bronto_Api_Field_Exception $e) {
             if ($e->getCode() == Bronto_Api_Field_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
