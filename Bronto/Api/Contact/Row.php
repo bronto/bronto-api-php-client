@@ -224,27 +224,59 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         return null;
     }
 
-//    public function addToList($list)
-//    {
-//        $listId = $list;
-//        if ($list instanceOf Bronto_Api_List_Row) {
-//            if (!$list->id) {
-//                $list = $list->read();
-//            }
-//            $listId = $list->id;
-//        }
-//    }
+    /**
+     * @param Bronto_Api_List_Row|string $list
+     * @return Bronto_Api_Contact_Row
+     */
+    public function addToList($list)
+    {
+        $listId = $list;
+        if ($list instanceOf Bronto_Api_List_Row) {
+            if (!$list->id) {
+                $list = $list->read();
+            }
+            $listId = $list->id;
+        }
 
-//    public function removeFromList($list)
-//    {
-//        $listId = $list;
-//        if ($list instanceOf Bronto_Api_List_Row) {
-//            if (!$list->id) {
-//                $list = $list->read();
-//            }
-//            $listId = $list->id;
-//        }
-//    }
+        if (!isset($this->_data['listIds'])) {
+            throw new Exception('Not yet implemented.');
+        }
+
+        $this->_data['listIds'][] = $list->id;
+        $this->_modifiedFields['listIds'] = true;
+        return $this;
+    }
+
+    /**
+     * @param Bronto_Api_List_Row|string $list
+     * @return Bronto_Api_Contact_Row
+     */
+    public function removeFromList($list)
+    {
+        $listId = $list;
+        if ($list instanceOf Bronto_Api_List_Row) {
+            if (!$list->id) {
+                $list = $list->read();
+            }
+            $listId = $list->id;
+        }
+
+        if (!isset($this->_data['listIds'])) {
+            throw new Exception('Not yet implemented.');
+        }
+
+        if (is_array($this->_data['listIds'])) {
+            foreach ($this->_data['listIds'] as $index => $id) {
+                if ($id == $listId) {
+                    unset($this->_data['listIds'][$index]);
+                    break;
+                }
+            }
+        }
+
+        $this->_modifiedFields['listIds'] = true;
+        return $this;
+    }
 
     /**
      * Proxy for intellisense
