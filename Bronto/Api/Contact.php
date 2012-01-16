@@ -8,6 +8,50 @@ require_once 'Bronto/Api/Contact/Exception.php';
 
 class Bronto_Api_Contact extends Bronto_Api_Abstract
 {
+    /** Status */
+    const STATUS_ACTIVE        = 'active';
+    const STATUS_ONBOARDING    = 'onboarding';
+    const STATUS_TRANSACTIONAL = 'transactional';
+    const STATUS_BOUNCE        = 'bounce';
+    const STATUS_UNCONFIRMED   = 'unconfirmed';
+    const STATUS_UNSUBSCRIBED  = 'unsub';
+
+    /** MsgPref */
+    const MSGPREF_TEXT = 'text';
+    const MSGPREF_HTML = 'html';
+
+    /** Source */
+    const SOURCE_MANUAL     = 'manual';
+    const SOURCE_IMPORT     = 'import';
+    const SOURCE_API        = 'api';
+    const SOURCE_WEBFORM    = 'webform';
+    const SOURCE_SALESFORCE = 'sforcereport';
+    
+    /**
+     * @var array
+     */
+    protected $_options = array(
+        'msgPref' => array(
+            self::MSGPREF_TEXT,
+            self::MSGPREF_HTML,
+        ),
+        'status' => array(
+            self::STATUS_ACTIVE,
+            self::STATUS_ONBOARDING,
+            self::STATUS_TRANSACTIONAL,
+            self::STATUS_BOUNCE,
+            self::STATUS_UNCONFIRMED,
+            self::STATUS_UNSUBSCRIBED,
+        ),
+        'source' => array(
+            self::SOURCE_MANUAL,
+            self::SOURCE_IMPORT,
+            self::SOURCE_API,
+            self::SOURCE_WEBFORM,
+            self::SOURCE_SALESFORCE,
+        ),
+    );
+    
     /**
      * The object name.
      *

@@ -10,6 +10,11 @@ abstract class Bronto_Api_Abstract
     protected $_api;
 
     /**
+     * @var array
+     */
+    protected $_options = array();
+    
+    /**
      * The object name.
      *
      * @var string
@@ -329,5 +334,32 @@ abstract class Bronto_Api_Abstract
     public function hasUpsert()
     {
         return (bool) $this->_hasUpsert;
+    }
+    
+    /**
+     * @param string $key
+     * @return array|boolean 
+     */
+    public function getOptionValues($key)
+    {
+        if (isset($this->_options[$key])) {
+            return $this->_options[$key];
+        }
+               
+        return false;
+    }
+    
+    /**
+     * @param string $key
+     * @param string $value
+     * @return boolean 
+     */
+    public function isValidOptionValue($key, $value)
+    {
+        if ($values = $this->getOptionValues($key)) {
+            return in_array($value, $values);
+        }
+        
+        return true;
     }
 }

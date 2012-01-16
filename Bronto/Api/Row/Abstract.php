@@ -45,11 +45,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected $_primary = 'id';
 
     /**
-     * @var array
-     */
-    protected $_options = array();
-
-    /**
      * API Object
      *
      * @var Bronto_Api_Abstract
