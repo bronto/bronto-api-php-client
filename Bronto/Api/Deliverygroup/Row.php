@@ -50,10 +50,10 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
      * @param bool $upsert
      * @return Bronto_Api_Deliverygroup_Row
      */
-    public function save($upsert = true)
+    public function save($upsert = true, $refresh = true)
     {
         if (!$upsert) {
-            return parent::save();
+            return parent::save($upsert, $refresh);
         }
         
         try {
@@ -61,7 +61,7 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
             $this->_refresh();
         } catch (Bronto_Api_Deliverygroup_Exception $e) {
             if ($e->getCode() == Bronto_Api_Exception::EMPTY_RESULT) {
-                return parent::save();
+                return parent::save($upsert, $refresh);
             } else {
                 throw $e;
             }
