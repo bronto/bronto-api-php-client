@@ -56,14 +56,14 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
      * @param bool $upsert
      * @return Bronto_Api_Message_Row
      */
-    public function save($upsert = true)
+    public function save($upsert = true, $refresh = true)
     {
         if (!$upsert) {
-            return parent::save();
+            return parent::save($upsert, $refresh);
         }
         
         try {
-            return parent::save();
+            return parent::save($upsert, $refresh);
         } catch (Bronto_Api_Message_Exception $e) {
             if ($e->getCode() == Bronto_Api_Message_Exception::MESSAGE_EXISTS) {
                 $this->_refresh();

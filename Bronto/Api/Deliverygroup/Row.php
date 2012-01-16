@@ -13,7 +13,7 @@
 class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
 {
     /** Visibility */
-    const VISIBILITY_INTERNAL = 'INTERNAL ';
+    const VISIBILITY_INTERNAL = 'INTERNAL';
     const VISIBILITY_PUBLIC   = 'PUBLIC';
     
     /**
