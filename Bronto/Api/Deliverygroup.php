@@ -20,7 +20,7 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Deliverygroup_Row';
-    
+
     /**
      * Classname for exceptions
      *
@@ -32,7 +32,7 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
      * @param array $filter
      * @param int $pageNumber
      * @throws Bronto_Api_Deliverygroup_Exception
-     * @return Bronto_Api_Rowset 
+     * @return Bronto_Api_Rowset
      */
     public function readAll(array $filter = array(), $pageNumber = 1)
     {
@@ -41,7 +41,7 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
         $params['pageNumber'] = (int) $pageNumber;
         return parent::readAll($params);
     }
-    
+
     /**
      * @param array $data
      * @throws Bronto_Api_Deliverygroup_Exception
@@ -64,28 +64,34 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
         $data = array(
             'deliveryGroup' => array('id' => $deliveryGroupId),
         );
-        
+
         if (!empty($deliveryIds)) {
             $data['deliveryIds'] = $deliveryIds;
         }
-        
+
         if (!empty($messageIds)) {
             $data['messageIds'] = $messageIds;
         }
-        
+
         if (!empty($messageRuleIds)) {
             $data['messageRuleIds'] = $messageRuleIds;
         }
+
+        $client = $this->getApi()->getSoapClient();
         
-        $client   = $this->getApi()->getSoapClient();
-        $result   = $client->addToDeliveryGroup($data)->return;
-        $row      = array_shift($result->results);
+        try {
+            $result = $client->addToDeliveryGroup($data)->return;
+            $row    = array_shift($result->results);
+        } catch (Exception $e) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass($e->getMessage());
+        }
 
         if (isset($result->errors) && $result->errors) {
             $exceptionClass = $this->getExceptionClass();
             throw new $exceptionClass($row->errorString, $row->errorCode);
         }
-        
+
         return true;
     }
 }
