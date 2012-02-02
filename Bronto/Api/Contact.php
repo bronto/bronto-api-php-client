@@ -26,7 +26,7 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
     const SOURCE_API        = 'api';
     const SOURCE_WEBFORM    = 'webform';
     const SOURCE_SALESFORCE = 'sforcereport';
-    
+
     /**
      * @var array
      */
@@ -51,7 +51,7 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
             self::SOURCE_SALESFORCE,
         ),
     );
-    
+
     /**
      * The object name.
      *
@@ -73,7 +73,7 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
 
     /**
      * Temporarily set to false
-     * 
+     *
      * @var bool
      */
     protected $_hasUpsert = false;
@@ -85,7 +85,7 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
      * @param int $pageNumber
      * @return Bronto_Api_Rowset
      */
-    public function readAll(array $filter = array(), array $fields = array(), $includeLists = false, $pageNumber = 1)
+    public function readAll(array $filter = array(), array $fields = array(), $includeLists = true, $pageNumber = 1)
     {
         $params = array();
         $params['filter']       = $filter;

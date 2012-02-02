@@ -182,6 +182,38 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
     }
 
     /**
+     * @return array
+     */
+    public function getLists()
+    {
+        if ($this->id) {
+            $filter = array('id' => $this->id);
+        } else {
+            $filter = array(
+                'email' => array(
+                    'value'    => $this->email,
+                    'operator' => 'EqualTo',
+                )
+            );
+        }
+
+        try {
+            $rowset = $this->getApiObject()->readAll($filter, null, true);
+
+            if ($rowset->count() > 0) {
+                $data = $rowset->current()->getData();
+                if (isset($data['listIds'])) {
+                    return $data['listIds'];
+                }
+            }
+        } catch (Exception $e) {
+            // Ignore
+        }
+
+        return array();
+    }
+
+    /**
      * @param Bronto_Api_List_Row|string $list
      * @return Bronto_Api_Contact_Row
      */
@@ -196,11 +228,13 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         }
 
         if (!isset($this->_data['listIds'])) {
-            throw new Exception('Not yet implemented.');
+            $this->_loadLists();
         }
 
-        $this->_data['listIds'][] = $list->id;
-        $this->_modifiedFields['listIds'] = true;
+        if (!in_array($listId, $this->_data['listIds'])) {
+            $this->_data['listIds'][] = $listId;
+            $this->_modifiedFields['listIds'] = true;
+        }
         return $this;
     }
 
@@ -219,13 +253,13 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         }
 
         if (!isset($this->_data['listIds'])) {
-            throw new Exception('Not yet implemented.');
+            $this->_loadLists();
         }
 
         if (is_array($this->_data['listIds'])) {
-            foreach ($this->_data['listIds'] as $index => $id) {
+            foreach ($this->_data['listIds'] as $i => $id) {
                 if ($id == $listId) {
-                    unset($this->_data['listIds'][$index]);
+                    unset($this->_data['listIds'][$i]);
                     break;
                 }
             }
@@ -234,7 +268,20 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         $this->_modifiedFields['listIds'] = true;
         return $this;
     }
-    
+
+    protected function _loadLists()
+    {
+        if (!isset($this->_data['listIds'])) {
+            $this->_data['listIds'] = array();
+        }
+
+        $listIds = $this->getLists();
+        foreach ($listIds as $listId) {
+            $this->_data['listIds'][] = $listId;
+            $this->_modifiedFields['listIds'] = true;
+        }
+    }
+
     /**
      * Proxy for intellisense
      *

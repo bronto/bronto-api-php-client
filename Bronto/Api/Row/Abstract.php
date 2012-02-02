@@ -178,9 +178,9 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected function _refresh($pull = true)
     {
         if ($pull) {
-            $this->_data       = $this->read(true);
+            $this->_data = $this->read(true);
         }
-        $this->_cleanData      = $this->_data;
+        $this->_cleanData = $this->_data;
         $this->_modifiedFields = array();
     }
 
@@ -395,6 +395,9 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         if (count($diffData) > 0) {
             $tempPrimaryKey = $this->_primary;
             $primaryKey = $this->getApiObject()->update(array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $diffData));
+        } else {
+            $tempPrimaryKey = $this->_primary;
+            $primaryKey = $this->{$tempPrimaryKey};
         }
 
         /**
