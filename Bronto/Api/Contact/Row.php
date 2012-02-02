@@ -198,7 +198,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         }
 
         try {
-            $rowset = $this->getApiObject()->readAll($filter, null, true);
+            $rowset = $this->getApiObject()->readAll($filter, array(), true);
 
             if ($rowset->count() > 0) {
                 $data = $rowset->current()->getData();
