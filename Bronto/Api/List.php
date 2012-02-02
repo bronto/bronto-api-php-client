@@ -14,19 +14,19 @@ class Bronto_Api_List extends Bronto_Api_Abstract
      * @var string
      */
     protected $_name = 'Lists';
-    
+
     /**
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_List_Row';
-    
+
     /**
      * Classname for exceptions
      *
      * @var string
      */
     protected $_exceptionClass = 'Bronto_Api_List_Exception';
-    
+
     /**
      * @param array $filter
      * @param int $pageNumber
@@ -39,7 +39,7 @@ class Bronto_Api_List extends Bronto_Api_Abstract
         $params['pageNumber'] = (int) $pageNumber;
         return parent::readAll($params);
     }
-    
+
     /**
      * @param array $data
      * @return Bronto_Api_List_Row
@@ -48,7 +48,7 @@ class Bronto_Api_List extends Bronto_Api_Abstract
     {
         return parent::createRow($data);
     }
-    
+
     /**
      * @param array $data
      * @return bool
@@ -59,14 +59,20 @@ class Bronto_Api_List extends Bronto_Api_Abstract
             $data = array($data);
         }
         $client   = $this->getApi()->getSoapClient();
-        $result   = $client->clearLists($data)->return;
-        $row      = array_shift($result->results);
+
+        try {
+            $result = $client->clearLists($data)->return;
+            $row    = array_shift($result->results);
+        } catch (Exception $e) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass($e->getMessage());
+        }
 
         if (isset($result->errors) && $result->errors) {
             $exceptionClass = $this->getExceptionClass();
             throw new $exceptionClass($row->errorString, $row->errorCode);
         }
-        
+
         return true;
     }
 }

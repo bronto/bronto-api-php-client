@@ -13,7 +13,7 @@ abstract class Bronto_Api_Abstract
      * @var array
      */
     protected $_options = array();
-    
+
     /**
      * The object name.
      *
@@ -214,8 +214,14 @@ abstract class Bronto_Api_Abstract
         $client     = $this->getApi()->getSoapClient();
         $methodName = '_name' . ucfirst($method);
         $function   = $method . $this->{$methodName};
-        $result     = $client->$function(array($data))->return;
-        $row        = array_shift($result->results);
+
+        try {
+            $result = $client->$function(array($data))->return;
+            $row    = array_shift($result->results);
+        } catch (Exception $e) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass($e->getMessage());
+        }
 
         if (isset($result->errors) && $result->errors) {
             $exceptionClass = $this->getExceptionClass();
@@ -238,7 +244,13 @@ abstract class Bronto_Api_Abstract
 
         $client   = $this->getApi()->getSoapClient();
         $function = "read{$this->_nameRead}";
-        $result   = $client->$function($params);
+
+        try {
+            $result = $client->$function($params);
+        } catch (Exception $e) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass($e->getMessage());
+        }
 
         if (!isset($result->return)) {
             $result->return = array();
@@ -267,8 +279,14 @@ abstract class Bronto_Api_Abstract
     {
         $client   = $this->getApi()->getSoapClient();
         $function = "delete{$this->_nameDelete}";
-        $result   = $client->$function(array($data))->return;
-        $row      = array_shift($result->results);
+
+        try {
+            $result = $client->$function(array($data))->return;
+            $row    = array_shift($result->results);
+        } catch (Exception $e) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass($e->getMessage());
+        }
 
         if (isset($result->errors) && $result->errors) {
             $exceptionClass = $this->getExceptionClass();
@@ -335,31 +353,31 @@ abstract class Bronto_Api_Abstract
     {
         return (bool) $this->_hasUpsert;
     }
-    
+
     /**
      * @param string $key
-     * @return array|boolean 
+     * @return array|boolean
      */
     public function getOptionValues($key)
     {
         if (isset($this->_options[$key])) {
             return $this->_options[$key];
         }
-               
+
         return false;
     }
-    
+
     /**
      * @param string $key
      * @param string $value
-     * @return boolean 
+     * @return boolean
      */
     public function isValidOptionValue($key, $value)
     {
         if ($values = $this->getOptionValues($key)) {
             return in_array($value, $values);
         }
-        
+
         return true;
     }
 }
