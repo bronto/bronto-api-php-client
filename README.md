@@ -15,13 +15,16 @@
 
 ### Login
 
+```php
     /* @var $bronto \Bronto_Api */
     $bronto = new \Bronto_Api();
     $bronto->setToken($token);
     $bronto->login();
+```
 
 ### Create new Contact
 
+```php
     /* @var $contactObject \Bronto_Api_Contact */
     $contactObject = $bronto->getContactObject();
 
@@ -42,9 +45,11 @@
     } catch (Exception $e) {
         // Handle error
     }
+```
 
 ### Delete a Contact
 
+```php
     /* @var $contactObject \Bronto_Api_Contact */
     $contactObject = $bronto->getContactObject();
 
@@ -54,9 +59,11 @@
     } catch (Exception $e) {
         // Handle error
     }
+```
 
 ### Read Contacts using Filter
 
+```php
     /* @var $contactObject \Bronto_Api_Contact */
     $contactObject = $bronto->getContactObject();
 
@@ -86,9 +93,11 @@
 
         $contactsPage++;
     }
+```
 
 ### Read List by Name
 
+```php
     /* @var $listObject \Bronto_Api_List */
     $listObject = $bronto->getListObject();
 
@@ -100,9 +109,11 @@
     } catch (Exception $e) {
         // Handle error
     }
+```
 
 ### Create new Field
 
+```php
     /* @var $fieldObject \Bronto_Api_Field */
     $fieldObject = $bronto->getFieldObject();
 
@@ -114,3 +125,4 @@
     } catch (Exception $e) {
         // Handle error
     }
+```
