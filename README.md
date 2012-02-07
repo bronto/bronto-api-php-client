@@ -1,5 +1,7 @@
 # Bronto_Api
 
+ActiveRecord style abstraction of the Bronto SOAP API.
+
 ## Implemented Objects
 
  * Activity
@@ -18,8 +20,8 @@
 ```php
 /* @var $bronto \Bronto_Api */
 $bronto = new \Bronto_Api();
-$bronto->setToken($token);
-$bronto->login();
+$bronto->setToken($token); // Or pass $token to the constructor of Bronto_Api
+$bronto->login(); // Only needs to be called once
 ```
 
 ### Create new Contact
