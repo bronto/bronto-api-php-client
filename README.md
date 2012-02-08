@@ -126,3 +126,36 @@ try {
     // Handle error
 }
 ```
+
+### Retrieve a Message
+
+```php
+/* @var $messageObject \Bronto_Api_Message */
+$messageObject  = $bronto->getMessageObject();
+
+/* @var $message \Bronto_Api_Message_Row */
+$message = $messageObject->createRow(array('id' => '123'));
+$message->read();
+```
+
+### Create a Delivery
+
+```php
+/* @var $deliveryObject \Bronto_Api_Delivery */
+$deliveryObject = $bronto->getDeliveryObject();
+
+/* @var $delivery \Bronto_Api_Delivery_Row */
+$delivery = $deliveryObject->createRow();
+$delivery->start      = date('c'); // Today
+$delivery->type       = \Bronto_Api_Delivery_Row::TYPE_TRANSACTIONAL;
+$delivery->messageId  = $message->id;
+$delivery->fromEmail  = 'user@example.com';
+$delivery->fromName   = 'Example Sender';
+$delivery->recipients = array(
+    array(
+        'type' => 'contact',
+        'id'   => $contact->id,
+    ),
+);
+$delivery->save();
+```
