@@ -8,6 +8,38 @@ require_once 'Bronto/Api/Delivery/Exception.php';
 
 class Bronto_Api_Delivery extends Bronto_Api_Abstract
 {
+    /** Status */
+    const STATUS_SENT     = 'sent';
+    const STATUS_SENDING  = 'sending';
+    const STATUS_UNSENT   = 'unsent';
+    const STATUS_ARCHIVED = 'archived';
+    const STATUS_SKIPPED  = 'skipped';
+
+    /** Type */
+    const TYPE_NORMAL        = 'normal';
+    const TYPE_TEST          = 'test';
+    const TYPE_TRANSACTIONAL = 'transactional';
+    const TYPE_AUTOMATED     = 'automated';
+
+    /**
+     * @var array
+     */
+    protected $_options = array(
+        'status' => array(
+            self::STATUS_SENT,
+            self::STATUS_SENDING,
+            self::STATUS_UNSENT,
+            self::STATUS_ARCHIVED,
+            self::STATUS_SKIPPED,
+        ),
+        'type' => array(
+            self::TYPE_NORMAL,
+            self::TYPE_TEST,
+            self::TYPE_TRANSACTIONAL,
+            self::TYPE_AUTOMATED,
+        ),
+    );
+
     /**
      * The object name.
      *

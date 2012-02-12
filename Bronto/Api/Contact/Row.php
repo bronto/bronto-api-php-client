@@ -18,6 +18,7 @@
  * @property-read int $numClicks
  * @property-read int $numConversions
  * @property-read float $conversionAmount
+ * @method Bronto_Api_Contact getApiObject()
  */
 class Bronto_Api_Contact_Row extends Bronto_Api_Row
 {
@@ -269,6 +270,9 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
         return $this;
     }
 
+    /**
+     * @return void
+     */
     protected function _loadLists()
     {
         if (!isset($this->_data['listIds'])) {
@@ -280,15 +284,5 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             $this->_data['listIds'][] = $listId;
             $this->_modifiedFields['listIds'] = true;
         }
-    }
-
-    /**
-     * Proxy for intellisense
-     *
-     * @return Bronto_Api_Contact
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
     }
 }

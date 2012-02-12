@@ -7,6 +7,7 @@
  * @property string $type
  * @property string $visibility
  * @property array $options
+ * @method Bronto_Api_Field getApiObject()
  */
 class Bronto_Api_Field_Row extends Bronto_Api_Row
 {
@@ -21,7 +22,7 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
     const TYPE_CURRENCY = 'currency';
     const TYPE_FLOAT    = 'float';
     const TYPE_DATE     = 'date';
-    
+
     /**
      * @var array
      */
@@ -39,7 +40,7 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
             self::TYPE_DATE,
         ),
     );
-    
+
     /**
      * @param bool $returnData
      * @return Bronto_Api_Field_Row|array
@@ -56,10 +57,10 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
                 )
             );
         }
-        
+
         return parent::_read($params, $returnData);
     }
-    
+
     /**
      * @param bool $upsert
      * @param bool $refresh
@@ -70,7 +71,7 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
         if (!$upsert) {
             return parent::save($upsert, $refresh);
         }
-        
+
         try {
             return parent::save($upsert, $refresh);
         } catch (Bronto_Api_Field_Exception $e) {
@@ -81,22 +82,12 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
             throw $e;
         }
     }
-    
+
     /**
-     * @return bool 
+     * @return bool
      */
     public function delete()
     {
         return parent::_delete(array('id' => $this->id));
-    }
-       
-    /**
-     * Proxy for intellisense
-     * 
-     * @return Bronto_Api_Field
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
     }
 }

@@ -18,42 +18,19 @@
  * @method Bronto_Api_Delivery_Row getDelivery()
  * @method Bronto_Api_Message_Row getMessage()
  * @method Bronto_Api_List_Row getList()
+ * @method Bronto_Api_Activity getApiObject()
  */
 class Bronto_Api_Activity_Row extends Bronto_Api_Row
-{   
-    /** Type */
-    const TYPE_OPEN        = 'open';
-    const TYPE_CLICK       = 'click';
-    const TYPE_CONVERSION  = 'conversion';
-    const TYPE_BOUNCE      = 'bounce';
-    const TYPE_SEND        = 'send';
-    const TYPE_UNSUBSCRIBE = 'unsubscribe';
-    const TYPE_VIEW        = 'view';
-    
-    /**
-     * @var array
-     */
-    protected $_options = array(
-        'trackingType' => array(
-            self::TYPE_OPEN,
-            self::TYPE_CLICK,
-            self::TYPE_CONVERSION,
-            self::TYPE_BOUNCE,
-            self::TYPE_SEND,
-            self::TYPE_UNSUBSCRIBE,
-            self::TYPE_VIEW,
-        ),
-    );
-    
+{
     /**
      * @var bool
      */
     protected $_readOnly = true;
-       
+
     /**
      * @param string $name
      * @param array $arguments
-     * @return mixed 
+     * @return mixed
      */
     public function __call($name, $arguments) {
         // Check is{Type}
@@ -63,7 +40,7 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
                 return $this->trackingType == strtoupper($type);
             }
         }
-        
+
         // Check get{Object}
         if (substr($name, 0, 3) == 'get') {
             $object = strtolower(substr($name, 3));
@@ -85,15 +62,5 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
 
             }
         }
-    }
-    
-    /**
-     * Proxy for intellisense
-     * 
-     * @return Bronto_Api_Activity
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
     }
 }

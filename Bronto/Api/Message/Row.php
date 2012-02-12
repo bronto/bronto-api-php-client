@@ -6,9 +6,10 @@
  * @property string $status
  * @property string $messageFolderId
  * @property array $content
+ * @method Bronto_Api_Message getApiObject()
  */
 class Bronto_Api_Message_Row extends Bronto_Api_Row
-{   
+{
     /**
      * @param Bronto_Api_Deliverygroup_Row|string $deliveryGroup
      * @return bool
@@ -19,7 +20,7 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
             $exceptionClass = $this->getExceptionClass();
             throw new $exceptionClass("This Message has not been saved yet (has no MessageId)");
         }
-        
+
         $deliveryGroupId = $deliveryGroup;
         if ($deliveryGroup instanceOf Bronto_Api_Deliverygroup_Row) {
             if (!$deliveryGroup->id) {
@@ -27,11 +28,11 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
             }
             $deliveryGroupId = $deliveryGroup->id;
         }
-        
+
         $deliveryGroupObject = $this->getApiObject()->getApi()->getDeliveryGroupObject();
         return $deliveryGroupObject->addToDeliveryGroup($deliveryGroupId, array(), array($this->id));
     }
-    
+
     /**
      * @param bool $returnData
      * @return Bronto_Api_Message_Row|array
@@ -48,10 +49,10 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
                 )
             );
         }
-        
+
         return parent::_read($params, $returnData);
     }
-    
+
     /**
      * @param bool $upsert
      * @return Bronto_Api_Message_Row
@@ -61,7 +62,7 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
         if (!$upsert) {
             return parent::save($upsert, $refresh);
         }
-        
+
         try {
             return parent::save($upsert, $refresh);
         } catch (Bronto_Api_Message_Exception $e) {
@@ -72,22 +73,12 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
             throw $e;
         }
     }
-    
+
     /**
-     * @return bool 
+     * @return bool
      */
     public function delete()
     {
         return parent::_delete(array('id' => $this->id));
-    }
-    
-    /**
-     * Proxy for intellisense
-     * 
-     * @return Bronto_Api_Message
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
     }
 }

@@ -64,41 +64,10 @@
  * @property int viewsDigg
  * @property int viewsMySpace
  * @property int numSocialViews
+ * @method Bronto_Api_Delivery getApiObject()
  */
 class Bronto_Api_Delivery_Row extends Bronto_Api_Row
 {
-    /** Status */
-    const STATUS_SENT     = 'sent';
-    const STATUS_SENDING  = 'sending';
-    const STATUS_UNSENT   = 'unsent';
-    const STATUS_ARCHIVED = 'archived';
-    const STATUS_SKIPPED  = 'skipped';
-
-    /** Type */
-    const TYPE_NORMAL        = 'normal';
-    const TYPE_TEST          = 'test';
-    const TYPE_TRANSACTIONAL = 'transactional';
-    const TYPE_AUTOMATED     = 'automated';
-
-    /**
-     * @var array
-     */
-    protected $_options = array(
-        'status' => array(
-            self::STATUS_SENT,
-            self::STATUS_SENDING,
-            self::STATUS_UNSENT,
-            self::STATUS_ARCHIVED,
-            self::STATUS_SKIPPED,
-        ),
-        'type' => array(
-            self::TYPE_NORMAL,
-            self::TYPE_TEST,
-            self::TYPE_TRANSACTIONAL,
-            self::TYPE_AUTOMATED,
-        ),
-    );
-
     /**
      * @return array
      */
@@ -209,26 +178,6 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
      */
     public function save($upsert = false, $refresh = true)
     {
-        /**
-         * If the _cleanData array is empty,
-         * this is an ADD of a new row.
-         * Otherwise it is an UPDATE.
-         */
-        if (empty($this->_cleanData)) {
-            return parent::save(false, $refresh);
-        } else {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass('Cannot update a delivery record');
-        }
-    }
-
-    /**
-     * Proxy for intellisense
-     *
-     * @return Bronto_Api_Delivery
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
+        return parent::save($upsert, $refresh);
     }
 }

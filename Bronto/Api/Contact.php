@@ -6,6 +6,9 @@ require_once 'Bronto/Api/Contact/Row.php';
 /** @var Bronto_Api_Contact_Exception */
 require_once 'Bronto/Api/Contact/Exception.php';
 
+/**
+ * @method Bronto_Api_Contact_Row createRow() createRow(array $data = array())
+ */
 class Bronto_Api_Contact extends Bronto_Api_Abstract
 {
     /** Status */
@@ -72,13 +75,6 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
     protected $_exceptionClass = 'Bronto_Api_Contact_Exception';
 
     /**
-     * Temporarily set to false
-     *
-     * @var bool
-     */
-    protected $_hasUpsert = false;
-
-    /**
      * @param array $filter
      * @param array $fields
      * @param bool $includeLists
@@ -93,14 +89,5 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
         $params['includeLists'] = (bool) $includeLists;
         $params['pageNumber']   = (int)  $pageNumber;
         return parent::readAll($params);
-    }
-
-    /**
-     * @param array $data
-     * @return Bronto_Api_Contact_Row
-     */
-    public function createRow(array $data = array())
-    {
-        return parent::createRow($data);
     }
 }
