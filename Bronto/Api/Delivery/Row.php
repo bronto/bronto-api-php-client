@@ -152,7 +152,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
      *
      * @param string $field
      * @param mixed $value
-     * @param string $type
+     * @param string $type text|html
      * @return Bronto_Api_Delivery_Row
      */
     public function setField($field, $value, $type = 'html')
@@ -165,11 +165,31 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
 
         if (!isset($this->_data['fields']) || !is_array($this->_data['fields'])) {
             $this->_data['fields'] = array();
+        } else {
+            // Check for dupes
+            foreach ($this->_data['fields'] as $i => $_field) {
+                if ($_field['name'] == $messageField['name']) {
+                    $this->_data['fields'][$i] = $messageField;
+                    $this->_modifiedFields['fields'] = true;
+                    return $this;
+                }
+            }
         }
 
         $this->_data['fields'][] = $messageField;
         $this->_modifiedFields['fields'] = true;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFields()
+    {
+        if (!empty($this->_data['fields'])) {
+            return $this->_data['fields'];
+        }
+        return array();
     }
 
     /**
@@ -183,10 +203,11 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     }
 
     /**
+     * @param bool $upsert
      * @param bool $refresh
      * @return Bronto_Api_Delivery_Row
      */
-    public function save($refresh = false)
+    public function save($upsert = false, $refresh = true)
     {
         /**
          * If the _cleanData array is empty,
