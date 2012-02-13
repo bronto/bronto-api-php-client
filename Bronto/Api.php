@@ -163,6 +163,16 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
+     * @return Bronto_Api_Conversion
+     */
+    public function getConversionObject()
+    {
+        return $this->getObject('conversion');
+    }
+
+    /**
+     * Proxy for intellisense
+     *
      * @return Bronto_Api_Delivery
      */
     public function getDeliveryObject()
