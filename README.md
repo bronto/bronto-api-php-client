@@ -6,6 +6,7 @@ ActiveRecord style abstraction of the Bronto SOAP API.
 
  * Activity
  * Contact
+ * Conversion
  * Delivery
  * Deliverygroup
  * Field
