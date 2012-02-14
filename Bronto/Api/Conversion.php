@@ -16,7 +16,8 @@ class Bronto_Api_Conversion extends Bronto_Api_Abstract
      *
      * @var string
      */
-    protected $_name = 'Conversions';
+    protected $_name     = 'Conversion';
+    protected $_nameRead = 'Conversions';
 
     /**
      * @var string
