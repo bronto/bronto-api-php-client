@@ -32,7 +32,7 @@ class Bronto_Api
         'compression'        => null,
         'encoding'           => 'UTF-8',
         'trace'              => true,
-        'connection_timeout' => null,
+        'exceptions'         => true,
         'cache_wsdl'         => null,
         'user_agent'         => 'Bronto_Api <https://github.com/leek/bronto_service>',
         'features'           => null,
@@ -161,6 +161,11 @@ class Bronto_Api
                 case 'soap_version':
                     if (!in_array($value, array(SOAP_1_1, SOAP_1_2))) {
                         throw new Bronto_Api_Exception('Invalid soap_version specified. Use SOAP_1_1 or SOAP_1_2 constants.');
+                    }
+                    break;
+                case 'cache_wsdl':
+                    if (!in_array($value, array(WSDL_CACHE_NONE, WSDL_CACHE_DISK, WSDL_CACHE_MEMORY, WSDL_CACHE_BOTH))) {
+                        throw new Bronto_Api_Exception('Invalid cache_wsdl specified.');
                     }
                     break;
             }
@@ -315,6 +320,7 @@ class Bronto_Api
                 'compression'  => $this->_options['compression'],
                 'encoding'     => $this->_options['encoding'],
                 'trace'        => $this->_options['trace'],
+                'exceptions'   => $this->_options['exceptions'],
                 'cache_wsdl'   => $this->_options['cache_wsdl'],
                 'user_agent'   => $this->_options['user_agent'],
                 'features'     => $this->_options['features'],
