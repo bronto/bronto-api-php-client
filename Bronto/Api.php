@@ -25,18 +25,17 @@ class Bronto_Api
      */
     protected $_options = array(
         // Bronto
-        'no_refresh'         => false,
-        'retry_limit'        => 5,
+        'no_refresh'   => false,
+        'retry_limit'  => 5,
         // SoapClient
-        'soap_version'       => null,
-        'compression'        => null,
-        'encoding'           => 'UTF-8',
-        'trace'              => true,
-        'exceptions'         => true,
-        'cache_wsdl'         => null,
-        'user_agent'         => 'Bronto_Api <https://github.com/leek/bronto_service>',
-        'features'           => null,
-        'keep_alive'         => false,
+        'soap_version' => null,
+        'compression'  => null,
+        'encoding'     => 'UTF-8',
+        'trace'        => true,
+        'exceptions'   => true,
+        'cache_wsdl'   => null,
+        'user_agent'   => 'Bronto_Api <https://github.com/leek/bronto_service>',
+        'features'     => null,
     );
 
     /**
@@ -184,7 +183,7 @@ class Bronto_Api
         if (isset($this->_options[$name])) {
             return $this->_options[$name];
         }
-        return false;
+        return null;
     }
 
     /**
@@ -324,7 +323,6 @@ class Bronto_Api
                 'cache_wsdl'   => $this->_options['cache_wsdl'],
                 'user_agent'   => $this->_options['user_agent'],
                 'features'     => $this->_options['features'],
-                'keep_alive'   => $this->_options['keep_alive'],
             ));
             $this->_soapClient->__setLocation(self::BASE_LOCATION);
         }
@@ -341,7 +339,6 @@ class Bronto_Api
         if ($this->_soapClient !== null) {
             return $this->_soapClient->__getLastRequest();
         }
-
         return '';
     }
 
@@ -355,7 +352,6 @@ class Bronto_Api
         if ($this->_soapClient !== null) {
             return $this->_soapClient->__getLastResponse();
         }
-
         return '';
     }
 
@@ -369,7 +365,6 @@ class Bronto_Api
         if ($this->_soapClient !== null) {
             return $this->_soapClient->__getLastRequestHeaders();
         }
-
         return '';
     }
 
@@ -383,7 +378,6 @@ class Bronto_Api
         if ($this->_soapClient !== null) {
             return $this->_soapClient->__getLastResponseHeaders();
         }
-
         return '';
     }
 }
