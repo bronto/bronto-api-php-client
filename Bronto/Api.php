@@ -221,6 +221,16 @@ class Bronto_Api
     }
 
     /**
+     * Proxy for intellisense
+     *
+     * @return Bronto_Api_Segment
+     */
+    public function getSegmentObject()
+    {
+        return $this->getObject('segment');
+    }
+
+    /**
      * Lazy loads our API objects
      *
      * @param string $object
@@ -312,21 +322,5 @@ class Bronto_Api
         }
 
         return '';
-    }
-}
-
-/**
- * These are here in case we accidentally leave debugging code.
- * Note: DO NOT LEAVE DEBUGGING CODE!
- */
-if (!function_exists('d')) {
-    function d($a = null, $b = null, $c = null) {
-        return;
-    }
-}
-
-if (!function_exists('dd')) {
-    function dd($a = null) {
-        return;
     }
 }

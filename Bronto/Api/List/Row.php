@@ -7,12 +7,13 @@
  * @property int $activeCount
  * @property string $status
  * @property string $visibility
+ * @method Bronto_Api_List getApiObject()
  */
 class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
 {
     /**
      * Retrieves contacts for current list
-     * 
+     *
      * @param bool $includeLists
      * @param array $fields
      * @param int $pageNumber
@@ -26,7 +27,7 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
         );
         return $contactObject->readAll($filter, $fields, $includeLists, $pageNumber);
     }
-    
+
     /**
      * @param bool $returnData
      * @return Bronto_Api_List_Row|array
@@ -43,10 +44,10 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
                 )
             );
         }
-        
+
         return parent::_read($params, $returnData);
     }
-    
+
     /**
      * @param bool $upsert
      * @param bool $refresh
@@ -57,7 +58,7 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
         if (!$upsert) {
             return parent::save($upsert, $refresh);
         }
-        
+
         try {
             return parent::save();
         } catch (Bronto_Api_List_Exception $e) {
@@ -68,15 +69,15 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
             throw $e;
         }
     }
-    
+
     /**
-     * @return bool 
+     * @return bool
      */
     public function delete()
     {
         return parent::_delete(array('id' => $this->id));
     }
-    
+
     /**
      * @return bool
      */
@@ -84,24 +85,34 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
     {
         return $this->getApiObject()->clear(array('id' => $this->id));
     }
-    
-    /**
-     * Proxy for intellisense
-     * 
-     * @return Bronto_Api_List
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
-    }
-    
+
     /**
      * Required by Bronto_Api_Delivery_Recipient
-     * 
-     * @return bool
+     *
+     * @return true
      */
     public function isList()
     {
         return true;
+    }
+
+    /**
+     * Required by Bronto_Api_Delivery_Recipient
+     *
+     * @return false
+     */
+    public function isContact()
+    {
+        return false;
+    }
+
+    /**
+     * Required by Bronto_Api_Delivery_Recipient
+     *
+     * @return false
+     */
+    public function isSegment()
+    {
+        return false;
     }
 }

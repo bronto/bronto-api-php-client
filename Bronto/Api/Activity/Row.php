@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @property string $activityDate
- * @property string $contactId
- * @property string $deliveryId
- * @property string $messageId
- * @property string $listId
- * @property string $trackingType
+ * @property-read string $activityDate
+ * @property-read string $contactId
+ * @property-read string $deliveryId
+ * @property-read string $messageId
+ * @property-read string $listId
+ * @property-read string $trackingType
  * @method bool isOpen()
  * @method bool isClick()
  * @method bool isConversion()

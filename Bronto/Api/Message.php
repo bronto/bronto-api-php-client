@@ -6,6 +6,9 @@ require_once 'Bronto/Api/Message/Row.php';
 /** @var Bronto_Api_Message_Exception */
 require_once 'Bronto/Api/Message/Exception.php';
 
+/**
+ * @method Bronto_Api_Message_Row createRow() createRow(array $data = array())
+ */
 class Bronto_Api_Message extends Bronto_Api_Abstract
 {
     /**
@@ -19,14 +22,14 @@ class Bronto_Api_Message extends Bronto_Api_Abstract
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Message_Row';
-    
+
     /**
      * Classname for exceptions
      *
      * @var string
      */
     protected $_exceptionClass = 'Bronto_Api_Message_Exception';
-       
+
     /**
      * @param array $filter
      * @param bool $includeContent
@@ -40,14 +43,5 @@ class Bronto_Api_Message extends Bronto_Api_Abstract
         $params['includeContent'] = (bool) $includeContent;
         $params['pageNumber']     = (int)  $pageNumber;
         return parent::readAll($params);
-    }
-
-    /**
-     * @param array $data
-     * @return Bronto_Api_Message_Row
-     */
-    public function createRow(array $data = array())
-    {
-        return parent::createRow($data);
     }
 }

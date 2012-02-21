@@ -61,17 +61,21 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
     /**
      * @param string $startDate
      * @param int $size
-     * @param array $types
+     * @param mixed $types
      * @throws Bronto_Api_Activity_Exception
      * @return Bronto_Api_Rowset
      */
-    public function readAll($startDate, $size = 25, array $types = array())
+    public function readAll($startDate, $size = 25, $types = array())
     {
         $filter = array();
         $filter['start'] = $startDate;
         $filter['size']  = (int) $size;
         if (!empty($types)) {
-            $filter['types'] = $types;
+            if (is_array($types)) {
+                $filter['types'] = $types;
+            } else {
+                $filter['types'] = array($types);
+            }
         }
         return parent::readAll(array('filter' => $filter));
     }

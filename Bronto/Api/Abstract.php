@@ -237,11 +237,6 @@ abstract class Bronto_Api_Abstract
      */
     public function readAll(array $params = array())
     {
-        if (!is_array($params)) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass('You must pass an array to readAll()');
-        }
-
         $client   = $this->getApi()->getSoapClient();
         $function = "read{$this->_nameRead}";
 

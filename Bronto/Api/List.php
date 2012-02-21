@@ -6,6 +6,9 @@ require_once 'Bronto/Api/List/Row.php';
 /** @var Bronto_Api_List_Exception */
 require_once 'Bronto/Api/List/Exception.php';
 
+/**
+ * @method Bronto_Api_List_Row createRow() createRow(array $data = array())
+ */
 class Bronto_Api_List extends Bronto_Api_Abstract
 {
     /**
@@ -42,15 +45,6 @@ class Bronto_Api_List extends Bronto_Api_Abstract
 
     /**
      * @param array $data
-     * @return Bronto_Api_List_Row
-     */
-    public function createRow(array $data = array())
-    {
-        return parent::createRow($data);
-    }
-
-    /**
-     * @param array $data
      * @return bool
      */
     public function clear(array $data = array())
@@ -58,7 +52,7 @@ class Bronto_Api_List extends Bronto_Api_Abstract
         if (!isset($data[0])) {
             $data = array($data);
         }
-        $client   = $this->getApi()->getSoapClient();
+        $client = $this->getApi()->getSoapClient();
 
         try {
             $result = $client->clearLists($data)->return;

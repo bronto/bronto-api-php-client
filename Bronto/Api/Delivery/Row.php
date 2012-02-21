@@ -1,79 +1,115 @@
 <?php
 
 /**
- * @property-read string id
+ * @property-read string $id
  * @property date start
- * @property string messageId
- * @property string status
- * @property string type
- * @property string fromEmail
- * @property string fromName
- * @property bool authentication
- * @property bool replyTracking
- * @property string replyEmail
- * @property string messageRuleId
- * @property bool optin
- * @property array content
- * @property array recipients
- * @property array fields
- * @property int numSends
- * @property int numDeliveries
- * @property int numHardBadEmail
- * @property int numHardDestUnreach
- * @property int numHardMessageContent
- * @property int numHardBounces
- * @property int numSoftBadEmail
- * @property int numSoftDestUnreach
- * @property int numSoftMessageContent
- * @property int numSoftBounces
- * @property int numOtherBounces
- * @property int uniqOpens
- * @property int numOpens
- * @property int avgOpens
- * @property int uniqClicks
- * @property int numClicks
- * @property int avgClicks
- * @property int uniqConversions
- * @property int numConversions
- * @property int avgConversions
- * @property int revenue
- * @property int numSurveyResponses
- * @property int numFriendForwards
- * @property int numContactUpdates
- * @property int numUnsubscribesByPrefs
- * @property int numUnsubscribesByComplaint
- * @property int numContactLoss
- * @property int numContactLossBounces
- * @property float deliveryRate
- * @property float openRate
- * @property float clickRate
- * @property float clickThroughRate
- * @property float conversionRate
- * @property float bounceRate
- * @property float complaintRate
- * @property float contactLossRate
- * @property int numSocialShares
- * @property int sharesFacebook
- * @property int sharesTwitter
- * @property int sharesLinkedIn
- * @property int sharesDigg
- * @property int sharesMySpace
- * @property int viewsFacebook
- * @property int viewsTwitter
- * @property int viewsLinkedIn
- * @property int viewsDigg
- * @property int viewsMySpace
- * @property int numSocialViews
+ * @property string $messageId
+ * @property string $status
+ * @property string $type
+ * @property string $fromEmail
+ * @property string $fromName
+ * @property bool $authentication
+ * @property bool $replyTracking
+ * @property string $replyEmail
+ * @property string $messageRuleId
+ * @property bool $optin
+ * @property float $throttle
+ * @property array $content
+ * @property array $recipients
+ * @property array $fields
+ * @property-read int $numSends
+ * @property-read int $numDeliveries
+ * @property-read int $numHardBadEmail
+ * @property-read int $numHardDestUnreach
+ * @property-read int $numHardMessageContent
+ * @property-read int $numHardBounces
+ * @property-read int $numSoftBadEmail
+ * @property-read int $numSoftDestUnreach
+ * @property-read int $numSoftMessageContent
+ * @property-read int $numSoftBounces
+ * @property-read int $numOtherBounces
+ * @property-read int $uniqOpens
+ * @property-read int $numOpens
+ * @property-read int $avgOpens
+ * @property-read int $uniqClicks
+ * @property-read int $numClicks
+ * @property-read int $avgClicks
+ * @property-read int $uniqConversions
+ * @property-read int $numConversions
+ * @property-read int $avgConversions
+ * @property-read int $revenue
+ * @property-read int $numSurveyResponses
+ * @property-read int $numFriendForwards
+ * @property-read int $numContactUpdates
+ * @property-read int $numUnsubscribesByPrefs
+ * @property-read int $numUnsubscribesByComplaint
+ * @property-read int $numContactLoss
+ * @property-read int $numContactLossBounces
+ * @property-read float $deliveryRate
+ * @property-read float $openRate
+ * @property-read float $clickRate
+ * @property-read float $clickThroughRate
+ * @property-read float $conversionRate
+ * @property-read float $bounceRate
+ * @property-read float $complaintRate
+ * @property-read float $contactLossRate
+ * @property-read int $numSocialShares
+ * @property-read int $sharesFacebook
+ * @property-read int $sharesTwitter
+ * @property-read int $sharesLinkedIn
+ * @property-read int $sharesDigg
+ * @property-read int $sharesMySpace
+ * @property-read int $viewsFacebook
+ * @property-read int $viewsTwitter
+ * @property-read int $viewsLinkedIn
+ * @property-read int $viewsDigg
+ * @property-read int $viewsMySpace
+ * @property-read int $numSocialViews
  * @method Bronto_Api_Delivery getApiObject()
  */
 class Bronto_Api_Delivery_Row extends Bronto_Api_Row
 {
     /**
+     * @var array
+     */
+    protected $_recipients = array();
+
+    /**
+     * @param bool $refresh
+     * @param array $additionalFilter
      * @return array
      */
-    public function getRecipients()
+    public function getRecipients($refresh = false, array $additionalFilter = array())
     {
-        $recipients = array();
+        if (!$this->id) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass("This Delivery has not been retrieved yet (has no DeliveryId)");
+        }
+
+        // If we have already retrieved this, don't do it again
+        if (!empty($this->_recipients) && !$refresh) {
+            return $this->_recipients;
+        }
+
+        // We didn't do $includeRecipients = true from original request
+        if (empty($this->recipients)) {
+            $this->recipients = array();
+
+            $filter = array();
+            $filter['deliveryId'] = $this->id;
+            $filter = array_merge($additionalFilter, $filter);
+            $recipientPage = 1;
+            while ($recipients = $this->getApiObject()->readDeliveryRecipients($filter, $recipientPage)) {
+                if (!$recipients->count()) {
+                    break;
+                }
+
+                $this->recipients = $this->recipients + $recipients;
+                $recipientPage++;
+            }
+        }
+
+        $this->_recipients = array();
         if (!empty($this->recipients)) {
             foreach ($this->recipients as $i => $recipient) {
                 switch ($recipient->type) {
@@ -81,7 +117,15 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
                         $listObject = $this->getApiObject()->getApi()->getListObject();
                         $list = $listObject->createRow();
                         $list->id = $recipient->id;
-                        $recipients[$i] = $list;
+                        $this->_recipients[] = $list;
+                        break;
+                    case 'contact':
+                        $contactObject = $this->getApiObject()->getApi()->getContactObject();
+                        $contact = $contactObject->createRow();
+                        $contact->id = $recipient->id;
+                        $this->_recipients[] = $contact;
+                        break;
+                    case 'segment':
                         break;
                     default:
                         $exceptionClass = $this->getExceptionClass();
@@ -90,11 +134,12 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
                 }
             }
         }
-        return $recipients;
+
+        return $this->_recipients;
     }
 
     /**
-     * @param Bronto_Api_Deliverygroup_Row|string $deliveryGroup
+     * @param Bronto_Api_Deliverygroup_Row|string $$deliveryGroup
      * @return bool
      */
     public function addToDeliveryGroup($deliveryGroup)
@@ -119,9 +164,9 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     /**
      * Sets a value for a Message Field
      *
-     * @param string $field
+     * @param string $$field
      * @param mixed $value
-     * @param string $type text|html
+     * @param string $$type text|html
      * @return Bronto_Api_Delivery_Row
      */
     public function setField($field, $value, $type = 'html')

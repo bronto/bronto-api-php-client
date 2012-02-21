@@ -6,6 +6,9 @@ require_once 'Bronto/Api/Delivery/Row.php';
 /** @var Bronto_Api_Delivery_Exception */
 require_once 'Bronto/Api/Delivery/Exception.php';
 
+/**
+ * @method Bronto_Api_Delivery_Row createRow() createRow(array $data = array())
+ */
 class Bronto_Api_Delivery extends Bronto_Api_Abstract
 {
     /** Status */
@@ -99,12 +102,28 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
     }
 
     /**
-     * @param array $data
-     * @throws Bronto_Api_Delivery_Exception
-     * @return Bronto_Api_Delivery_Row
+     * @param array $filter
+     * @param int $pageNumber
+     * @return array
      */
-    public function createRow(array $data = array())
+    public function readDeliveryRecipients(array $filter = array(), $pageNumber = 1)
     {
-        return parent::createRow($data);
+        $params = array();
+        $params['filter']     = $filter;
+        $params['pageNumber'] = (int) $pageNumber;
+
+        try {
+            $client = $this->getApi()->getSoapClient();
+            $result = $client->readDeliveryRecipients($params)->return;
+        } catch (Exception $e) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass($e->getMessage());
+        }
+
+        if (!isset($result->return)) {
+            $result->return = array();
+        }
+
+        return $result->return;
     }
 }

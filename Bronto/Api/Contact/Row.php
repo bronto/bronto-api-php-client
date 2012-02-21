@@ -20,7 +20,7 @@
  * @property-read float $conversionAmount
  * @method Bronto_Api_Contact getApiObject()
  */
-class Bronto_Api_Contact_Row extends Bronto_Api_Row
+class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
 {
     /**
      * Initialize object
@@ -284,5 +284,35 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row
             $this->_data['listIds'][] = $listId;
             $this->_modifiedFields['listIds'] = true;
         }
+    }
+
+    /**
+     * Required by Bronto_Api_Delivery_Recipient
+     *
+     * @return false
+     */
+    public function isList()
+    {
+        return false;
+    }
+
+    /**
+     * Required by Bronto_Api_Delivery_Recipient
+     *
+     * @return true
+     */
+    public function isContact()
+    {
+        return true;
+    }
+
+    /**
+     * Required by Bronto_Api_Delivery_Recipient
+     *
+     * @return false
+     */
+    public function isSegment()
+    {
+        return false;
     }
 }
