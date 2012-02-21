@@ -23,7 +23,21 @@ class Bronto_Api
     /**
      * @var array
      */
-    protected $_options = array();
+    protected $_options = array(
+        // Bronto
+        'no_refresh'         => false,
+        'retry_limit'        => 5,
+        // SoapClient
+        'soap_version'       => null,
+        'compression'        => null,
+        'encoding'           => 'UTF-8',
+        'trace'              => true,
+        'connection_timeout' => null,
+        'cache_wsdl'         => null,
+        'user_agent'         => 'Bronto_Api <https://github.com/leek/bronto_service>',
+        'features'           => null,
+        'keep_alive'         => false,
+    );
 
     /**
      * Cache of class objects
@@ -38,15 +52,43 @@ class Bronto_Api
      * @param string $token
      * @param array $options
      */
-    public function __construct($token = null, $options = null)
+    public function __construct($token = null, array $options = array())
     {
         if (!extension_loaded('soap')) {
             require_once 'Bronto/Api/Exception.php';
             throw new Bronto_Api_Exception('SOAP extension is not loaded.');
         }
 
+        if (!extension_loaded('openssl')) {
+            require_once 'Bronto/Api/Exception.php';
+            throw new Bronto_Api_Exception('OpenSSL extension is not loaded.');
+        }
+
         if ($token !== null) {
             $this->setToken($token);
+        }
+
+        if (!empty($options)) {
+            $this->setOptions($options);
+        }
+
+        // Use SOAP 1.2 as default
+        if ($this->_options['soap_version'] == null) {
+            $this->_options['soap_version'] = SOAP_1_2;
+        }
+
+        // Accept GZIP compression
+        if ($this->_options['compression'] == null) {
+            $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
+        }
+
+        // No WSDL cache
+        if ($this->_options['cache_wsdl'] == null) {
+            $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
+        }
+
+        if ($this->_options['features'] == null) {
+            $this->_options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
         }
     }
 
@@ -113,10 +155,17 @@ class Bronto_Api
      */
     public function setOption($name, $value)
     {
-        switch (strtolower($name)) {
-            case 'norefresh':
-                $this->_options['norefresh'] = (bool) $value;
-                break;
+        if (isset($this->_options[$name])) {
+            // Some settings need checked
+            switch ($name) {
+                case 'soap_version':
+                    if (!in_array($value, array(SOAP_1_1, SOAP_1_2))) {
+                        throw new Bronto_Api_Exception('Invalid soap_version specified. Use SOAP_1_1 or SOAP_1_2 constants.');
+                    }
+                    break;
+            }
+
+            $this->_options[$name] = $value;
         }
         return $this;
     }
@@ -127,17 +176,10 @@ class Bronto_Api
      */
     public function getOption($name)
     {
-        switch (strtolower($name)) {
-            case 'norefresh':
-                if (isset($this->_options[$name])) {
-                    return (bool) $this->_options[$name];
-                } else {
-                    return false;
-                }
-                break;
+        if (isset($this->_options[$name])) {
+            return $this->_options[$name];
         }
-
-        return null;
+        return false;
     }
 
     /**
@@ -269,9 +311,14 @@ class Bronto_Api
     {
         if ($this->_soapClient == null) {
             $this->_soapClient = new SoapClient(self::BASE_WSDL, array(
-                'trace'    => 1,
-                'encoding' => 'UTF-8',
-                'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
+                'soap_version' => $this->_options['soap_version'],
+                'compression'  => $this->_options['compression'],
+                'encoding'     => $this->_options['encoding'],
+                'trace'        => $this->_options['trace'],
+                'cache_wsdl'   => $this->_options['cache_wsdl'],
+                'user_agent'   => $this->_options['user_agent'],
+                'features'     => $this->_options['features'],
+                'keep_alive'   => $this->_options['keep_alive'],
             ));
             $this->_soapClient->__setLocation(self::BASE_LOCATION);
         }
