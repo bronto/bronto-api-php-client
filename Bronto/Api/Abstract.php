@@ -231,7 +231,7 @@ abstract class Bronto_Api_Abstract
                 $error = true;
                 if ($tries == 5) {
                     $exceptionClass = $this->getExceptionClass();
-                    throw new $exceptionClass($e->getMessage());
+                    throw new $exceptionClass($e->getMessage() . " (Tried {$tries} times)");
                 }
             }
 
@@ -292,7 +292,7 @@ abstract class Bronto_Api_Abstract
                 $error = true;
                 if ($tries == 5) {
                     $exceptionClass = $this->getExceptionClass();
-                    throw new $exceptionClass($e->getMessage());
+                    throw new $exceptionClass($e->getMessage() . " (Tried {$tries} times)");
                 }
             }
 
