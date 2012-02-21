@@ -232,6 +232,9 @@ abstract class Bronto_Api_Abstract
                 if ($tries == 5) {
                     $exceptionClass = $this->getExceptionClass();
                     throw new $exceptionClass($e->getMessage() . " (Tried {$tries} times)");
+                } else {
+                    // Attempt to get a new session token
+                    $this->getApi()->login();
                 }
             }
 
@@ -244,10 +247,8 @@ abstract class Bronto_Api_Abstract
                     } catch (Bronto_Api_Exception $e) {
                         if ($e->isRecoverable()) {
                             if ($tries <= 5) {
-                                if ($e->requiresLogin()) {
-                                    // Attempt to get a new session token
-                                    $this->getApi()->login();
-                                }
+                                // Attempt to get a new session token
+                                $this->getApi()->login();
                             } else {
                                 // Re-throw exception since we've tried too many times
                                 throw $e;
@@ -293,6 +294,9 @@ abstract class Bronto_Api_Abstract
                 if ($tries == 5) {
                     $exceptionClass = $this->getExceptionClass();
                     throw new $exceptionClass($e->getMessage() . " (Tried {$tries} times)");
+                } else {
+                    // Attempt to get a new session token
+                    $this->getApi()->login();
                 }
             }
 
