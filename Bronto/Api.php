@@ -71,9 +71,9 @@ class Bronto_Api
             $this->setOptions($options);
         }
 
-        // Use SOAP 1.2 as default
+        // Use SOAP 1.1 as default
         if ($this->_options['soap_version'] == null) {
-            $this->_options['soap_version'] = SOAP_1_2;
+            $this->_options['soap_version'] = SOAP_1_1;
         }
 
         // No WSDL cache
