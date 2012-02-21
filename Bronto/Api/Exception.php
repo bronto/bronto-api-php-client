@@ -18,4 +18,36 @@ class Bronto_Api_Exception extends Exception
 
     /* Custom */
     const EMPTY_RESULT          = 9001;
+
+    /**
+     * @return bool
+     */
+    public function isRecoverable()
+    {
+        if (!$this->getCode()) {
+            return false;
+        }
+
+        $recoverable = array(
+            self::UNKNOWN_ERROR,
+            self::INVALID_SESSION_TOKEN,
+            self::INVALID_REQUEST,
+            self::SHARD_OFFLINE,
+            self::READ_ERROR
+        );
+
+        return in_array($this->getCode(), $recoverable);
+    }
+
+    /**
+     * @return bool
+     */
+    public function requiresLogin()
+    {
+        if (!$this->getCode()) {
+            return false;
+        }
+
+        return $this->getCode() == self::INVALID_SESSION_TOKEN;
+    }
 }

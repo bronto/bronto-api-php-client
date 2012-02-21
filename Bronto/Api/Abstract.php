@@ -57,6 +57,8 @@ abstract class Bronto_Api_Abstract
     protected $_nameDelete = null;
 
     /**
+     * Whether or not this object has an addOrUpdate method
+     *
      * @var bool
      */
     protected $_hasUpsert = false;
@@ -215,18 +217,48 @@ abstract class Bronto_Api_Abstract
         $methodName = '_name' . ucfirst($method);
         $function   = $method . $this->{$methodName};
 
-        try {
-            $result = $client->$function(array($data))->return;
-            $row    = array_shift($result->results);
-        } catch (Exception $e) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($e->getMessage());
-        }
+        // Handle [frequent] API failures
+        $tries   = 0;
+        $success = false;
+        do {
+            try {
+                $tries++;
+                $result = $client->$function(array($data))->return;
+                $row    = array_shift($result->results);
+            } catch (Exception $e) {
+                if ($tries == 5) {
+                    $exceptionClass = $this->getExceptionClass();
+                    throw new $exceptionClass($e->getMessage());
+                }
+            }
 
-        if (isset($result->errors) && $result->errors) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($row->errorString, $row->errorCode);
-        }
+            if (isset($result->errors) && $result->errors) {
+                try {
+                    $exceptionClass = $this->getExceptionClass();
+                    throw new $exceptionClass($row->errorString, $row->errorCode);
+                } catch (Bronto_Api_Exception $e) {
+                    if ($e->isRecoverable()) {
+                        if ($tries <= 5) {
+                            if ($e->requiresLogin()) {
+                                // Attempt to get a new session token
+                                $this->getApi()->login();
+                            }
+                        } else {
+                            // Re-throw exception since we've tried too many times
+                            throw $e;
+                        }
+                    } else {
+                        // Re-throw exception since it is unrecoverable
+                        throw $e;
+                    }
+                }
+            } else {
+                if ($row->id) {
+                    // Don't keep re-trying since we were successful
+                    $success = true;
+                }
+            }
+        } while (!$success && $tries <= 5);
 
         return array('id' => $row->id);
     }
@@ -240,20 +272,29 @@ abstract class Bronto_Api_Abstract
         $client   = $this->getApi()->getSoapClient();
         $function = "read{$this->_nameRead}";
 
-        try {
-            $result = $client->$function($params);
-        } catch (Exception $e) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($e->getMessage());
-        }
+        // Handle [frequent] API failures
+        $tries   = 0;
+        $success = false;
+        do {
+            try {
+                $tries++;
+                $result = $client->$function($params);
+            } catch (Exception $e) {
+                if ($tries == 5) {
+                    $exceptionClass = $this->getExceptionClass();
+                    throw new $exceptionClass($e->getMessage());
+                }
+            }
 
-        if (!isset($result->return)) {
-            $result->return = array();
-        }
+            if (isset($result->return)) {
+                // Don't keep re-trying since we were successful
+                $success = true;
+            }
+        } while (!$success && $tries <= 5);
 
         $config = array(
             'apiObject' => $this,
-            'data'      => $result->return,
+            'data'      => isset($result->return) ? $result->return : array(),
             'rowClass'  => $this->getRowClass(),
             'stored'    => true,
         );
