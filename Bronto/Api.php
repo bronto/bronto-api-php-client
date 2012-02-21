@@ -79,7 +79,7 @@ class Bronto_Api
 
         // Accept GZIP compression
         if ($this->_options['compression'] == null) {
-            $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
+            $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_DEFLATE;
         }
 
         // No WSDL cache
