@@ -29,7 +29,6 @@ class Bronto_Api
         'retry_limit'        => 5,
         // SoapClient
         'soap_version'       => null,
-        'compression'        => null,
         'encoding'           => 'UTF-8',
         'trace'              => true,
         'connection_timeout' => null,
@@ -75,11 +74,6 @@ class Bronto_Api
         // Use SOAP 1.2 as default
         if ($this->_options['soap_version'] == null) {
             $this->_options['soap_version'] = SOAP_1_2;
-        }
-
-        // Accept GZIP compression
-        if ($this->_options['compression'] == null) {
-            $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_DEFLATE;
         }
 
         // No WSDL cache
@@ -312,7 +306,6 @@ class Bronto_Api
         if ($this->_soapClient == null) {
             $this->_soapClient = new SoapClient(self::BASE_WSDL, array(
                 'soap_version' => $this->_options['soap_version'],
-                'compression'  => $this->_options['compression'],
                 'encoding'     => $this->_options['encoding'],
                 'trace'        => $this->_options['trace'],
                 'cache_wsdl'   => $this->_options['cache_wsdl'],
