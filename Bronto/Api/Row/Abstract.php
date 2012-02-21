@@ -334,7 +334,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         if (is_array($primaryKey)) {
             $newPrimaryKey = $primaryKey;
         } else {
-            //ZF-6167 Use tempPrimaryKey temporary to avoid that zend encoding fails.
             $tempPrimaryKey = (array) $this->_primary;
             $newPrimaryKey  = array(current($tempPrimaryKey) => $primaryKey);
         }

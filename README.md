@@ -6,6 +6,7 @@ ActiveRecord style abstraction of the Bronto SOAP API.
 
  * Activity
  * Contact
+ * Conversion
  * Delivery
  * Deliverygroup
  * Field
@@ -160,4 +161,28 @@ $delivery->recipients = array(
     ),
 );
 $delivery->save();
+```
+
+### Read a Delivery
+
+```php
+/* @var $deliveryObject \Bronto_Api_Delivery */
+$deliveryObject = $bronto->getDeliveryObject();
+
+/* @var $delivery \Bronto_Api_Delivery_Row */
+$delivery = $deliveryObject->createRow(array(
+    'id' => 'some delivery id'
+));
+$delivery->read();
+```
+
+### Read Recipients from a Delivery
+
+```php
+/* @var $delivery \Bronto_Api_Delivery_Row */
+$recipients = $delivery->getRecipients();
+
+foreach ($recipients as $recipient) {
+    // Do something with $recipient
+}
 ```
