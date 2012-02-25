@@ -8,8 +8,6 @@ require_once 'Bronto/Api/Activity/Exception.php';
 
 class Bronto_Api_Activity extends Bronto_Api_Abstract
 {
-    const DEFAULT_LIMIT = 2;
-
     /** Type */
     const TYPE_OPEN        = 'open';
     const TYPE_CLICK       = 'click';
@@ -72,45 +70,22 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
      * @throws Bronto_Api_Activity_Exception
      * @return Bronto_Api_Rowset
      */
-    public function readAll($startDate, $size = null, $types = array())
+    public function readAll($startDate, $size = 25, $types = array())
     {
-        $params = $this->_convertParams($startDate, $size, $types);
-        return $this->read($params);
-    }
+        $filter = array(
+            'start' => $startDate,
+            'size'  => (int) $size
+        );
 
-    /**
-     * Converts method arguments into Bronto parameters
-     *
-     * @param string $startDate
-     * @param int $size
-     * @param string|array $types
-     * @return array
-     */
-    protected function _convertParams($startDate, $size = null, $types = array())
-    {
-        $params = array();
-        $params['filter'] = array();
-
-        // Start Date
-        $params['filter']['start'] = $startDate;
-
-        // Size
-        if (empty($size)) {
-            $params['filter']['size'] = self::DEFAULT_LIMIT;
-        } else {
-            $params['filter']['size'] = (int) $size;
-        }
-
-        // Types
         if (!empty($types)) {
             if (is_array($types)) {
-                $params['filter']['types'] = $types;
+                $filter['types'] = $types;
             } else {
-                $params['filter']['types'] = array($types);
+                $filter['types'] = array($types);
             }
         }
 
-        return $params;
+        return $this->read(array($filter));
     }
 
     /**

@@ -156,7 +156,7 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      * Similar to the current() function for arrays in PHP
      * Required by interface Iterator.
      *
-     * @return Zend_Db_Table_Row_Abstract current element from the collection
+     * @return Bronto_Api_Row_Abstract current element from the collection
      */
     public function current()
     {
@@ -252,7 +252,7 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      * Required by the ArrayAccess implementation
      *
      * @param string $offset
-     * @return Zend_Db_Table_Row_Abstract
+     * @return Bronto_Api_Row_Abstract
      */
     public function offsetGet($offset)
     {
@@ -287,6 +287,11 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     {
     }
 
+    /**
+     * @param int $position
+     * @return Bronto_Api_Row_Abstract
+     * @throws Bronto_Api_Rowset_Exception
+     */
     protected function _loadAndReturnRow($position)
     {
         if (!isset($this->_data[$position])) {
@@ -313,10 +318,10 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     /**
      * Seamlessly iterate over this rowset
      *
-     * @return Bronto_RowsetIterator
+     * @return Bronto_Rowset_Iterator
      */
     public function iterate()
     {
-        return new Bronto_RowsetIterator($this);
+        return new Bronto_Rowset_Iterator($this);
     }
 }
