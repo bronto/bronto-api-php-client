@@ -8,6 +8,8 @@ require_once 'Bronto/Api/Activity/Exception.php';
 
 class Bronto_Api_Activity extends Bronto_Api_Abstract
 {
+    const DEFAULT_LIMIT = 2;
+
     /** Type */
     const TYPE_OPEN        = 'open';
     const TYPE_CLICK       = 'click';
@@ -59,25 +61,56 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
     protected $_exceptionClass = 'Bronto_Api_Activity_Exception';
 
     /**
+     * @var bool
+     */
+    protected $_canIterate = false;
+
+    /**
      * @param string $startDate
      * @param int $size
-     * @param mixed $types
+     * @param string|array $types
      * @throws Bronto_Api_Activity_Exception
      * @return Bronto_Api_Rowset
      */
-    public function readAll($startDate, $size = 25, $types = array())
+    public function readAll($startDate, $size = null, $types = array())
     {
-        $filter = array();
-        $filter['start'] = $startDate;
-        $filter['size']  = (int) $size;
+        $params = $this->_convertParams($startDate, $size, $types);
+        return $this->read($params);
+    }
+
+    /**
+     * Converts method arguments into Bronto parameters
+     *
+     * @param string $startDate
+     * @param int $size
+     * @param string|array $types
+     * @return array
+     */
+    protected function _convertParams($startDate, $size = null, $types = array())
+    {
+        $params = array();
+        $params['filter'] = array();
+
+        // Start Date
+        $params['filter']['start'] = $startDate;
+
+        // Size
+        if (empty($size)) {
+            $params['filter']['size'] = self::DEFAULT_LIMIT;
+        } else {
+            $params['filter']['size'] = (int) $size;
+        }
+
+        // Types
         if (!empty($types)) {
             if (is_array($types)) {
-                $filter['types'] = $types;
+                $params['filter']['types'] = $types;
             } else {
-                $filter['types'] = array($types);
+                $params['filter']['types'] = array($types);
             }
         }
-        return parent::readAll(array('filter' => $filter));
+
+        return $params;
     }
 
     /**

@@ -88,6 +88,6 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
         $params['fields']       = $fields;
         $params['includeLists'] = (bool) $includeLists;
         $params['pageNumber']   = (int)  $pageNumber;
-        return parent::readAll($params);
+        return $this->read($params);
     }
 }

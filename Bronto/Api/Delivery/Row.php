@@ -65,6 +65,7 @@
  * @property-read int $viewsDigg
  * @property-read int $viewsMySpace
  * @property-read int $numSocialViews
+ * @method Bronto_Api_Delivery_Row save() save(bool $upsert, bool $refresh)
  * @method Bronto_Api_Delivery getApiObject()
  */
 class Bronto_Api_Delivery_Row extends Bronto_Api_Row
@@ -214,15 +215,5 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     {
         $params = array('id' => $this->id);
         return parent::_read($params, $returnData);
-    }
-
-    /**
-     * @param bool $upsert
-     * @param bool $refresh
-     * @return Bronto_Api_Delivery_Row
-     */
-    public function save($upsert = false, $refresh = false)
-    {
-        return parent::save($upsert, $refresh);
     }
 }

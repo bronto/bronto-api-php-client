@@ -42,6 +42,6 @@ class Bronto_Api_Message extends Bronto_Api_Abstract
         $params['filter']         = $filter;
         $params['includeContent'] = (bool) $includeContent;
         $params['pageNumber']     = (int)  $pageNumber;
-        return parent::readAll($params);
+        return $this->read($params);
     }
 }

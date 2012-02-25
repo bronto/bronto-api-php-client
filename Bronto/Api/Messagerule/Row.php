@@ -10,12 +10,23 @@
 class Bronto_Api_Messagerule_Row extends Bronto_Api_Row
 {
     /**
-     * @return Bronto_Api_Messagerule_Row
+     * @param bool $returnData
+     * @return Bronto_Api_Messagerule_Row|array
      */
-    public function read()
+    public function read($returnData = false)
     {
-        $filter = array('id' => $this->id);
-        return parent::_read('MessageRules', $filter);
+        if ($this->id) {
+            $params = array('id' => $this->id);
+        } else {
+            $params = array(
+                'name' => array(
+                    'value'    => $this->name,
+                    'operator' => 'EqualTo',
+                )
+            );
+        }
+
+        return parent::_read($params, $returnData);
     }
 
     /**

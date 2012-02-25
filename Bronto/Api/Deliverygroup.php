@@ -6,8 +6,25 @@ require_once 'Bronto/Api/Deliverygroup/Row.php';
 /** @var Bronto_Api_Deliverygroup_Exception */
 require_once 'Bronto/Api/Deliverygroup/Exception.php';
 
+/**
+ * @method Bronto_Api_Deliverygroup_Row createRow() createRow(array $data = array())
+ */
 class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
 {
+    /** Visibility */
+    const VISIBILITY_INTERNAL = 'INTERNAL';
+    const VISIBILITY_PUBLIC   = 'PUBLIC';
+
+    /**
+     * @var array
+     */
+    protected $_options = array(
+        'visibility' => array(
+            self::VISIBILITY_INTERNAL,
+            self::VISIBILITY_PUBLIC,
+        ),
+    );
+
     /**
      * The object name.
      *
@@ -39,17 +56,7 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-        return parent::readAll($params);
-    }
-
-    /**
-     * @param array $data
-     * @throws Bronto_Api_Deliverygroup_Exception
-     * @return Bronto_Api_Deliverygroup_Row
-     */
-    public function createRow(array $data = array())
-    {
-        return parent::createRow($data);
+        return $this->read($params);
     }
 
     /**
@@ -78,7 +85,7 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
         }
 
         $client = $this->getApi()->getSoapClient();
-        
+
         try {
             $result = $client->addToDeliveryGroup($data)->return;
             $row    = array_shift($result->results);

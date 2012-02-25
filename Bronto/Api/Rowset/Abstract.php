@@ -8,14 +8,14 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      * @var array
      */
     protected $_data = array();
-    
+
     /**
      * API Object
      *
      * @var Bronto_Api_Abstract
      */
     protected $_apiObject;
-    
+
     /**
      * API Object class name
      *
@@ -29,7 +29,7 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Row';
-    
+
     /**
      * Iterator pointer.
      *
@@ -50,7 +50,7 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      * @var array
      */
     protected $_rows = array();
-    
+
     /**
      * @var boolean
      */
@@ -60,7 +60,12 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      * @var boolean
      */
     protected $_readOnly = false;
-    
+
+    /**
+     * @var array
+     */
+    protected $_params = array();
+
     /**
      * Constructor.
      *
@@ -72,28 +77,32 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
             $this->_apiObject      = $config['apiObject'];
             $this->_apiObjectClass = get_class($this->_apiObject);
         }
-        
+
         if (isset($config['rowClass'])) {
             $this->_rowClass = $config['rowClass'];
         }
-        
+
         if (isset($config['data'])) {
             $this->_data = $config['data'];
         }
-        
+
         if (isset($config['readOnly'])) {
             $this->_readOnly = $config['readOnly'];
         }
-        
+
         if (isset($config['stored'])) {
             $this->_stored = $config['stored'];
         }
-        
+
+        if (isset($config['params'])) {
+            $this->_params = $config['params'];
+        }
+
         // Set the count of rows
         $this->_count = count($this->_data);
         $this->init();
     }
-    
+
     /**
      * Initialize object
      *
@@ -104,7 +113,7 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     public function init()
     {
     }
-    
+
     /**
      * @return Bronto_Api_Abstract
      */
@@ -112,13 +121,21 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     {
         return $this->_apiObject;
     }
-    
+
     /**
      * @return string
      */
     public function getApiObjectClass()
     {
         return $this->_apiObjectClass;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->_params;
     }
 
     /**
@@ -269,12 +286,12 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     public function offsetUnset($offset)
     {
     }
-    
+
     protected function _loadAndReturnRow($position)
     {
         if (!isset($this->_data[$position])) {
-            require_once 'Zend/Db/Table/Rowset/Exception.php';
-            throw new Zend_Db_Table_Rowset_Exception("Data for provided position does not exist");
+            require_once 'Bronto/Api/Rowset/Exception.php';
+            throw new Bronto_Api_Rowset_Exception("Data for provided position does not exist");
         }
 
         // Do we already have a row object for this position?
@@ -291,5 +308,15 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
 
         // Return the row object
         return $this->_rows[$position];
+    }
+
+    /**
+     * Seamlessly iterate over this rowset
+     *
+     * @return Bronto_RowsetIterator
+     */
+    public function iterate()
+    {
+        return new Bronto_RowsetIterator($this);
     }
 }

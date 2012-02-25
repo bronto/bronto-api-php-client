@@ -11,36 +11,6 @@
  */
 class Bronto_Api_Field_Row extends Bronto_Api_Row
 {
-    /** Type */
-    const TYPE_TEXT     = 'text';
-    const TYPE_TEXTAREA = 'textarea';
-    const TYPE_PASSWORD = 'password';
-    const TYPE_CHECKBOX = 'checkbox';
-    const TYPE_RADIO    = 'radio';
-    const TYPE_SELECT   = 'select';
-    const TYPE_INTEGER  = 'integer';
-    const TYPE_CURRENCY = 'currency';
-    const TYPE_FLOAT    = 'float';
-    const TYPE_DATE     = 'date';
-
-    /**
-     * @var array
-     */
-    protected $_options = array(
-        'type' => array(
-            self::TYPE_TEXT,
-            self::TYPE_TEXTAREA,
-            self::TYPE_PASSWORD,
-            self::TYPE_CHECKBOX,
-            self::TYPE_RADIO,
-            self::TYPE_SELECT,
-            self::TYPE_INTEGER,
-            self::TYPE_CURRENCY,
-            self::TYPE_FLOAT,
-            self::TYPE_DATE,
-        ),
-    );
-
     /**
      * @param bool $returnData
      * @return Bronto_Api_Field_Row|array

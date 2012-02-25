@@ -77,7 +77,7 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
         $params['includeRecipients'] = (bool) $includeRecipients;
         $params['includeContent']    = (bool) $includeContent;
         $params['pageNumber']        = (int)  $pageNumber;
-        return parent::readAll($params);
+        return $this->read($params);
     }
 
     /**
