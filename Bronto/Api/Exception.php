@@ -19,6 +19,32 @@ class Bronto_Api_Exception extends Exception
     /* Custom */
     const EMPTY_RESULT          = 9001;
 
+    protected $_recoverable = array(
+        self::UNKNOWN_ERROR,
+        self::INVALID_SESSION_TOKEN,
+        self::INVALID_REQUEST,
+        self::SHARD_OFFLINE,
+        self::READ_ERROR
+    );
+
+    /**
+     * @param type $message
+     * @param type $code
+     * @param type $previous
+     */
+    public function __construct($message = null, $code = null, $previous = null)
+    {
+        if (empty($code)) {
+            $parts = explode(':', $message, 2);
+            if (isset($parts[0]) && is_numeric($parts[0])) {
+                $code    = $parts[0];
+                $message = $parts[1];
+            }
+        }
+
+        parent::__construct($message, $code, $previous);
+    }
+
     /**
      * @return bool
      */
@@ -27,27 +53,6 @@ class Bronto_Api_Exception extends Exception
         if (!$this->getCode()) {
             return false;
         }
-
-        $recoverable = array(
-            self::UNKNOWN_ERROR,
-            self::INVALID_SESSION_TOKEN,
-            self::INVALID_REQUEST,
-            self::SHARD_OFFLINE,
-            self::READ_ERROR
-        );
-
-        return in_array($this->getCode(), $recoverable);
-    }
-
-    /**
-     * @return bool
-     */
-    public function requiresLogin()
-    {
-        if (!$this->getCode()) {
-            return false;
-        }
-
-        return $this->getCode() == self::INVALID_SESSION_TOKEN;
+        return in_array($this->getCode(), $this->_recoverable);
     }
 }
