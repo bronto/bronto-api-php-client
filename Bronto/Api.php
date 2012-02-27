@@ -27,6 +27,7 @@ class Bronto_Api
         // Bronto
         'no_refresh'   => false,
         'retry_limit'  => 5,
+        'debug'        => false,
         // SoapClient
         'soap_version' => null,
         'compression'  => null,
@@ -44,6 +45,16 @@ class Bronto_Api
      * @var array
      */
     protected $_classCache = array();
+
+    /**
+     * @var bool
+     */
+    protected $_connected = false;
+
+    /**
+     * @var bool
+     */
+    protected $_authenticated = false;
 
     /**
      * Constructor
@@ -98,19 +109,53 @@ class Bronto_Api
      */
     public function login()
     {
+        $this->_authenticated = false;
+
+        $token = $this->getToken();
+        if (empty($token)) {
+            throw new Bronto_Api_Exception('Token is empty or invalid.', Bronto_Api_Exception::NO_TOKEN);
+        }
+
         try {
             $client    = $this->getSoapClient();
-            $sessionId = $client->login(array('apiToken' => $this->getToken()))->return;
+            $sessionId = $client->login(array('apiToken' => $token))->return;
             $client->__setSoapHeaders(array(
                 new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
             ));
-        } catch (SoapFault $e) {
-            if (strpos($e->getMessage(), 'Authentication failed for token') !== false) {
-                throw new Bronto_Api_Exception("Authentication failed for token: {$this->getToken()}");
-            }
+            $this->_authenticated = true;
+        } catch (Exception $e) {
+            $this->throwException($e);
         }
 
         return $this;
+    }
+
+    /**
+     * @param string|Exception $exception
+     * @param string $message
+     * @param string $code
+     */
+    public function throwException($exception, $message = null, $code = null)
+    {
+        if (is_string($exception)) {
+            if (class_exists($exception, false)) {
+                $exception = new $exception($message, $code);
+            } else {
+                $exception = new Bronto_Api_Exception($exception);
+            }
+        } else {
+            if (!($exception instanceOf Bronto_Api_Exception)) {
+                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode());
+            }
+        }
+
+        if ($this->getDebug()) {
+            /* @var $exception Bronto_Api_Exception */
+            $exception->setRequest($this->getLastRequest());
+            $exception->setResponse($this->getLastResponse());
+        }
+
+        throw $exception;
     }
 
     /**
@@ -159,12 +204,12 @@ class Bronto_Api
             switch ($name) {
                 case 'soap_version':
                     if (!in_array($value, array(SOAP_1_1, SOAP_1_2))) {
-                        throw new Bronto_Api_Exception('Invalid soap_version specified. Use SOAP_1_1 or SOAP_1_2 constants.');
+                        throw new Bronto_Api_Exception('Invalid soap_version value specified. Use SOAP_1_1 or SOAP_1_2 constants.');
                     }
                     break;
                 case 'cache_wsdl':
                     if (!in_array($value, array(WSDL_CACHE_NONE, WSDL_CACHE_DISK, WSDL_CACHE_MEMORY, WSDL_CACHE_BOTH))) {
-                        throw new Bronto_Api_Exception('Invalid cache_wsdl specified.');
+                        throw new Bronto_Api_Exception('Invalid cache_wsdl value specified.');
                     }
                     break;
             }
@@ -301,7 +346,7 @@ class Bronto_Api
             if (class_exists($className)) {
                 $this->_classCache[$object] = new $className(array('api' => $this));
             } else {
-                throw new Exception("Unable to load class: {$className}");
+                $this->throwException("Unable to load class: {$className}");
             }
         }
 
@@ -313,6 +358,8 @@ class Bronto_Api
      */
     public function getSoapClient()
     {
+        $this->_connected = false;
+
         if ($this->_soapClient == null) {
             $this->_soapClient = new SoapClient(self::BASE_WSDL, array(
                 'soap_version' => $this->_options['soap_version'],
@@ -325,8 +372,46 @@ class Bronto_Api
                 'features'     => $this->_options['features'],
             ));
             $this->_soapClient->__setLocation(self::BASE_LOCATION);
+            $this->_connected = true;
+            if (!$this->isAuthenticated() && $this->getToken()) {
+                $this->login();
+            }
         }
         return $this->_soapClient;
+    }
+
+    /**
+     * @param bool $value
+     * @return Bronto_Api
+     */
+    public function setDebug($value)
+    {
+        $this->_options['debug'] = (bool) $value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDebug()
+    {
+        return $this->_options['debug'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConnected()
+    {
+        return (bool) $this->_connected;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthenticated()
+    {
+        return (bool) $this->_authenticated;
     }
 
     /**
