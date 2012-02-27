@@ -73,7 +73,7 @@ try {
 
 ### Read Contacts using Filter
 
-#### Option #1: Using paging
+##### Option #1: Using paging
 
 ```php
 <?php
@@ -109,7 +109,7 @@ while ($contacts = $contactObject->readAll($contactsFilter, array(), false, $con
 }
 ```
 
-#### Option #2: Using iterator
+##### Option #2: Using iterator
 
 ```php
 <?php
