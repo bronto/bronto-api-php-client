@@ -318,10 +318,10 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     /**
      * Seamlessly iterate over this rowset
      *
-     * @return Bronto_Rowset_Iterator
+     * @return Bronto_Api_Rowset_Iterator
      */
     public function iterate()
     {
-        return new Bronto_Rowset_Iterator($this);
+        return new Bronto_Api_Rowset_Iterator($this);
     }
 }

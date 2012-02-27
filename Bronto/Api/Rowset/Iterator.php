@@ -1,6 +1,6 @@
 <?php
 
-class Bronto_Rowset_Iterator implements Iterator
+class Bronto_Api_Rowset_Iterator implements Iterator
 {
     const TYPE_PAGE = 1;
     const TYPE_DATE = 2;
@@ -99,7 +99,7 @@ class Bronto_Rowset_Iterator implements Iterator
      * Similar to the reset() function for arrays in PHP.
      * Required by interface Iterator.
      *
-     * @return Bronto_Rowset_Iterator Fluent interface.
+     * @return Bronto_Api_Rowset_Iterator Fluent interface.
      */
     public function rewind()
     {
