@@ -104,26 +104,13 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
     /**
      * @param array $filter
      * @param int $pageNumber
-     * @return array
+     * @return Bronto_Api_Rowset
      */
     public function readDeliveryRecipients(array $filter = array(), $pageNumber = 1)
     {
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-
-        try {
-            $client = $this->getApi()->getSoapClient();
-            $result = $client->readDeliveryRecipients($params)->return;
-        } catch (Exception $e) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($e->getMessage());
-        }
-
-        if (!isset($result->return)) {
-            $result->return = array();
-        }
-
-        return $result->return;
+        return $this->read($params, 'readDeliveryRecipients');
     }
 }

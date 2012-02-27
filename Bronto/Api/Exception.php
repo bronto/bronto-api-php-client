@@ -18,6 +18,7 @@ class Bronto_Api_Exception extends Exception
 
     /* Custom */
     const EMPTY_RESULT          = 9001;
+    const NO_TOKEN              = 9002;
 
     protected $_recoverable = array(
         self::UNKNOWN_ERROR,
@@ -28,9 +29,19 @@ class Bronto_Api_Exception extends Exception
     );
 
     /**
-     * @param type $message
-     * @param type $code
-     * @param type $previous
+     * @var string
+     */
+    protected $_request;
+
+    /**
+     * @var string
+     */
+    protected $_response;
+
+    /**
+     * @param string $message
+     * @param string $code
+     * @param string $previous
      */
     public function __construct($message = null, $code = null, $previous = null)
     {
@@ -54,5 +65,50 @@ class Bronto_Api_Exception extends Exception
             return false;
         }
         return in_array($this->getCode(), $this->_recoverable);
+    }
+
+    /**
+     * @param int $tries
+     * @return Bronto_Api_Exception
+     */
+    public function setTries($tries)
+    {
+        $this->message = $this->message . " [Tried: {$tries}]";
+        return $this;
+    }
+
+    /**
+     * @param string $request
+     * @return Bronto_Api_Exception
+     */
+    public function setRequest($request)
+    {
+        $this->_request = $request;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequest()
+    {
+        return $this->_request;
+    }
+
+    /**
+     * @param string $response
+     * @return Bronto_Api_Exception
+     */
+    public function setResponse($response)
+    {
+        $this->_response = $response;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponse()
+    {
+        return $this->_response;
     }
 }

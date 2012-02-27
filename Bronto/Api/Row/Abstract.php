@@ -154,6 +154,14 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @return array
+     */
+    public function __toArray()
+    {
+        return $this->toArray();
+    }
+
+    /**
      * Sets all data in the row from an array.
      *
      * @param  array $data

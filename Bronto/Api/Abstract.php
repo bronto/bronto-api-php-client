@@ -248,41 +248,33 @@ abstract class Bronto_Api_Abstract
                 $result = $client->$function(array($data))->return;
                 $row    = array_shift($result->results);
             } catch (Exception $e) {
-                $error = true;
-                if ($tries == 5) {
-                    $exceptionClass = $this->getExceptionClass();
-                    throw new $exceptionClass($e->getMessage() . " (Tried {$tries} times)");
+                $error          = true;
+                $exceptionClass = $this->getExceptionClass();
+                $exception      = new $exceptionClass($e->getMessage());
+                $exception->setTries($tries);
+                if (!$exception->isRecoverable() || $tries == 5) {
+                    $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
                     $this->getApi()->login();
                 }
             }
 
+            // Convert API error into Exception
             if (!$error) {
-                // No soapClient error
                 if (isset($result->errors) && $result->errors) {
-                    try {
-                        $exceptionClass = $this->getExceptionClass();
-                        throw new $exceptionClass($row->errorString, $row->errorCode);
-                    } catch (Bronto_Api_Exception $e) {
-                        if ($e->isRecoverable()) {
-                            if ($tries <= 5) {
-                                // Attempt to get a new session token
-                                $this->getApi()->login();
-                            } else {
-                                // Re-throw exception since we've tried too many times
-                                throw $e;
-                            }
-                        } else {
-                            // Re-throw exception since it is unrecoverable
-                            throw $e;
-                        }
+                    $exceptionClass = $this->getExceptionClass();
+                    $exception      = new $exceptionClass($row->errorString, $row->errorCode);
+                    $exception->setTries($tries);
+                    if (!$exception->isRecoverable() || $tries == 5) {
+                        $this->getApi()->throwException($exception);
+                    } else {
+                        // Attempt to get a new session token
+                        $this->getApi()->login();
                     }
                 } else {
-                    if ($row->id) {
-                        // Don't keep re-trying since we were successful
-                        $success = true;
-                    }
+                    // Don't keep re-trying since we were successful
+                    $success = true;
                 }
             }
 
@@ -293,12 +285,17 @@ abstract class Bronto_Api_Abstract
 
     /**
      * @param array $params
+     * @param string $method
      * @return Bronto_Api_Row_Abstract
      */
-    public function read(array $params = array())
+    public function read(array $params = array(), $method = null)
     {
-        $client   = $this->getApi()->getSoapClient();
-        $function = "read{$this->_nameRead}";
+        $client = $this->getApi()->getSoapClient();
+        if (empty($method)) {
+            $function = "read{$this->_nameRead}";
+        } else {
+            $function = $method;
+        }
 
         // Handle [frequent] API failures
         $tries   = 0;
@@ -312,15 +309,17 @@ abstract class Bronto_Api_Abstract
             } catch (Exception $e) {
                 $error          = true;
                 $exceptionClass = $this->getExceptionClass();
-                $exception      = new $exceptionClass($e->getMessage() . " (Tried: {$tries})");
+                $exception      = new $exceptionClass($e->getMessage());
+                $exception->setTries($tries);
                 if (!$exception->isRecoverable() || $tries == 5) {
-                    throw $exception;
+                    $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
                     $this->getApi()->login();
                 }
             }
 
+            // Convert API error into Exception
             if (!$error) {
                 // Don't keep re-trying since we were successful
                 $success = true;
@@ -353,20 +352,50 @@ abstract class Bronto_Api_Abstract
         $client   = $this->getApi()->getSoapClient();
         $function = "delete{$this->_nameDelete}";
 
-        try {
-            $result = $client->$function(array($data))->return;
-            $row    = array_shift($result->results);
-        } catch (Exception $e) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($e->getMessage());
-        }
+        // Handle [frequent] API failures
+        $tries   = 0;
+        $success = false;
+        do {
+            $tries++;
+            $error = false;
 
-        if (isset($result->errors) && $result->errors) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($row->errorString, $row->errorCode);
-        }
+            try {
+                $result = $client->$function(array($data))->return;
+                $row    = array_shift($result->results);
+            } catch (Exception $e) {
+                $error          = true;
+                $exceptionClass = $this->getExceptionClass();
+                $exception      = new $exceptionClass($e->getMessage());
+                $exception->setTries($tries);
+                if (!$exception->isRecoverable() || $tries == 5) {
+                    $this->getApi()->throwException($exception);
+                } else {
+                    // Attempt to get a new session token
+                    $this->getApi()->login();
+                }
+            }
 
-        return true;
+            // Convert API error into Exception
+            if (!$error) {
+                if (isset($result->errors) && $result->errors) {
+                    $exceptionClass = $this->getExceptionClass();
+                    $exception      = new $exceptionClass($row->errorString, $row->errorCode);
+                    $exception->setTries($tries);
+                    if (!$exception->isRecoverable() || $tries == 5) {
+                        $this->getApi()->throwException($exception);
+                    } else {
+                        // Attempt to get a new session token
+                        $this->getApi()->login();
+                    }
+                } else {
+                    // Don't keep re-trying since we were successful
+                    $success = true;
+                }
+            }
+
+        } while (!$success && $tries <= 5);
+
+        return $success;
     }
 
     /**

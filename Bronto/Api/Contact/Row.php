@@ -7,7 +7,7 @@
  * @property string $msgPref
  * @property string $source
  * @property string $customSource
- * @property string $listIds
+ * @property array $listIds
  * @property array $fields
  * @property-read string $created
  * @property-read string $modifed
@@ -284,6 +284,24 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
             $this->_data['listIds'][] = $listId;
             $this->_modifiedFields['listIds'] = true;
         }
+    }
+
+    /**
+     * @param array $additionalFilter
+     * @param int $pageNumber
+     * @return Bronto_Api_Rowset
+     */
+    public function getDeliveries(array $additionalFilter = array(), $pageNumber = 1)
+    {
+        if (!$this->id) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass("This Contact has not been retrieved yet (has no ContactId)");
+        }
+
+        /* @var $deliveryObject Bronto_Api_Delivery */
+        $deliveryObject = $this->getApiObject()->getApi()->getDeliveryObject();
+        $filter = array_merge_recursive(array('contactId' => $this->id), $additionalFilter);
+        return $deliveryObject->readDeliveryRecipients($filter, $pageNumber);
     }
 
     /**

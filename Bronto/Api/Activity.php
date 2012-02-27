@@ -85,7 +85,7 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
             }
         }
 
-        return $this->read(array($filter));
+        return $this->read(array('filter' => $filter));
     }
 
     /**
