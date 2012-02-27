@@ -19,7 +19,7 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     /**
      * API Object class name
      *
-     * @var Bronto_Api_Abstract
+     * @var string
      */
     protected $_apiObjectClass;
 

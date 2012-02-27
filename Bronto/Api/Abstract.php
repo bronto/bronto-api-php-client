@@ -97,7 +97,7 @@ abstract class Bronto_Api_Abstract
     /**
      * @var int
      */
-    protected $_iteratorType = Bronto_Cursor::TYPE_PAGE;
+    protected $_iteratorType = Bronto_Rowset_Iterator::TYPE_PAGE;
 
     /**
      * @var string
