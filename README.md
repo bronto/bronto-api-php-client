@@ -13,12 +13,15 @@ ActiveRecord style abstraction of the Bronto SOAP API.
  * List
  * Message
  * Messagerule
+ * Segment
 
 ## Example Code
 
 ### Login
 
 ```php
+<?php
+
 /* @var $bronto \Bronto_Api */
 $bronto = new \Bronto_Api();
 $bronto->setToken($token); // Or pass $token to the constructor of Bronto_Api
@@ -28,6 +31,8 @@ $bronto->login(); // Only needs to be called once
 ### Create new Contact
 
 ```php
+<?php
+
 /* @var $contactObject \Bronto_Api_Contact */
 $contactObject = $bronto->getContactObject();
 
@@ -53,6 +58,8 @@ try {
 ### Delete a Contact
 
 ```php
+<?php
+
 /* @var $contactObject \Bronto_Api_Contact */
 $contactObject = $bronto->getContactObject();
 
@@ -66,7 +73,11 @@ try {
 
 ### Read Contacts using Filter
 
+##### Option #1: Using paging
+
 ```php
+<?php
+
 /* @var $contactObject \Bronto_Api_Contact */
 $contactObject = $bronto->getContactObject();
 
@@ -98,9 +109,25 @@ while ($contacts = $contactObject->readAll($contactsFilter, array(), false, $con
 }
 ```
 
+##### Option #2: Using iterator
+
+```php
+<?php
+
+// ...
+
+$contactsCounter = 0;
+foreach ($contactObject->readAll($contactsFilter)->iterate() as $contact /* @var $contact \Bronto_Api_Contact_Row */) {
+    echo "{$contactsCounter}. {$contact->email}\n";
+    $contactsCounter++;
+}
+```
+
 ### Read List by Name
 
 ```php
+<?php
+
 /* @var $listObject \Bronto_Api_List */
 $listObject = $bronto->getListObject();
 
@@ -117,6 +144,8 @@ try {
 ### Create new Field
 
 ```php
+<?php
+
 /* @var $fieldObject \Bronto_Api_Field */
 $fieldObject = $bronto->getFieldObject();
 
@@ -133,6 +162,8 @@ try {
 ### Retrieve a Message
 
 ```php
+<?php
+
 /* @var $messageObject \Bronto_Api_Message */
 $messageObject  = $bronto->getMessageObject();
 
@@ -144,6 +175,8 @@ $message->read();
 ### Create a Delivery
 
 ```php
+<?php
+
 /* @var $deliveryObject \Bronto_Api_Delivery */
 $deliveryObject = $bronto->getDeliveryObject();
 
@@ -166,6 +199,8 @@ $delivery->save();
 ### Read a Delivery
 
 ```php
+<?php
+
 /* @var $deliveryObject \Bronto_Api_Delivery */
 $deliveryObject = $bronto->getDeliveryObject();
 
@@ -179,10 +214,12 @@ $delivery->read();
 ### Read Recipients from a Delivery
 
 ```php
+<?php
+
 /* @var $delivery \Bronto_Api_Delivery_Row */
 $recipients = $delivery->getRecipients();
 
-foreach ($recipients as $recipient) {
+foreach ($recipients as $recipient /* @var $recipient \Bronto_Api_Delivery_Recipient */) {
     // Do something with $recipient
 }
 ```
