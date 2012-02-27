@@ -28,6 +28,8 @@ $bronto->login(); // Only needs to be called once
 ### Create new Contact
 
 ```php
+<?php
+
 /* @var $contactObject \Bronto_Api_Contact */
 $contactObject = $bronto->getContactObject();
 
@@ -53,6 +55,8 @@ try {
 ### Delete a Contact
 
 ```php
+<?php
+
 /* @var $contactObject \Bronto_Api_Contact */
 $contactObject = $bronto->getContactObject();
 
@@ -67,6 +71,8 @@ try {
 ### Read Contacts using Filter
 
 ```php
+<?php
+
 /* @var $contactObject \Bronto_Api_Contact */
 $contactObject = $bronto->getContactObject();
 
@@ -101,6 +107,8 @@ while ($contacts = $contactObject->readAll($contactsFilter, array(), false, $con
 ### Read List by Name
 
 ```php
+<?php
+
 /* @var $listObject \Bronto_Api_List */
 $listObject = $bronto->getListObject();
 
@@ -117,6 +125,8 @@ try {
 ### Create new Field
 
 ```php
+<?php
+
 /* @var $fieldObject \Bronto_Api_Field */
 $fieldObject = $bronto->getFieldObject();
 
@@ -133,6 +143,8 @@ try {
 ### Retrieve a Message
 
 ```php
+<?php
+
 /* @var $messageObject \Bronto_Api_Message */
 $messageObject  = $bronto->getMessageObject();
 
@@ -144,6 +156,8 @@ $message->read();
 ### Create a Delivery
 
 ```php
+<?php
+
 /* @var $deliveryObject \Bronto_Api_Delivery */
 $deliveryObject = $bronto->getDeliveryObject();
 
@@ -166,6 +180,8 @@ $delivery->save();
 ### Read a Delivery
 
 ```php
+<?php
+
 /* @var $deliveryObject \Bronto_Api_Delivery */
 $deliveryObject = $bronto->getDeliveryObject();
 
@@ -179,6 +195,8 @@ $delivery->read();
 ### Read Recipients from a Delivery
 
 ```php
+<?php
+
 /* @var $delivery \Bronto_Api_Delivery_Row */
 $recipients = $delivery->getRecipients();
 
