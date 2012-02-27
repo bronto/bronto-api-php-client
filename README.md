@@ -19,6 +19,8 @@ ActiveRecord style abstraction of the Bronto SOAP API.
 ### Login
 
 ```php
+<?php
+
 /* @var $bronto \Bronto_Api */
 $bronto = new \Bronto_Api();
 $bronto->setToken($token); // Or pass $token to the constructor of Bronto_Api
