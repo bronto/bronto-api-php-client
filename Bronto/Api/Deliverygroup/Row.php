@@ -9,23 +9,10 @@
  * @property array $deliveryIds
  * @property array $messageRuleIds
  * @property array $messageIds
+ * @method Bronto_Api_Deliverygroup getApiObject()
  */
 class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
 {
-    /** Visibility */
-    const VISIBILITY_INTERNAL = 'INTERNAL';
-    const VISIBILITY_PUBLIC   = 'PUBLIC';
-    
-    /**
-     * @var array
-     */
-    protected $_options = array(
-        'visibility' => array(
-            self::VISIBILITY_INTERNAL,
-            self::VISIBILITY_PUBLIC,
-        ),
-    );
-          
     /**
      * @param bool $returnData
      * @return Bronto_Api_Deliverygroup_Row|array
@@ -42,10 +29,10 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
                 )
             );
         }
-        
+
         return parent::_read($params, $returnData);
     }
-    
+
     /**
      * @param bool $upsert
      * @return Bronto_Api_Deliverygroup_Row
@@ -55,7 +42,7 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
         if (!$upsert) {
             return parent::save($upsert, $refresh);
         }
-        
+
         try {
             // Attempt to load DeliveryGroup
             $this->_refresh();
@@ -66,15 +53,5 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
                 throw $e;
             }
         }
-    }
-             
-    /**
-     * Proxy for intellisense
-     * 
-     * @return Bronto_Api_Deliverygroup
-     */
-    public function getApiObject()
-    {
-        return parent::getApiObject();
     }
 }

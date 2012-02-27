@@ -40,7 +40,7 @@ class Bronto_Api_List extends Bronto_Api_Abstract
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-        return parent::readAll($params);
+        return $this->read($params);
     }
 
     /**

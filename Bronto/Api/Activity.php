@@ -59,17 +59,24 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
     protected $_exceptionClass = 'Bronto_Api_Activity_Exception';
 
     /**
+     * @var bool
+     */
+    protected $_canIterate = false;
+
+    /**
      * @param string $startDate
      * @param int $size
-     * @param mixed $types
+     * @param string|array $types
      * @throws Bronto_Api_Activity_Exception
      * @return Bronto_Api_Rowset
      */
     public function readAll($startDate, $size = 25, $types = array())
     {
-        $filter = array();
-        $filter['start'] = $startDate;
-        $filter['size']  = (int) $size;
+        $filter = array(
+            'start' => $startDate,
+            'size'  => (int) $size
+        );
+
         if (!empty($types)) {
             if (is_array($types)) {
                 $filter['types'] = $types;
@@ -77,7 +84,8 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
                 $filter['types'] = array($types);
             }
         }
-        return parent::readAll(array('filter' => $filter));
+
+        return $this->read(array($filter));
     }
 
     /**

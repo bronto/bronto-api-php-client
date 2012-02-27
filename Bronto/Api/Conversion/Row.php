@@ -56,17 +56,17 @@ class Bronto_Api_Conversion_Row extends Bronto_Api_Row
         if (empty($this->_cleanData)) {
             return parent::save(false, $refresh);
         } else {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass('Cannot update a conversion record');
+            require_once 'Bronto/Api/Row/Exception.php';
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot update a %s record.", $this->getApiObject()->getName()));
         }
     }
 
     /**
-     * @return bool
+     * @return void
      */
     public function delete()
     {
-        $exceptionClass = $this->getExceptionClass();
-        throw new $exceptionClass('Cannot delete a conversion record');
+        require_once 'Bronto/Api/Row/Exception.php';
+        throw new Bronto_Api_Row_Exception(sprintf("Cannot delete a %s record.", $this->getApiObject()->getName()));
     }
 }

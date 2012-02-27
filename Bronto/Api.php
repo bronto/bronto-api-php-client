@@ -330,6 +330,17 @@ class Bronto_Api
     }
 
     /**
+     * Seamlessly iterate over a rowset.
+     *
+     * @param Bronto_Api_Rowset $rowset
+     * @return Bronto_Rowset_Iterator
+     */
+    public function iterate(Bronto_Api_Rowset $rowset)
+    {
+        return new Bronto_Rowset_Iterator($rowset);
+    }
+
+    /**
      * Retrieve request XML
      *
      * @return string

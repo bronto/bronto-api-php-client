@@ -95,6 +95,26 @@ abstract class Bronto_Api_Abstract
     protected $_exceptionClass = 'Bronto_Api_Exception';
 
     /**
+     * @var int
+     */
+    protected $_iteratorType = Bronto_Cursor::TYPE_PAGE;
+
+    /**
+     * @var string
+     */
+    protected $_iteratorCheckField = 'pageNumber';
+
+    /**
+     * @var string
+     */
+    protected $_iteratorUpdateField = 'pageNumber';
+
+    /**
+     * @var bool
+     */
+    protected $_canIterate = true;
+
+    /**
      * Constructor
      *
      * @param  mixed $config
@@ -275,7 +295,7 @@ abstract class Bronto_Api_Abstract
      * @param array $params
      * @return Bronto_Api_Row_Abstract
      */
-    public function readAll(array $params = array())
+    public function read(array $params = array())
     {
         $client   = $this->getApi()->getSoapClient();
         $function = "read{$this->_nameRead}";
@@ -290,10 +310,11 @@ abstract class Bronto_Api_Abstract
             try {
                 $result = $client->$function($params);
             } catch (Exception $e) {
-                $error = true;
-                if ($tries == 5) {
-                    $exceptionClass = $this->getExceptionClass();
-                    throw new $exceptionClass($e->getMessage() . " (Tried {$tries} times)");
+                $error          = true;
+                $exceptionClass = $this->getExceptionClass();
+                $exception      = new $exceptionClass($e->getMessage() . " (Tried: {$tries})");
+                if (!$exception->isRecoverable() || $tries == 5) {
+                    throw $exception;
                 } else {
                     // Attempt to get a new session token
                     $this->getApi()->login();
@@ -301,11 +322,8 @@ abstract class Bronto_Api_Abstract
             }
 
             if (!$error) {
-                // No soapClient error
-                if (isset($result->return)) {
-                    // Don't keep re-trying since we were successful
-                    $success = true;
-                }
+                // Don't keep re-trying since we were successful
+                $success = true;
             }
 
         } while (!$success && $tries <= 5);
@@ -315,6 +333,7 @@ abstract class Bronto_Api_Abstract
             'data'      => isset($result->return) ? $result->return : array(),
             'rowClass'  => $this->getRowClass(),
             'stored'    => true,
+            'params'    => $params,
         );
 
         $rowsetClass = $this->getRowsetClass();
@@ -433,5 +452,37 @@ abstract class Bronto_Api_Abstract
         }
 
         return true;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIteratorType()
+    {
+        return $this->_iteratorType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIteratorCheckField()
+    {
+        return $this->_iteratorCheckField;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIteratorUpdateField()
+    {
+        return $this->_iteratorUpdateField;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canIterate()
+    {
+        return (bool) $this->_canIterate;
     }
 }

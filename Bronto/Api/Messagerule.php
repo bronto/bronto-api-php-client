@@ -40,15 +40,6 @@ class Bronto_Api_Messagerule extends Bronto_Api_Abstract
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-        return parent::readAll($params);
-    }
-
-    /**
-     * @param array $data
-     * @return Bronto_Api_Message_Row
-     */
-    public function delete(array $data = array())
-    {
-        return parent::delete('Messages', $data);
+        return $this->read($params);
     }
 }

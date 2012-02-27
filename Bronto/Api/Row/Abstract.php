@@ -157,7 +157,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
      * Sets all data in the row from an array.
      *
      * @param  array $data
-     * @return Zend_Db_Table_Row_Abstract Provides a fluent interface
+     * @return Bronto_Api_Row_Abstract Provides a fluent interface
      */
     public function setFromArray(array $data)
     {
@@ -308,7 +308,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          */
         if ($this->_readOnly === true) {
             require_once 'Bronto/Api/Row/Exception.php';
-            throw new Bronto_Api_Row_Exception('This row has been marked read-only');
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot create a %s record.", $this->getApiObject()->getName()));
         }
 
         /**
@@ -354,7 +354,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         /**
          * Update the _cleanData to reflect that the data has been inserted.
          */
-        $noRefresh = $this->getApiObject()->getApi()->getOption('noRefresh');
+        $noRefresh = $this->getApiObject()->getApi()->getOption('no_refresh');
         if ($noRefresh == true || $refresh == false) {
             $this->_refresh(false);
         } else {
@@ -371,7 +371,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          */
         if ($this->_readOnly === true) {
             require_once 'Bronto/Api/Row/Exception.php';
-            throw new Bronto_Api_Row_Exception('This row has been marked read-only');
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot update a %s record.", $this->getApiObject()->getName()));
         }
 
         /**
@@ -410,7 +410,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          * Refresh the data just in case triggers in the API changed
          * any columns.  Also this resets the _cleanData.
          */
-        $noRefresh = $this->getApiObject()->getApi()->getOption('noRefresh');
+        $noRefresh = $this->getApiObject()->getApi()->getOption('no_refresh');
         if ($noRefresh == true || $refresh == false) {
             $this->_refresh(false);
         } else {
@@ -431,7 +431,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          */
         if ($this->_readOnly === true) {
             require_once 'Bronto/Api/Row/Exception.php';
-            throw new Bronto_Api_Row_Exception('This row has been marked read-only');
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot delete a %s record.", $this->getApiObject()->getName()));
         }
 
         /**
@@ -483,8 +483,10 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
      */
     public function __set($columnName, $value)
     {
-        $this->_data[$columnName] = $value;
-        $this->_modifiedFields[$columnName] = true;
+        if (!$this->_readOnly) {
+            $this->_data[$columnName] = $value;
+            $this->_modifiedFields[$columnName] = true;
+        }
     }
 
     /**
@@ -495,7 +497,9 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
      */
     public function __unset($columnName)
     {
-        unset($this->_data[$columnName]);
+        if (!$this->_readOnly) {
+            unset($this->_data[$columnName]);
+        }
         return $this;
     }
 
