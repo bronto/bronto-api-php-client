@@ -13,6 +13,7 @@ ActiveRecord style abstraction of the Bronto SOAP API.
  * List
  * Message
  * Messagerule
+ * Segment
 
 ## Example Code
 
@@ -72,6 +73,8 @@ try {
 
 ### Read Contacts using Filter
 
+#### Option #1: Using paging
+
 ```php
 <?php
 
@@ -103,6 +106,20 @@ while ($contacts = $contactObject->readAll($contactsFilter, array(), false, $con
     }
 
     $contactsPage++;
+}
+```
+
+#### Option #2: Using iterator
+
+```php
+<?php
+
+// ...
+
+$contactsCounter = 0;
+foreach ($contactObject->readAll($contactsFilter)->iterate() as $contact /* @var $contact \Bronto_Api_Contact_Row */) {
+    echo "{$contactsCounter}. {$contact->email}\n";
+    $contactsCounter++;
 }
 ```
 
@@ -202,7 +219,7 @@ $delivery->read();
 /* @var $delivery \Bronto_Api_Delivery_Row */
 $recipients = $delivery->getRecipients();
 
-foreach ($recipients as $recipient) {
+foreach ($recipients as $recipient /* @var $recipient \Bronto_Api_Delivery_Recipient */) {
     // Do something with $recipient
 }
 ```
