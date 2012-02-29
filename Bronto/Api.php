@@ -92,9 +92,9 @@ class Bronto_Api
             $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
         }
 
-        // No WSDL cache
+        // Turn on the WSDL cache
         if ($this->_options['cache_wsdl'] == null) {
-            $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
+            $this->_options['cache_wsdl'] = WSDL_CACHE_BOTH;
         }
 
         if ($this->_options['features'] == null) {
@@ -358,9 +358,8 @@ class Bronto_Api
      */
     public function getSoapClient()
     {
-        $this->_connected = false;
-
         if ($this->_soapClient == null) {
+            $this->_connected = false;
             $this->_soapClient = new SoapClient(self::BASE_WSDL, array(
                 'soap_version' => $this->_options['soap_version'],
                 'compression'  => $this->_options['compression'],

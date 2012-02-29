@@ -7,7 +7,7 @@ require_once 'Bronto/Api/Contact/Row.php';
 require_once 'Bronto/Api/Contact/Exception.php';
 
 /**
- * @method Bronto_Api_Contact_Row createRow() createRow(array $data = array())
+ * @method Bronto_Api_Contact_Row createRow() createRow(array $data)
  */
 class Bronto_Api_Contact extends Bronto_Api_Abstract
 {

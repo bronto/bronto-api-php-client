@@ -32,7 +32,8 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
      * @param array $arguments
      * @return mixed
      */
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         // Check is{Type}
         if (substr($name, 0, 2) == 'is') {
             $type = strtolower(substr($name, 2));
@@ -49,17 +50,28 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
                 case 'delivery':
                 case 'message':
                 case 'list':
-                    $idField = "{$object}Id";
+                    // Cache object result
+                    $cacheObject = (bool) (isset($arguments[0]) && $arguments[0]);
+                    $idField     = "{$object}Id";
                     if (isset($this->{$idField}) && !empty($this->{$idField})) {
+                        if ($cacheObject) {
+                            $cached = $this->getApiObject()->getFromCache($object, $this->{$idField});
+                            if ($cached) {
+                                return $cached;
+                            }
+                        }
                         $apiObject = $this->getApiObject()->getApi()->getObject($object);
                         $row       = $apiObject->createRow();
                         $row->id   = $this->{$idField};
-                        return $row->read();
+                        $row->read();
+                        if ($cacheObject) {
+                            $this->getApiObject()->addToCache($object, $this->{$idField}, $row);
+                        }
+                        return $row;
                     } else {
                         return false;
                     }
                     break;
-
             }
         }
     }

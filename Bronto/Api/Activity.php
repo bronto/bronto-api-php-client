@@ -59,9 +59,32 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
     protected $_exceptionClass = 'Bronto_Api_Activity_Exception';
 
     /**
-     * @var bool
+     * @var int
      */
-    protected $_canIterate = false;
+    protected $_iteratorType = Bronto_Api_Rowset_Iterator::TYPE_DATE;
+
+    /**
+     * @var string
+     */
+    protected $_iteratorParam = 'start';
+
+    /**
+     * @var string
+     */
+    protected $_iteratorRowField = 'activityDate';
+
+    /**
+     * For many activities, caching the row objects saves tons of time.
+     * Example: fetching 1000 activities that references only 3 messageId's
+     *
+     * @var array
+     */
+    protected $_objectCache = array(
+        'contact'  => array(),
+        'delivery' => array(),
+        'message'  => array(),
+        'list'     => array(),
+    );
 
     /**
      * @param string $startDate
@@ -70,7 +93,7 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
      * @throws Bronto_Api_Activity_Exception
      * @return Bronto_Api_Rowset
      */
-    public function readAll($startDate, $size = 25, $types = array())
+    public function readAll($startDate = '2002-01-01T00:00:00+00:00', $size = 100, $types = array())
     {
         $filter = array(
             'start' => $startDate,
@@ -97,5 +120,29 @@ class Bronto_Api_Activity extends Bronto_Api_Abstract
     {
         $exceptionClass = $this->getExceptionClass();
         throw new $exceptionClass('You cannot create an Activity row.');
+    }
+
+    /**
+     * @param string $type
+     * @param string $index
+     * @param Bronto_Api_Row_Abstract $object
+     */
+    public function addToCache($type, $index, Bronto_Api_Row_Abstract $object)
+    {
+        $this->_objectCache[$type][$index] = $object;
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @param string $index
+     * @return bool|Bronto_Api_Row_Abstract
+     */
+    public function getFromCache($type, $index)
+    {
+        if (isset($this->_objectCache[$type][$index])) {
+            return $this->_objectCache[$type][$index];
+        }
+        return false;
     }
 }

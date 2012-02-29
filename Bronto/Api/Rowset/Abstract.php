@@ -164,8 +164,21 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
             return null;
         }
 
+        // Do we already have a row object for this position?
+        if (empty($this->_rows[$this->_pointer])) {
+            $this->_data[$this->_pointer] = (array) $this->_data[$this->_pointer];
+            $this->_rows[$this->_pointer] = new $this->_rowClass(
+                array(
+                    'apiObject' => $this->_apiObject,
+                    'data'      => $this->_data[$this->_pointer],
+                    'stored'    => $this->_stored,
+                    'readOnly'  => $this->_readOnly
+                )
+            );
+        }
+
         // return the row object
-        return $this->_loadAndReturnRow($this->_pointer);
+        return $this->_rows[$this->_pointer];
     }
 
     /**
@@ -285,34 +298,6 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
      */
     public function offsetUnset($offset)
     {
-    }
-
-    /**
-     * @param int $position
-     * @return Bronto_Api_Row_Abstract
-     * @throws Bronto_Api_Rowset_Exception
-     */
-    protected function _loadAndReturnRow($position)
-    {
-        if (!isset($this->_data[$position])) {
-            require_once 'Bronto/Api/Rowset/Exception.php';
-            throw new Bronto_Api_Rowset_Exception("Data for provided position does not exist");
-        }
-
-        // Do we already have a row object for this position?
-        if (empty($this->_rows[$position])) {
-            $this->_rows[$position] = new $this->_rowClass(
-                array(
-                    'apiObject' => $this->_apiObject,
-                    'data'      => (array) $this->_data[$position],
-                    'stored'    => $this->_stored,
-                    'readOnly'  => $this->_readOnly
-                )
-            );
-        }
-
-        // Return the row object
-        return $this->_rows[$position];
     }
 
     /**

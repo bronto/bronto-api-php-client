@@ -1,9 +1,16 @@
 <?php
 
-class Bronto_Api_Rowset_Iterator implements Iterator
+class Bronto_Api_Rowset_Iterator implements Iterator, Countable
 {
     const TYPE_PAGE = 1;
     const TYPE_DATE = 2;
+
+    /**
+     * API Object
+     *
+     * @var Bronto_Api_Abstract
+     */
+    protected $_apiObject;
 
     /**
      * @var Bronto_Api_Rowset_Abstract
@@ -16,34 +23,61 @@ class Bronto_Api_Rowset_Iterator implements Iterator
     protected $_page = 1;
 
     /**
+     * @var bool
+     */
+    protected $_newPage = true;
+
+    /**
+     * How many data rows there are (currently)
+     *
+     * @var int
+     */
+    protected $_count;
+
+    /**
+     * Iterator pointer
+     *
+     * @var integer
+     */
+    protected $_pointer = 0;
+
+    /**
      * @var int
      */
     protected $_type;
 
     /**
+     * Query field for paging
+     *
      * @var string
      */
-    protected $_checkField;
+    protected $_param;
 
     /**
      * @var string
      */
-    protected $_updateField;
+    protected $_rowField;
 
     /**
-     * @var int
+     * Initial paging value
+     *
+     * @var int|string
      */
-    protected $_initialFieldValue;
+    protected $_initialParamValue;
 
     /**
-     * @var int
+     * Last used paging value
+     *
+     * @var int|string
      */
-    protected $_lastFieldValue;
+    protected $_lastParamValue;
 
     /**
-     * @var int
+     * Next paging value to be used
+     *
+     * @var int|string
      */
-    protected $_nextFieldValue;
+    protected $_nextParamValue;
 
     /**
      * Constructor
@@ -52,28 +86,41 @@ class Bronto_Api_Rowset_Iterator implements Iterator
      */
     public function __construct(Bronto_Api_Rowset_Abstract $rowset)
     {
-        $apiObject = $rowset->getApiObject();
+        $this->_apiObject = $rowset->getApiObject();
 
-        if (!$apiObject->canIterate()) {
-            throw new Exception(sprintf('Cannot iterate results for %s', $apiObject->getName()));
+        if (!$this->_apiObject->canIterate()) {
+            throw new Bronto_Api_Rowset_Exception(sprintf('Cannot iterate results for %s', $this->_apiObject->getName()));
         }
 
-        $this->_type        = $apiObject->getIteratorType();
-        $this->_checkField  = $apiObject->getIteratorCheckField();
-        $this->_updateField = $apiObject->getIteratorUpdateField();
-        $this->_rowset      = $rowset;
+        $this->_type     = $this->_apiObject->getIteratorType();
+        $this->_param    = $this->_apiObject->getIteratorParam();
+        $this->_rowField = $this->_apiObject->getIteratorRowField();
+        $this->_rowset   = $rowset;
+        $this->_count    = $rowset->count();
 
         // Set initial/next values
         $params = $this->_rowset->getParams();
-        if (isset($params[$this->_checkField])) {
-            $this->_setupInitialValues($params[$this->_checkField]);
+        if (isset($params[$this->_param])) {
+            $this->_setupInitialValues($params[$this->_param]);
         } else {
-            // @todo
+            foreach ($params as $value) {
+                if (is_array($value) && isset($value[$this->_param])) {
+                    $this->_setupInitialValues($value[$this->_param]);
+                }
+            }
         }
 
-        if (empty($this->_nextFieldValue)) {
-            throw new Exception('Could not determine next field value');
+        if (empty($this->_nextParamValue)) {
+            throw new Bronto_Api_Rowset_Exception('Could not determine next field value');
         }
+    }
+
+    /**
+     * @return Bronto_Api_Abstract
+     */
+    public function getApiObject()
+    {
+        return $this->_apiObject;
     }
 
     /**
@@ -84,26 +131,52 @@ class Bronto_Api_Rowset_Iterator implements Iterator
     protected function _setupInitialValues($value)
     {
         if ($this->_type == self::TYPE_DATE) {
-            $this->_nextFieldValue    = DateTime::createFromFormat(DateTime::ISO8601, $value);
-            $this->_lastFieldValue    = $this->_nextFieldValue;
-            $this->_initialFieldValue = $this->_nextFieldValue;
+            $this->_nextParamValue    = DateTime::createFromFormat(DateTime::ISO8601, $value);
+            $this->_lastParamValue    = clone $this->_nextParamValue;
+            $this->_initialParamValue = clone $this->_nextParamValue;
+            $this->_hashList          = array();
         } elseif ($this->_type == self::TYPE_PAGE) {
-            $this->_initialFieldValue = $value;
-            $this->_lastFieldValue    = $value;
-            $this->_nextFieldValue    = $value + 1;
+            $this->_initialParamValue = $value;
+            $this->_lastParamValue    = $value;
+            $this->_nextParamValue    = $value + 1;
         }
     }
 
     /**
-     * Rewind the Iterator to the first element.
-     * Similar to the reset() function for arrays in PHP.
+     * @return int
+     */
+    public function getCurrentPage()
+    {
+        return $this->_page;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentKey()
+    {
+        return $this->_pointer;
+    }
+
+    /**
+     * Returns the number of elements in the collection.
+     *
+     * Implements Countable::count()
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->_count;
+    }
+
+    /**
      * Required by interface Iterator.
      *
-     * @return Bronto_Api_Rowset_Iterator Fluent interface.
+     * @return void
      */
     public function rewind()
     {
-        return $this;
     }
 
     /**
@@ -123,12 +196,12 @@ class Bronto_Api_Rowset_Iterator implements Iterator
         $row = $this->_rowset->current();
 
         if ($this->_type == self::TYPE_DATE) {
-            $checkField = $this->_checkField;
-            $checkValue = $row->{$checkField};
-            if (!empty($checkValue)) {
-                $dateTime = DateTime::createFromFormat("Y-m-d\TH:i:s.uO", $checkValue);
-                if ($dateTime > $this->_nextFieldValue) {
-                    $this->_nextFieldValue = $dateTime;
+            $rowField = $this->_rowField;
+            $rowValue = $row->{$rowField};
+            if (!empty($rowValue)) {
+                $dateTime = DateTime::createFromFormat(DateTime::ISO8601, $rowValue);
+                if ($dateTime > $this->_nextParamValue) {
+                    $this->_nextParamValue = $dateTime;
                 }
             }
         }
@@ -158,6 +231,9 @@ class Bronto_Api_Rowset_Iterator implements Iterator
     public function next()
     {
         $this->_rowset->next();
+        ++$this->_pointer;
+        $this->_newPage = false;
+        return $this->current();
     }
 
     /**
@@ -181,40 +257,64 @@ class Bronto_Api_Rowset_Iterator implements Iterator
      */
     protected function _nextRowset()
     {
-        if ($this->_nextFieldValue <= $this->_lastFieldValue) {
-            return false;
+        // Special check for DATE type so we don't infinite loop
+        if ($this->_type == self::TYPE_DATE) {
+            if ($this->_nextParamValue <= $this->_lastParamValue) {
+                // We have to add 1 second when next value is == last
+                $this->_nextParamValue->add(new DateInterval('PT1S'));
+            }
         }
 
-        $params = $this->_updateParams(null, $this->_rowset->getParams());
-        $this->_rowset = $this->_rowset->getApiObject()->read($params);
-        $this->_page   = $this->_page + 1;
-        if ($this->_type == self::TYPE_PAGE) {
-            $this->_nextFieldValue = $this->_nextFieldValue + 1;
+        // Set params from next request
+        $params = $this->_rowset->getParams();
+        if (isset($params[$this->_param])) {
+            $params[$this->_param] = $this->_nextParamValue;
+        } else {
+            foreach ($params as &$value) {
+                if (is_array($value) && isset($value[$this->_param])) {
+                    $value[$this->_param] = $this->_nextParamValue;
+                    if ($this->_type == self::TYPE_DATE) {
+                        $value[$this->_param] = date('c', $this->_nextParamValue->getTimestamp());
+                    }
+                }
+            }
         }
+
+        // Make request for the new rowset
+        unset($this->_rowset);
+        $this->_rowset = $this->getApiObject()->read($params);
+
+        // Increments
+        $this->_newPage = true;
+        $this->_page    = $this->_page + 1;
+        $this->_count   = $this->_count + $this->_rowset->count();
+
+        if ($this->_type == self::TYPE_PAGE) {
+            $this->_lastParamValue = $this->_nextParamValue;
+            $this->_nextParamValue = $this->_nextParamValue + 1;
+        } else {
+            $this->_lastParamValue = clone $this->_nextParamValue;
+        }
+
         return $this->_rowset->valid();
     }
 
     /**
-     * @param mixed $key
-     * @param mixed $value
-     * @return array
+     * @return bool
      */
-    protected function _updateParams($key, $value)
+    public function isNewPage()
     {
-        if (is_array($value)) {
-            foreach ($value as $key1 => $value1) {
-                $value[$key1] = $this->_updateParams($key1, $value1);
-            }
-        } else {
-            if ($key == $this->_updateField) {
-                $this->_lastFieldValue = $this->_nextFieldValue;
-                if ($this->_type == self::TYPE_DATE) {
-                    $value = $this->_nextFieldValue->format("Y-m-d\TH:i:sP");
-                } elseif ($this->_type == self::TYPE_PAGE) {
-                    $value = $this->_nextFieldValue;
-                }
-            }
+        return $this->_newPage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastPageFilter()
+    {
+        if ($this->_lastParamValue instanceOf DateTime) {
+            return $this->_lastParamValue->format(DateTime::ISO8601);
         }
-        return $value;
+        return $this->_lastParamValue;
     }
 }

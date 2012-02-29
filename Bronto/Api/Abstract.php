@@ -102,12 +102,12 @@ abstract class Bronto_Api_Abstract
     /**
      * @var string
      */
-    protected $_iteratorCheckField = 'pageNumber';
+    protected $_iteratorParam = 'pageNumber';
 
     /**
-     * @var string
+     * @var mixed
      */
-    protected $_iteratorUpdateField = 'pageNumber';
+    protected $_iteratorRowField;
 
     /**
      * @var bool
@@ -494,17 +494,17 @@ abstract class Bronto_Api_Abstract
     /**
      * @return string
      */
-    public function getIteratorCheckField()
+    public function getIteratorParam()
     {
-        return $this->_iteratorCheckField;
+        return $this->_iteratorParam;
     }
 
     /**
-     * @return array
+     * @return string|bool
      */
-    public function getIteratorUpdateField()
+    public function getIteratorRowField()
     {
-        return $this->_iteratorUpdateField;
+        return !empty($this->_iteratorRowField) ? $this->_iteratorRowField : false;
     }
 
     /**

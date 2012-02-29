@@ -52,6 +52,11 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected $_apiObject;
 
     /**
+     * @var string
+     */
+    protected $_hash;
+
+    /**
      * Constructor
      *
      * @param array $config
@@ -309,6 +314,12 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         return $this;
     }
 
+    /**
+     * @param bool $upsert
+     * @param bool $refresh
+     * @return type
+     * @throws Bronto_Api_Row_Exception
+     */
     protected function _add($upsert = false, $refresh = true)
     {
         /**
@@ -577,5 +588,19 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     public function getData()
     {
         return $this->_data;
+    }
+
+    /**
+     * Retrieve an MD5 hash for this object
+     *
+     * @return string
+     */
+    public function getHash()
+    {
+        if (!$this->_hash || !empty($this->_modifiedFields)) {
+            $json = json_encode($this->getData());
+            $this->_hash = md5($json);
+        }
+        return $this->_hash;
     }
 }
