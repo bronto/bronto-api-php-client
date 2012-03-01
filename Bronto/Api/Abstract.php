@@ -230,7 +230,7 @@ abstract class Bronto_Api_Abstract
 
         if (isset($data[0])) {
             $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass("{$method}() only allows adding one item at a time.");
+            throw new $exceptionClass("'{$method}' method only allows adding one item at a time.");
         }
 
         $client     = $this->getApi()->getSoapClient();

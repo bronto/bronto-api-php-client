@@ -17,12 +17,13 @@ class Bronto_Api_Exception extends Exception
     const READ_ERROR            = 113; // There was an error reading your query results. Please try your request again shortly.
 
     /* Misc */
-    const HTTP_HEADER_ERROR     = 98001;
+    const HTTP_HEADER_ERROR     = 98001; // Error Fetching http headers
     const NO_XML_DOCUMENT       = 98002;
     const INVALID_URL           = 98003;
     const CONNECT_ERROR         = 98004;
     const WSDL_PARSE_ERROR      = 98005;
     const REQUEST_ERROR         = 98006;
+    const CONNECTION_RESET      = 98007; // SSL: Connection reset by peer
 
     /* Custom */
     const EMPTY_RESULT          = 99001;
@@ -42,6 +43,7 @@ class Bronto_Api_Exception extends Exception
         self::NO_XML_DOCUMENT,
         self::CONNECT_ERROR,
         self::WSDL_PARSE_ERROR,
+        self::CONNECTION_RESET,
     );
 
     /**
@@ -63,6 +65,9 @@ class Bronto_Api_Exception extends Exception
     {
         if (empty($code)) {
             $parts = explode(':', $message, 2);
+            if (is_array($parts)) {
+                $parts = array_map('trim', $parts);
+            }
             if (isset($parts[0]) && is_numeric($parts[0])) {
                 $code    = $parts[0];
                 $message = $parts[1];
@@ -71,19 +76,25 @@ class Bronto_Api_Exception extends Exception
 
         if (empty($code)) {
             // Handle some SoapFault exceptions
-            if (stripos($message, 'Error Fetching http headers')) {
+            if (stripos($message, 'Error Fetching http headers') !== false) {
                 $code = self::HTTP_HEADER_ERROR;
-            } else if (stripos($message, 'looks like we got no XML document')) {
+            } else if (stripos($message, 'looks like we got no XML document') !== false) {
                 $code = self::NO_XML_DOCUMENT;
-            } else if (stripos($message, 'Could not connect to host')) {
+            } else if (stripos($message, 'Could not connect to host') !== false) {
                 $code = self::CONNECT_ERROR;
-            } else if (stripos($message, 'Parsing WSDL')) {
+            } else if (stripos($message, 'Parsing WSDL') !== false) {
                 $code = self::WSDL_PARSE_ERROR;
-            } else if (stripos($message, 'There was an error in your soap request')) {
+            } else if (stripos($message, 'There was an error in your soap request') !== false) {
                 $code = self::REQUEST_ERROR;
-            } else if (stripos($message, 'Unable to parse URL')) {
+            } else if (stripos($message, 'Connection reset by peer') !== false) {
+                $code = self::CONNECTION_RESET;
+            } else if (stripos($message, 'Unable to parse URL') !== false) {
                 $code = self::INVALID_URL;
             }
+        }
+
+        if (!empty($code)) {
+            $message = "{$code} : {$message}";
         }
 
         parent::__construct($message, $code, $previous);
