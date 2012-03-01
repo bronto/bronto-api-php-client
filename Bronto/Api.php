@@ -37,6 +37,7 @@ class Bronto_Api
         'cache_wsdl'   => null,
         'user_agent'   => 'Bronto_Api <https://github.com/leek/bronto_service>',
         'features'     => null,
+        'connection_timeout' => 30,
     );
 
     /**
@@ -100,6 +101,8 @@ class Bronto_Api
         if ($this->_options['features'] == null) {
             $this->_options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
         }
+
+        ini_set('default_socket_timeout', 120);
     }
 
     /**
@@ -109,15 +112,17 @@ class Bronto_Api
      */
     public function login()
     {
-        $this->_authenticated = false;
-
         $token = $this->getToken();
         if (empty($token)) {
             throw new Bronto_Api_Exception('Token is empty or invalid.', Bronto_Api_Exception::NO_TOKEN);
         }
 
         try {
-            $client    = $this->getSoapClient();
+            $this->_authenticated = false;
+            $this->_soapClient    = null;
+
+            // Get a new SoapClient
+            $client    = $this->getSoapClient(false);
             $sessionId = $client->login(array('apiToken' => $token))->return;
             $client->__setSoapHeaders(array(
                 new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
@@ -354,9 +359,10 @@ class Bronto_Api
     }
 
     /**
+     * @param bool $authenticate
      * @return SoapClient
      */
-    public function getSoapClient()
+    public function getSoapClient($authenticate = true)
     {
         if ($this->_soapClient == null) {
             $this->_connected = false;
@@ -372,7 +378,7 @@ class Bronto_Api
             ));
             $this->_soapClient->__setLocation(self::BASE_LOCATION);
             $this->_connected = true;
-            if (!$this->isAuthenticated() && $this->getToken()) {
+            if ($authenticate && !$this->isAuthenticated() && $this->getToken()) {
                 $this->login();
             }
         }

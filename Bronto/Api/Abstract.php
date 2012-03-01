@@ -256,6 +256,7 @@ abstract class Bronto_Api_Abstract
                     $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
+                    sleep(5);
                     $this->getApi()->login();
                 }
             }
@@ -270,6 +271,7 @@ abstract class Bronto_Api_Abstract
                         $this->getApi()->throwException($exception);
                     } else {
                         // Attempt to get a new session token
+                        sleep(5);
                         $this->getApi()->login();
                     }
                 } else {
@@ -315,6 +317,7 @@ abstract class Bronto_Api_Abstract
                     $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
+                    sleep(5);
                     $this->getApi()->login();
                 }
             }
@@ -371,6 +374,7 @@ abstract class Bronto_Api_Abstract
                     $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
+                    sleep(5);
                     $this->getApi()->login();
                 }
             }
@@ -385,6 +389,7 @@ abstract class Bronto_Api_Abstract
                         $this->getApi()->throwException($exception);
                     } else {
                         // Attempt to get a new session token
+                        sleep(5);
                         $this->getApi()->login();
                     }
                 } else {

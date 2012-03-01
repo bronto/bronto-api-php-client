@@ -16,16 +16,31 @@ class Bronto_Api_Exception extends Exception
     const INVALID_FILTER	    = 112; // Invalid filter type (must be AND or OR).
     const READ_ERROR            = 113; // There was an error reading your query results. Please try your request again shortly.
 
-    /* Custom */
-    const EMPTY_RESULT          = 9001;
-    const NO_TOKEN              = 9002;
+    /* Misc */
+    const HTTP_HEADER_ERROR     = 98001;
+    const NO_XML_DOCUMENT       = 98002;
+    const INVALID_URL           = 98003;
+    const CONNECT_ERROR         = 98004;
+    const WSDL_PARSE_ERROR      = 98005;
 
+    /* Custom */
+    const EMPTY_RESULT          = 99001;
+    const NO_TOKEN              = 99002;
+
+    /**
+     * Array of exceptions we can (maybe) recover from
+     * @var array
+     */
     protected $_recoverable = array(
         self::UNKNOWN_ERROR,
         self::INVALID_SESSION_TOKEN,
         self::INVALID_REQUEST,
         self::SHARD_OFFLINE,
-        self::READ_ERROR
+        self::READ_ERROR,
+        self::HTTP_HEADER_ERROR,
+        self::NO_XML_DOCUMENT,
+        self::CONNECT_ERROR,
+        self::WSDL_PARSE_ERROR,
     );
 
     /**
@@ -50,6 +65,21 @@ class Bronto_Api_Exception extends Exception
             if (isset($parts[0]) && is_numeric($parts[0])) {
                 $code    = $parts[0];
                 $message = $parts[1];
+            }
+        }
+
+        if (empty($code)) {
+            // Handle some SoapFault exceptions
+            if (stripos($message, 'Error Fetching http headers')) {
+                $code = self::HTTP_HEADER_ERROR;
+            } else if (stripos($message, 'looks like we got no XML document')) {
+                $code = self::NO_XML_DOCUMENT;
+            } else if (stripos($message, 'Could not connect to host')) {
+                $code = self::CONNECT_ERROR;
+            } else if (stripos($message, 'Parsing WSDL')) {
+                $code = self::WSDL_PARSE_ERROR;
+            } else if (stripos($message, 'Unable to parse URL')) {
+                $code = self::INVALID_URL;
             }
         }
 
