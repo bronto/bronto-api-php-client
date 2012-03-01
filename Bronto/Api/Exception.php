@@ -22,6 +22,7 @@ class Bronto_Api_Exception extends Exception
     const INVALID_URL           = 98003;
     const CONNECT_ERROR         = 98004;
     const WSDL_PARSE_ERROR      = 98005;
+    const REQUEST_ERROR         = 98006;
 
     /* Custom */
     const EMPTY_RESULT          = 99001;
@@ -78,6 +79,8 @@ class Bronto_Api_Exception extends Exception
                 $code = self::CONNECT_ERROR;
             } else if (stripos($message, 'Parsing WSDL')) {
                 $code = self::WSDL_PARSE_ERROR;
+            } else if (stripos($message, 'There was an error in your soap request')) {
+                $code = self::REQUEST_ERROR;
             } else if (stripos($message, 'Unable to parse URL')) {
                 $code = self::INVALID_URL;
             }
