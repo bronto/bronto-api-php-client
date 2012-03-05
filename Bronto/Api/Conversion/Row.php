@@ -4,7 +4,7 @@
  * @property-read string id
  * @property string contactId
  * @property string email
- * @property string order_id
+ * @property string orderId
  * @property string item
  * @property string description
  * @property int quantity
