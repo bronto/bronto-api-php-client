@@ -61,7 +61,7 @@ class Bronto_Api_Exception extends Exception
      * @param string $code
      * @param Exception $previous
      */
-    public function __construct($message = null, $code = 0, Exception $previous = null)
+    public function __construct($message = '', $code = 0, Exception $previous = null)
     {
         if (empty($code)) {
             $parts = explode(':', $message, 2);
@@ -97,7 +97,11 @@ class Bronto_Api_Exception extends Exception
             $message = "{$code} : {$message}";
         }
 
-        parent::__construct($message, $code, $previous);
+        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+            parent::__construct($message, $code, $previous);
+        } else {
+            parent::__construct($message, $code);
+        }
     }
 
     /**
