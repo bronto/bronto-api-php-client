@@ -63,6 +63,13 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
     protected $_name = 'Contacts';
 
     /**
+     * Whether or not this object has an addOrUpdate method
+     *
+     * @var bool
+     */
+    protected $_hasUpsert = true;
+
+    /**
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Contact_Row';

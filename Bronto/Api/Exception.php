@@ -59,9 +59,9 @@ class Bronto_Api_Exception extends Exception
     /**
      * @param string $message
      * @param string $code
-     * @param string $previous
+     * @param Exception $previous
      */
-    public function __construct($message = null, $code = null, $previous = null)
+    public function __construct($message = null, $code = 0, Exception $previous = null)
     {
         if (empty($code)) {
             $parts = explode(':', $message, 2);
@@ -69,8 +69,8 @@ class Bronto_Api_Exception extends Exception
                 $parts = array_map('trim', $parts);
             }
             if (isset($parts[0]) && is_numeric($parts[0])) {
-                $code    = $parts[0];
-                $message = $parts[1];
+                $code    = (int)    $parts[0];
+                $message = (string) $parts[1];
             }
         }
 

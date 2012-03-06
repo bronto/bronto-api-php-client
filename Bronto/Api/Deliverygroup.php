@@ -34,6 +34,13 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
     protected $_nameRead = 'DeliveryGroups';
 
     /**
+     * Whether or not this object has an addOrUpdate method
+     *
+     * @var bool
+     */
+    protected $_hasUpsert = true;
+
+    /**
      * @var string
      */
     protected $_rowClass = 'Bronto_Api_Deliverygroup_Row';
