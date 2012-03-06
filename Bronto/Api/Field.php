@@ -61,6 +61,11 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
     protected $_exceptionClass = 'Bronto_Api_Field_Exception';
 
     /**
+     * @var array
+     */
+    protected $_objectCache = array();
+
+    /**
      * @param array $filter
      * @param int $pageNumber
      * @return Bronto_Api_Rowset
@@ -71,5 +76,27 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
         return $this->read($params);
+    }
+
+    /**
+     * @param string $index
+     * @param Bronto_Api_Field_Row $field
+     */
+    public function addToCache($index, Bronto_Api_Field_Row $field)
+    {
+        $this->_objectCache[$index] = $field;
+        return $this;
+    }
+
+    /**
+     * @param string $index
+     * @return bool|Bronto_Api_Field_Row
+     */
+    public function getFromCache($index)
+    {
+        if (isset($this->_objectCache[$index])) {
+            return $this->_objectCache[$index];
+        }
+        return false;
     }
 }

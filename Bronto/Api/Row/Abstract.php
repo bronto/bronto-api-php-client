@@ -340,6 +340,10 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          */
         $data = array_intersect_key($this->_data, $this->_modifiedFields);
         if ($upsert) {
+            $tempPrimaryKey = $this->_primary;
+            if (!empty($this->{$tempPrimaryKey})) {
+                $data = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $data);
+            }
             $primaryKey = $this->getApiObject()->addOrUpdate($data);
         } else {
             $primaryKey = $this->getApiObject()->add($data);
