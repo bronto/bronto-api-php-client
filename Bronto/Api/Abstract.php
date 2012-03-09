@@ -246,6 +246,7 @@ abstract class Bronto_Api_Abstract
                     $data     = array($data);
                 }
                 $result = $client->$function($data)->return;
+                $row = array_shift($result->results);
             } catch (Exception $e) {
                 $error          = true;
                 $exceptionClass = $this->getExceptionClass();
@@ -298,7 +299,6 @@ abstract class Bronto_Api_Abstract
             }
             return new $rowsetClass($config);
         } else {
-            $row = array_shift($result->results);
             return array('id' => $row->id);
         }
     }
