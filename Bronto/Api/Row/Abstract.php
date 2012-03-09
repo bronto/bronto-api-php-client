@@ -57,6 +57,21 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected $_hash;
 
     /**
+     * @var bool
+     */
+    protected $_isNew = false;
+
+    /**
+     * @var bool
+     */
+    protected $_isError = false;
+
+    /**
+     * @var bool
+     */
+    protected $_errorCode;
+
+    /**
      * Constructor
      *
      * @param array $config
@@ -72,8 +87,25 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
                 require_once 'Bronto/Api/Row/Exception.php';
                 throw new Bronto_Api_Row_Exception('Data must be an array');
             }
+
+            if (isset($config['data']['isNew'])) {
+                $this->_isNew = (bool) $config['data']['isNew'];
+                unset($config['data']['isNew']);
+            }
+
+            if (isset($config['data']['isError'])) {
+                $this->_isError = (bool) $config['data']['isError'];
+                unset($config['data']['isError']);
+            }
+
+            if (isset($config['data']['errorCode'])) {
+                $this->_errorCode = (int) $config['data']['errorCode'];
+                unset($config['data']['errorCode']);
+            }
+
             $this->_data = $config['data'];
         }
+
         if (isset($config['stored']) && $config['stored'] === true) {
             $this->_cleanData = $this->_data;
         }
@@ -606,5 +638,32 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
             $this->_hash = md5($json);
         }
         return $this->_hash;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNew()
+    {
+        return $this->_isNew;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasError()
+    {
+        return $this->_isError;
+    }
+
+    /**
+     * @return int|bool
+     */
+    public function getErrorCode()
+    {
+        if ($this->hasError()) {
+            return $this->_errorCode;
+        }
+        return false;
     }
 }

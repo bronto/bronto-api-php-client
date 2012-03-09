@@ -218,6 +218,7 @@ abstract class Bronto_Api_Abstract
      */
     protected function _save($method, array $data = array())
     {
+        $multiple  = true;
         $available = array('add', 'update');
         if ($this->_hasUpsert) {
             $available[] = 'addorupdate';
@@ -226,11 +227,6 @@ abstract class Bronto_Api_Abstract
         if (!in_array(strtolower($method), $available)) {
             $exceptionClass = $this->getExceptionClass();
             throw new $exceptionClass("Save method '{$method}' not allowed.");
-        }
-
-        if (isset($data[0])) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass("'{$method}' method only allows adding one item at a time.");
         }
 
         $client     = $this->getApi()->getSoapClient();
@@ -245,8 +241,11 @@ abstract class Bronto_Api_Abstract
             $error = false;
 
             try {
-                $result = $client->$function(array($data))->return;
-                $row    = array_shift($result->results);
+                if (!isset($data[0])) {
+                    $multiple = false;
+                    $data     = array($data);
+                }
+                $result = $client->$function($data)->return;
             } catch (Exception $e) {
                 $error          = true;
                 $exceptionClass = $this->getExceptionClass();
@@ -282,7 +281,26 @@ abstract class Bronto_Api_Abstract
 
         } while (!$success && $tries <= 5);
 
-        return array('id' => $row->id);
+        if ($multiple) {
+            // Return a rowset if adding multiple
+            $config = array(
+                'apiObject' => $this,
+                'data'      => $result->results,
+                'rowClass'  => $this->getRowClass(),
+                'stored'    => true,
+                'params'    => false,
+            );
+
+            $rowsetClass = $this->getRowsetClass();
+            if (!class_exists($rowsetClass)) {
+                $exceptionClass = $this->getExceptionClass();
+                throw new $exceptionClass("Cannot find Rowset class: {$rowsetClass}");
+            }
+            return new $rowsetClass($config);
+        } else {
+            $row = array_shift($result->results);
+            return array('id' => $row->id);
+        }
     }
 
     /**
