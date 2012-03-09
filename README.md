@@ -55,6 +55,23 @@ try {
 }
 ```
 
+### Create/Update many Contacts
+
+```php
+<?php
+
+/* @var $contactObject \Bronto_Api_Contact */
+$contactObject = $bronto->getContactObject();
+
+/* @var $contacts \Bronto_Api_Rowset */
+$contacts = $contactObject->addOrUpdate(array(
+    array('email' => 'joe.doe+1@example'),
+    array('email' => 'joe.doe+2@example'),
+    array('email' => 'joe.doe+3@example'),
+));
+
+```
+
 ### Delete a Contact
 
 ```php
