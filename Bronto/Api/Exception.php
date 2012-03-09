@@ -57,11 +57,19 @@ class Bronto_Api_Exception extends Exception
     protected $_response;
 
     /**
+     * For PHP <5.3.0
+     *
+     * @var Exception
+     */
+    protected $_previous;
+
+    /**
      * @param string $message
      * @param string $code
+     * @param int $tries
      * @param Exception $previous
      */
-    public function __construct($message = '', $code = 0, Exception $previous = null)
+    public function __construct($message = '', $code = 0, $tries = null, Exception $previous = null)
     {
         if (empty($code)) {
             $parts = explode(':', $message, 2);
@@ -97,9 +105,14 @@ class Bronto_Api_Exception extends Exception
             $message = "{$code} : {$message}";
         }
 
+        if (!empty($tries)) {
+            $message .= " [Tried: {$tries}]";
+        }
+
         if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
             parent::__construct($message, $code, $previous);
         } else {
+            $this->_previous = $previous;
             parent::__construct($message, $code);
         }
     }
@@ -113,16 +126,6 @@ class Bronto_Api_Exception extends Exception
             return false;
         }
         return in_array($this->getCode(), $this->_recoverable);
-    }
-
-    /**
-     * @param int $tries
-     * @return Bronto_Api_Exception
-     */
-    public function setTries($tries)
-    {
-        $this->message = $this->message . " [Tried: {$tries}]";
-        return $this;
     }
 
     /**
@@ -158,5 +161,50 @@ class Bronto_Api_Exception extends Exception
     public function getResponse()
     {
         return $this->_response;
+    }
+
+    /**
+     * For PHP <5.3.0
+     * @return Exception|null
+     */
+    public function getPreviousException()
+    {
+        if (method_exists($this, 'getPrevious')) {
+            return $this->getPrevious();
+        }
+        return $this->getPreviousException();
+    }
+
+    /**
+     * @return array
+     */
+    public function getTraceSafe()
+    {
+        if (!isset($this->_trace)) {
+            $this->_trace = $this->getTrace();
+            if (empty($this->_trace)) {
+                $backtrace = debug_backtrace();
+                $this->_trace = array($backtrace[count($backtrace)-1]);
+            }
+        }
+        return $this->_trace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorClass()
+    {
+        $trace = $this->getTraceSafe();
+        return $trace[0]['class'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorMethod()
+    {
+        $trace = $this->getTraceSafe();
+        return $trace[0]['function'];
     }
 }

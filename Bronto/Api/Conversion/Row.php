@@ -46,7 +46,7 @@ class Bronto_Api_Conversion_Row extends Bronto_Api_Row
      * @param bool $refresh
      * @return Bronto_Api_Conversion_Row
      */
-    public function save($upsert = false, $refresh = true)
+    public function save($upsert = null, $refresh = true)
     {
         /**
          * If the _cleanData array is empty,

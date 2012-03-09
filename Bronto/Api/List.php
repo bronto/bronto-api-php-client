@@ -52,21 +52,7 @@ class Bronto_Api_List extends Bronto_Api_Abstract
         if (!isset($data[0])) {
             $data = array($data);
         }
-        $client = $this->getApi()->getSoapClient();
 
-        try {
-            $result = $client->clearLists($data)->return;
-            $row    = array_shift($result->results);
-        } catch (Exception $e) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($e->getMessage());
-        }
-
-        if (isset($result->errors) && $result->errors) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass($row->errorString, $row->errorCode);
-        }
-
-        return true;
+        return $this->_doRequest('clearLists', $data);
     }
 }

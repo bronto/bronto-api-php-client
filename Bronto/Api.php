@@ -136,21 +136,28 @@ class Bronto_Api
     }
 
     /**
+     * We want all Exceptions to be Bronto_Api_Exception for request/response
+     *
      * @param string|Exception $exception
      * @param string $message
      * @param string $code
+     * @return Bronto_Api_Exception
      */
     public function throwException($exception, $message = null, $code = null)
     {
-        if (is_string($exception)) {
-            if (class_exists($exception, false)) {
-                $exception = new $exception($message, $code);
+        if ($exception instanceOf Exception) {
+            if ($exception instanceOf Bronto_Api_Exception) {
+                // Good
             } else {
-                $exception = new Bronto_Api_Exception($exception);
+                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode());
             }
         } else {
-            if (!($exception instanceOf Bronto_Api_Exception)) {
-                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode());
+            if (is_string($exception)) {
+                if (class_exists($exception, false)) {
+                    $exception = new $exception($message, $code);
+                } else {
+                    $exception = new Bronto_Api_Exception($exception);
+                }
             }
         }
 
