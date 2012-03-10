@@ -307,7 +307,6 @@ abstract class Bronto_Api_Abstract
      */
     protected function _doRequest($method, array $data)
     {
-        $client  = $this->getApi()->getSoapClient();
         $tries   = 0;
         $success = false;
 
@@ -317,6 +316,7 @@ abstract class Bronto_Api_Abstract
             $error = false;
 
             try {
+                $client = $this->getApi()->getSoapClient();
                 $result = $client->$method($data)->return;
             } catch (Exception $e) {
                 $error          = true;

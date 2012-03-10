@@ -50,7 +50,7 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
             if ($e->getCode() == Bronto_Api_Exception::EMPTY_RESULT) {
                 return parent::save($upsert, $refresh);
             } else {
-                throw $e;
+                $this->getApiObject()->getApi()->throwException($e);
             }
         }
     }

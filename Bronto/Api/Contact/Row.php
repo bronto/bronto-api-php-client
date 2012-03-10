@@ -75,9 +75,9 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
         } catch (Bronto_Api_Contact_Exception $e) {
             if ($e->getCode() == Bronto_Api_Contact_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return $this->id;
+                return array('id' => $this->id);
             }
-            throw $e;
+            $this->getApiObject()->getApi()->throwException($e);
         }
     }
 

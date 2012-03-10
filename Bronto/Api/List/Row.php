@@ -64,9 +64,9 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
         } catch (Bronto_Api_List_Exception $e) {
             if ($e->getCode() == Bronto_Api_List_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return $this->id;
+                return array('id' => $this->id);
             }
-            throw $e;
+            $this->getApiObject()->getApi()->throwException($e);
         }
     }
 

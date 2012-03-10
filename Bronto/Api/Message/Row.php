@@ -68,9 +68,9 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
         } catch (Bronto_Api_Message_Exception $e) {
             if ($e->getCode() == Bronto_Api_Message_Exception::MESSAGE_EXISTS) {
                 $this->_refresh();
-                return $this->id;
+                return array('id' => $this->id);
             }
-            throw $e;
+            $this->getApiObject()->getApi()->throwException($e);
         }
     }
 

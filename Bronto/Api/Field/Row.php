@@ -47,9 +47,9 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
         } catch (Bronto_Api_Field_Exception $e) {
             if ($e->getCode() == Bronto_Api_Field_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return $this->id;
+                return array('id' => $this->id);
             }
-            throw $e;
+            $this->getApiObject()->getApi()->throwException($e);
         }
     }
 
