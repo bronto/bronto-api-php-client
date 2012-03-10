@@ -66,12 +66,10 @@ class Bronto_Api
     public function __construct($token = null, array $options = array())
     {
         if (!extension_loaded('soap')) {
-            require_once 'Bronto/Api/Exception.php';
             throw new Bronto_Api_Exception('SOAP extension is not loaded.');
         }
 
         if (!extension_loaded('openssl')) {
-            require_once 'Bronto/Api/Exception.php';
             throw new Bronto_Api_Exception('OpenSSL extension is not loaded.');
         }
 

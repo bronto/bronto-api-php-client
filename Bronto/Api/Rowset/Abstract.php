@@ -241,7 +241,6 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     {
         $position = (int) $position;
         if ($position < 0 || $position >= $this->_count) {
-            require_once 'Bronto/Api/Rowset/Exception.php';
             throw new Bronto_Api_Rowset_Exception("Illegal index {$position}");
         }
         $this->_pointer = $position;
@@ -271,7 +270,6 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     {
         $offset = (int) $offset;
         if ($offset < 0 || $offset >= $this->_count) {
-            require_once 'Bronto/Api/Rowset/Exception.php';
             throw new Bronto_Api_Rowset_Exception("Illegal index {$offset}");
         }
         $this->_pointer = $offset;

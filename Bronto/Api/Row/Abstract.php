@@ -370,7 +370,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          * A read-only row cannot be saved.
          */
         if ($this->_readOnly === true) {
-            require_once 'Bronto/Api/Row/Exception.php';
             throw new Bronto_Api_Row_Exception(sprintf("Cannot create a %s record.", $this->getApiObject()->getName()));
         }
 
@@ -442,7 +441,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          * A read-only row cannot be saved.
          */
         if ($this->_readOnly === true) {
-            require_once 'Bronto/Api/Row/Exception.php';
             throw new Bronto_Api_Row_Exception(sprintf("Cannot update a %s record.", $this->getApiObject()->getName()));
         }
 
@@ -503,7 +501,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          * A read-only row cannot be saved.
          */
         if ($this->_readOnly === true) {
-            require_once 'Bronto/Api/Row/Exception.php';
             throw new Bronto_Api_Row_Exception(sprintf("Cannot delete a %s record.", $this->getApiObject()->getName()));
         }
 
