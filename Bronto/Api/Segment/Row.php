@@ -4,9 +4,9 @@
  * @property-read string $id
  * @property-read string $name
  * @property-read array $rules
- * @property-read date $lastUpdated
+ * @property-read string $lastUpdated
  * @property-read float $activeCount
- * @method Bronto_Api_Segment getApiObject()
+ * @method Bronto_Api_Segment getApiObject() getApiObject()
  */
 class Bronto_Api_Segment_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
 {
@@ -17,7 +17,7 @@ class Bronto_Api_Segment_Row extends Bronto_Api_Row implements Bronto_Api_Delive
 
     /**
      * @param bool $returnData
-     * @return Bronto_Api_Contact_Row|array
+     * @return Bronto_Api_Segment_Row
      */
     public function read($returnData = false)
     {

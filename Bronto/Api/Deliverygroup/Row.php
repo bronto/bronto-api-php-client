@@ -9,7 +9,7 @@
  * @property array $deliveryIds
  * @property array $messageRuleIds
  * @property array $messageIds
- * @method Bronto_Api_Deliverygroup getApiObject()
+ * @method Bronto_Api_Deliverygroup getApiObject() getApiObject()
  */
 class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
 {
@@ -35,23 +35,19 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
 
     /**
      * @param bool $upsert
+     * @param bool $refresh
      * @return Bronto_Api_Deliverygroup_Row
      */
-    public function save($upsert = true, $refresh = true)
+    public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::save($upsert, $refresh);
+            return parent::_save(false, $refresh);
         }
 
         try {
-            // Attempt to load DeliveryGroup
-            $this->_refresh();
+            return parent::_save(true, $refresh);
         } catch (Bronto_Api_Deliverygroup_Exception $e) {
-            if ($e->getCode() == Bronto_Api_Exception::EMPTY_RESULT) {
-                return parent::save($upsert, $refresh);
-            } else {
-                $this->getApiObject()->getApi()->throwException($e);
-            }
+            $this->getApiObject()->getApi()->throwException($e);
         }
     }
 }

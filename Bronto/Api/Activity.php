@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Activity_Row */
-require_once 'Bronto/Api/Activity/Row.php';
-
-/** @var Bronto_Api_Activity_Exception */
-require_once 'Bronto/Api/Activity/Exception.php';
-
 class Bronto_Api_Activity extends Bronto_Api_Abstract
 {
     /** Type */

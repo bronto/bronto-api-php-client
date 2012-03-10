@@ -13,7 +13,7 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
 
     /**
      * This is set to a copy of $_data when the data is fetched from
-     * a database, specified as a new tuple in the constructor, or
+     * the API, specified as a new tuple in the constructor, or
      * when dirty data is posted to the database with save().
      *
      * @var array
@@ -29,9 +29,9 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected $_modifiedFields = array();
 
     /**
-     * A row is marked read only if it contains columns that are not physically represented within
-     * the database schema (e.g. evaluated columns/Zend_Db_Expr columns). This can also be passed
-     * as a run-time config options as a means of protecting row data.
+     * A row is marked read only if it contains columns that are not physically
+     * represented within the API schema. This can also be passed as a
+     * run-time config options as a means of protecting row data.
      *
      * @var boolean
      */
@@ -72,6 +72,11 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected $_errorCode;
 
     /**
+     * @var bool
+     */
+    protected $_isLoaded = false;
+
+    /**
      * Constructor
      *
      * @param array $config
@@ -84,7 +89,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
 
         if (isset($config['data'])) {
             if (!is_array($config['data'])) {
-                require_once 'Bronto/Api/Row/Exception.php';
                 throw new Bronto_Api_Row_Exception('Data must be an array');
             }
 
@@ -175,6 +179,9 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         return $this->__unset($offset);
     }
 
+    /**
+     * @return ArrayIterator
+     */
     public function getIterator()
     {
         return new ArrayIterator((array) $this->_data);
@@ -290,38 +297,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * Saves the properties to the API.
-     *
-     * This performs an intelligent add/update, and reloads the
-     * properties with fresh data from the table on success.
-     *
-     * @param bool $upsert
-     * @param bool $refresh
-     * @return array
-     */
-    public function save($upsert = true, $refresh = true)
-    {
-        if (!$this->getApiObject()->hasUpsert()) {
-            $upsert = false;
-        }
-
-        if ($upsert) {
-            return $this->_add(true, $refresh);
-        } else {
-            /**
-             * If the _cleanData array is empty,
-             * this is an ADD of a new row.
-             * Otherwise it is an UPDATE.
-             */
-            if (empty($this->_cleanData)) {
-                return $this->_add(false, $refresh);
-            } else {
-                return $this->_update($refresh);
-            }
-        }
-    }
-
-    /**
      * @param array $filter
      * @param bool $returnData
      * @return Bronto_Api_Row_Abstract
@@ -330,29 +305,66 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     {
         $rowset = $this->getApiObject()->readAll($filter);
 
-        if ($rowset->count() == 0) {
-            $exceptionClass = $this->getApiObject()->getExceptionClass();
-            throw new $exceptionClass('An empty result was returned', Bronto_Api_Exception::EMPTY_RESULT);
+        if ($rowset->count() > 0) {
+            $data = array();
+        } else {
+            $data = $rowset->current()->getData();
         }
 
-        $data = $rowset->current()->getData();
         if ($returnData) {
             return $data;
         }
 
         $this->_data           = $data;
-        $this->_cleanData      = $this->_data;
+        $this->_cleanData      = $data;
         $this->_modifiedFields = array();
+        if (!empty($data)) {
+            $this->_isLoaded = true;
+        }
+        return $this;
+    }
+
+    /**
+     * Saves the properties to the API.
+     *
+     * This performs an intelligent add/update, and can reload the
+     * properties with fresh data from the API on success.
+     *
+     * @param bool $upsert
+     * @param bool $refresh
+     * @return Bronto_Api_Row_Abstract
+     */
+    protected function _save($upsert = true, $refresh = false)
+    {
+        if (!$this->getApiObject()->hasUpsert()) {
+            $upsert = false;
+        }
+
+        if ($upsert) {
+            $this->_add(true, $refresh);
+        } else {
+            /**
+             * If the _cleanData array is empty,
+             * this is an ADD of a new row.
+             * Otherwise it is an UPDATE.
+             */
+            if (empty($this->_cleanData)) {
+                $this->_add(false, $refresh);
+            } else {
+                $this->_update($refresh);
+            }
+        }
+
         return $this;
     }
 
     /**
      * @param bool $upsert
      * @param bool $refresh
-     * @return type
+     * @return array
      * @throws Bronto_Api_Row_Exception
      */
-    protected function _add($upsert = false, $refresh = true)
+    protected function _add($upsert = false, $refresh = false)
     {
         /**
          * A read-only row cannot be saved.
@@ -383,11 +395,11 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
 
         /**
          * Normalize the result to an array indexed by primary key column(s).
-         * The table add() method may return a scalar.
+         * The API add() method may return a scalar.
          */
 
         if (is_array($primaryKey)) {
-            $newPrimaryKey = $primaryKey;
+            $newPrimaryKey  = $primaryKey;
         } else {
             $tempPrimaryKey = (array) $this->_primary;
             $newPrimaryKey  = array(current($tempPrimaryKey) => $primaryKey);
@@ -409,8 +421,8 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         /**
          * Update the _cleanData to reflect that the data has been inserted.
          */
-        $noRefresh = $this->getApiObject()->getApi()->getOption('no_refresh');
-        if ($noRefresh == true || $refresh == false) {
+        $refreshOnSave = $this->getApiObject()->getApi()->getOption('refresh_on_save');
+        if (!$refreshOnSave || !$refresh) {
             $this->_refresh(false);
         } else {
             $this->_refresh();
@@ -419,7 +431,12 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         return $primaryKey;
     }
 
-    protected function _update($refresh = true)
+    /**
+     * @param bool $refresh
+     * @return array
+     * @throws Bronto_Api_Row_Exception
+     */
+    protected function _update($refresh = false)
     {
         /**
          * A read-only row cannot be saved.
@@ -465,8 +482,8 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
          * Refresh the data just in case triggers in the API changed
          * any columns.  Also this resets the _cleanData.
          */
-        $noRefresh = $this->getApiObject()->getApi()->getOption('no_refresh');
-        if ($noRefresh == true || $refresh == false) {
+        $refreshOnSave = $this->getApiObject()->getApi()->getOption('refresh_on_save');
+        if (!$refreshOnSave || !$refresh) {
             $this->_refresh(false);
         } else {
             $this->_refresh();
@@ -477,7 +494,8 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
 
     /**
      * @param array $data
-     * @return bool
+     * @return array
+     * @throws Bronto_Api_Row_Exception
      */
     protected function _delete(array $data = array())
     {
@@ -555,7 +573,6 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
         if (!$this->_readOnly) {
             unset($this->_data[$columnName]);
         }
-        return $this;
     }
 
     /**

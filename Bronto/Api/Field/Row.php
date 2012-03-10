@@ -7,13 +7,13 @@
  * @property string $type
  * @property string $visibility
  * @property array $options
- * @method Bronto_Api_Field getApiObject()
+ * @method Bronto_Api_Field getApiObject() getApiObject()
  */
 class Bronto_Api_Field_Row extends Bronto_Api_Row
 {
     /**
      * @param bool $returnData
-     * @return Bronto_Api_Field_Row|array
+     * @return Bronto_Api_Field_Row
      */
     public function read($returnData = false)
     {
@@ -34,20 +34,20 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
     /**
      * @param bool $upsert
      * @param bool $refresh
-     * @return Bronto_Api_List_Row
+     * @return Bronto_Api_Field_Row
      */
-    public function save($upsert = true, $refresh = true)
+    public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::save($upsert, $refresh);
+            return parent::_save(false, $refresh);
         }
 
         try {
-            return parent::save($upsert, $refresh);
+            return parent::_save(true, $refresh);
         } catch (Bronto_Api_Field_Exception $e) {
-            if ($e->getCode() == Bronto_Api_Field_Exception::ALREADY_EXISTS) {
+            if ($e->getCode() === Bronto_Api_Field_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return array('id' => $this->id);
+                return $this;
             }
             $this->getApiObject()->getApi()->throwException($e);
         }

@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Contact_Row */
-require_once 'Bronto/Api/Contact/Row.php';
-
-/** @var Bronto_Api_Contact_Exception */
-require_once 'Bronto/Api/Contact/Exception.php';
-
 /**
  * @method Bronto_Api_Contact_Row createRow() createRow(array $data)
  */

@@ -7,7 +7,7 @@
  * @property int $activeCount
  * @property string $status
  * @property string $visibility
- * @method Bronto_Api_List getApiObject()
+ * @method Bronto_Api_List getApiObject() getApiObject()
  */
 class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
 {
@@ -30,7 +30,7 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
 
     /**
      * @param bool $returnData
-     * @return Bronto_Api_List_Row|array
+     * @return Bronto_Api_List_Row
      */
     public function read($returnData = false)
     {
@@ -53,18 +53,18 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
      * @param bool $refresh
      * @return Bronto_Api_List_Row
      */
-    public function save($upsert = true, $refresh = true)
+    public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::save($upsert, $refresh);
+            return parent::_save(false, $refresh);
         }
 
         try {
-            return parent::save();
+            return parent::_save(true, $refresh);
         } catch (Bronto_Api_List_Exception $e) {
-            if ($e->getCode() == Bronto_Api_List_Exception::ALREADY_EXISTS) {
+            if ($e->getCode() === Bronto_Api_List_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return array('id' => $this->id);
+                return $this;
             }
             $this->getApiObject()->getApi()->throwException($e);
         }

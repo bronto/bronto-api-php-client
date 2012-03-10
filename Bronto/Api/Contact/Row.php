@@ -18,7 +18,7 @@
  * @property-read int $numClicks
  * @property-read int $numConversions
  * @property-read float $conversionAmount
- * @method Bronto_Api_Contact getApiObject()
+ * @method Bronto_Api_Contact getApiObject() getApiObject()
  */
 class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
 {
@@ -41,7 +41,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
 
     /**
      * @param bool $returnData
-     * @return Bronto_Api_Contact_Row|array
+     * @return Bronto_Api_Contact_Row
      */
     public function read($returnData = false)
     {
@@ -64,18 +64,18 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      * @param bool $refresh
      * @return Bronto_Api_Contact_Row
      */
-    public function save($upsert = true, $refresh = true)
+    public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::save($upsert, $refresh);
+            return parent::_save(false, $refresh);
         }
 
         try {
-            return parent::save($upsert, $refresh);
+            return parent::_save(true, $refresh);
         } catch (Bronto_Api_Contact_Exception $e) {
-            if ($e->getCode() == Bronto_Api_Contact_Exception::ALREADY_EXISTS) {
+            if ($e->getCode() === Bronto_Api_Contact_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return array('id' => $this->id);
+                return $this;
             }
             $this->getApiObject()->getApi()->throwException($e);
         }

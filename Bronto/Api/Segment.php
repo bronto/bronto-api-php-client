@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Segment_Row */
-require_once 'Bronto/Api/Segment/Row.php';
-
-/** @var Bronto_Api_Segment_Exception */
-require_once 'Bronto/Api/Segment/Exception.php';
-
 class Bronto_Api_Segment extends Bronto_Api_Abstract
 {
     /**

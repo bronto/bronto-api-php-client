@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Conversion_Row */
-require_once 'Bronto/Api/Conversion/Row.php';
-
-/** @var Bronto_Api_Conversion_Exception */
-require_once 'Bronto/Api/Conversion/Exception.php';
-
 /**
  * @method Bronto_Api_Conversion_Row createRow() createRow(array $data = array())
  */

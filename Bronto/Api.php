@@ -25,9 +25,9 @@ class Bronto_Api
      */
     protected $_options = array(
         // Bronto
-        'no_refresh'   => false,
-        'retry_limit'  => 5,
-        'debug'        => false,
+        'refresh_on_save' => false,
+        'retry_limit'     => 5,
+        'debug'           => false,
         // SoapClient
         'soap_version' => null,
         'compression'  => null,
@@ -233,14 +233,15 @@ class Bronto_Api
 
     /**
      * @param string $name
+     * @param mixed $default
      * @return mixed
      */
-    public function getOption($name)
+    public function getOption($name, $default = null)
     {
         if (isset($this->_options[$name])) {
             return $this->_options[$name];
         }
-        return null;
+        return $default;
     }
 
     /**

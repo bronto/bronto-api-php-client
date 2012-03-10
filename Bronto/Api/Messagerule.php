@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Message_Row */
-require_once 'Bronto/Api/Messagerule/Row.php';
-
-/** @var Bronto_Api_Message_Exception */
-require_once 'Bronto/Api/Messagerule/Exception.php';
-
 /**
  * @method Bronto_Api_Messagerule_Row createRow() createRow(array $data = array())
  */

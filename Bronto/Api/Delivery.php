@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Delivery_Row */
-require_once 'Bronto/Api/Delivery/Row.php';
-
-/** @var Bronto_Api_Delivery_Exception */
-require_once 'Bronto/Api/Delivery/Exception.php';
-
 /**
  * @method Bronto_Api_Delivery_Row createRow() createRow(array $data = array())
  */

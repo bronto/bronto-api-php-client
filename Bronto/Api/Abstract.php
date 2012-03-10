@@ -307,8 +307,9 @@ abstract class Bronto_Api_Abstract
      */
     protected function _doRequest($method, array $data)
     {
-        $tries   = 0;
-        $success = false;
+        $maxTries = (int) $this->getApi()->getOption('retry_limit', 5);
+        $tries    = 0;
+        $success  = false;
 
         // Handle [frequent] API failures
         do {
@@ -322,7 +323,7 @@ abstract class Bronto_Api_Abstract
                 $error          = true;
                 $exceptionClass = $this->getExceptionClass();
                 $exception      = new $exceptionClass($e->getMessage(), $e->getCode(), $tries, $e);
-                if (!$exception->isRecoverable() || $tries === 5) {
+                if (!$exception->isRecoverable() || $tries === $maxTries) {
                     return $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
@@ -338,7 +339,7 @@ abstract class Bronto_Api_Abstract
                         if ($row->errorString && $row->errorCode) {
                             $exceptionClass = $this->getExceptionClass();
                             $exception      = new $exceptionClass($row->errorString, $row->errorCode, $tries);
-                            if (!$exception->isRecoverable() || $tries == 5) {
+                            if (!$exception->isRecoverable() || $tries === $maxTries) {
                                 return $this->getApi()->throwException($exception);
                             } else {
                                 // Attempt to get a new session token
@@ -354,7 +355,7 @@ abstract class Bronto_Api_Abstract
                 }
             }
 
-        } while (!$success && $tries <= 5);
+        } while (!$success && $tries <= $maxTries);
 
         return $result;
     }

@@ -2,7 +2,7 @@
 
 /**
  * @property-read string $id
- * @property date start
+ * @property string start
  * @property string $messageId
  * @property string $status
  * @property string $type
@@ -65,7 +65,7 @@
  * @property-read int $viewsDigg
  * @property-read int $viewsMySpace
  * @property-read int $numSocialViews
- * @method Bronto_Api_Delivery getApiObject()
+ * @method Bronto_Api_Delivery getApiObject() getApiObject()
  */
 class Bronto_Api_Delivery_Row extends Bronto_Api_Row
 {
@@ -126,6 +126,10 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
                         $this->_recipients[] = $contact;
                         break;
                     case 'segment':
+                        $segmentObject = $this->getApiObject()->getApi()->getSegmentObject();
+                        $segment = $segmentObject->createRow();
+                        $segment->id = $recipient->id;
+                        $this->_recipients[] = $segment;
                         break;
                     default:
                         $exceptionClass = $this->getExceptionClass();
@@ -155,6 +159,11 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
                 $deliveryGroup = $deliveryGroup->read();
             }
             $deliveryGroupId = $deliveryGroup->id;
+        }
+
+        if (empty($deliveryGroupId)) {
+            $exceptionClass = $this->getExceptionClass();
+            throw new $exceptionClass('Unable to find deliveryGroup');
         }
 
         $deliveryGroupObject = $this->getApiObject()->getApi()->getDeliveryGroupObject();
@@ -208,21 +217,19 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
 
     /**
      * @param bool $returnData
-     * @return Bronto_Api_Delivery_Row|array
+     * @return Bronto_Api_Delivery_Row
      */
     public function read($returnData = false)
     {
-        $params = array('id' => $this->id);
-        return parent::_read($params, $returnData);
+        return parent::_read(array('id' => $this->id), $returnData);
     }
 
     /**
-     * @param bool $upsert
      * @param bool $refresh
-     * @return array
+     * @return Bronto_Api_Delivery_Row
      */
-    public function save($upsert = true, $refresh = false)
+    public function save($refresh = false)
     {
-        return parent::save($upsert, $refresh);
+        return parent::_save(false, $refresh);
     }
 }

@@ -6,7 +6,7 @@
  * @property string $status
  * @property string $messageFolderId
  * @property array $content
- * @method Bronto_Api_Message getApiObject()
+ * @method Bronto_Api_Message getApiObject() getApiObject()
  */
 class Bronto_Api_Message_Row extends Bronto_Api_Row
 {
@@ -35,7 +35,7 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
 
     /**
      * @param bool $returnData
-     * @return Bronto_Api_Message_Row|array
+     * @return Bronto_Api_Message_Row
      */
     public function read($returnData = false)
     {
@@ -55,20 +55,21 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
 
     /**
      * @param bool $upsert
+     * @param bool $refresh
      * @return Bronto_Api_Message_Row
      */
-    public function save($upsert = true, $refresh = true)
+    public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::save($upsert, $refresh);
+            return parent::_save(false, $refresh);
         }
 
         try {
-            return parent::save($upsert, $refresh);
+            return parent::_save(true, $refresh);
         } catch (Bronto_Api_Message_Exception $e) {
-            if ($e->getCode() == Bronto_Api_Message_Exception::MESSAGE_EXISTS) {
+            if ($e->getCode() === Bronto_Api_Message_Exception::MESSAGE_EXISTS) {
                 $this->_refresh();
-                return array('id' => $this->id);
+                return $this;
             }
             $this->getApiObject()->getApi()->throwException($e);
         }

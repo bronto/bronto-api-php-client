@@ -1,11 +1,5 @@
 <?php
 
-/** @var Bronto_Api_Field_Row */
-require_once 'Bronto/Api/Field/Row.php';
-
-/** @var Bronto_Api_Field_Exception */
-require_once 'Bronto/Api/Field/Exception.php';
-
 /**
  * @method Bronto_Api_Field_Row createRow() createRow(array $data = array())
  */
@@ -81,6 +75,7 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
     /**
      * @param string $index
      * @param Bronto_Api_Field_Row $field
+     * @return Bronto_Api_Field
      */
     public function addToCache($index, Bronto_Api_Field_Row $field)
     {
@@ -90,7 +85,7 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
 
     /**
      * @param string $index
-     * @return bool|Bronto_Api_Field_Row
+     * @return Bronto_Api_Field_Row
      */
     public function getFromCache($index)
     {

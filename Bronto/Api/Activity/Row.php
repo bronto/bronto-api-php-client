@@ -7,18 +7,18 @@
  * @property-read string $messageId
  * @property-read string $listId
  * @property-read string $trackingType
- * @method bool isOpen()
- * @method bool isClick()
- * @method bool isConversion()
- * @method bool isBounce()
- * @method bool isSend()
- * @method bool isUnsubscribe()
- * @method bool isView()
- * @method Bronto_Api_Contact_Row getContact()
- * @method Bronto_Api_Delivery_Row getDelivery()
- * @method Bronto_Api_Message_Row getMessage()
- * @method Bronto_Api_List_Row getList()
- * @method Bronto_Api_Activity getApiObject()
+ * @method bool isOpen() isOpen()
+ * @method bool isClick() isClick()
+ * @method bool isConversion() isConversion()
+ * @method bool isBounce() isBounce()
+ * @method bool isSend() isSend()
+ * @method bool isUnsubscribe() isUnsubscribe()
+ * @method bool isView() isView()
+ * @method Bronto_Api_Contact_Row getContact() getContact()
+ * @method Bronto_Api_Delivery_Row getDelivery() getDelivery()
+ * @method Bronto_Api_Message_Row getMessage() getMessage()
+ * @method Bronto_Api_List_Row getList() getList()
+ * @method Bronto_Api_Activity getApiObject() getApiObject()
  */
 class Bronto_Api_Activity_Row extends Bronto_Api_Row
 {
