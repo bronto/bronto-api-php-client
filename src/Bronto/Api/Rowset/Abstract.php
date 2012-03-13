@@ -10,6 +10,13 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     protected $_data = array();
 
     /**
+     * Any errors for each row.
+     *
+     * @var array
+     */
+    protected $_errors = false;
+
+    /**
      * API Object
      *
      * @var Bronto_Api_Abstract
@@ -79,19 +86,23 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
         }
 
         if (isset($config['rowClass'])) {
-            $this->_rowClass = $config['rowClass'];
+            $this->_rowClass = (string) $config['rowClass'];
         }
 
         if (isset($config['data'])) {
-            $this->_data = $config['data'];
+            $this->_data = (array) $config['data'];
+        }
+
+        if (isset($config['errors'])) {
+            $this->_errors = (array) $config['errors'];
         }
 
         if (isset($config['readOnly'])) {
-            $this->_readOnly = $config['readOnly'];
+            $this->_readOnly = (bool) $config['readOnly'];
         }
 
         if (isset($config['stored'])) {
-            $this->_stored = $config['stored'];
+            $this->_stored = (bool) $config['stored'];
         }
 
         if (isset($config['params'])) {
@@ -306,5 +317,34 @@ abstract class Bronto_Api_Rowset_Abstract implements SeekableIterator, Countable
     public function iterate()
     {
         return new Bronto_Api_Rowset_Iterator($this);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return !empty($this->_errors);
+    }
+
+    /**
+     * @return bool|array
+     */
+    public function getErrors()
+    {
+        if ($this->hasErrors()) {
+            $errors = array();
+            foreach ($this->_errors as $pointer) {
+                if ($this->offsetExists($pointer)) {
+                    $row = $this->offsetGet($pointer);
+                    $errors[] = array(
+                        'code'    => $row->getErrorCode(),
+                        'message' => $row->getErrorMessage(),
+                    );
+                }
+            }
+            return $errors;
+        }
+        return false;
     }
 }

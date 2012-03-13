@@ -67,9 +67,14 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     protected $_isError = false;
 
     /**
-     * @var bool
+     * @var int
      */
     protected $_errorCode;
+
+    /**
+     * @var string
+     */
+    protected $_errorString;
 
     /**
      * @var bool
@@ -98,13 +103,19 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
             }
 
             if (isset($config['data']['isError'])) {
-                $this->_isError = (bool) $config['data']['isError'];
+                $this->_isError  = (bool) $config['data']['isError'];
+                $this->_readOnly = true;
                 unset($config['data']['isError']);
             }
 
             if (isset($config['data']['errorCode'])) {
                 $this->_errorCode = (int) $config['data']['errorCode'];
                 unset($config['data']['errorCode']);
+            }
+
+            if (isset($config['data']['errorString'])) {
+                $this->_errorString = (string) $config['data']['errorString'];
+                unset($config['data']['errorString']);
             }
 
             $this->_data = $config['data'];
@@ -677,6 +688,17 @@ abstract class Bronto_Api_Row_Abstract implements ArrayAccess, IteratorAggregate
     {
         if ($this->hasError()) {
             return $this->_errorCode;
+        }
+        return false;
+    }
+
+    /**
+     * @return int|bool
+     */
+    public function getErrorMessage()
+    {
+        if ($this->hasError()) {
+            return $this->_errorString;
         }
         return false;
     }

@@ -228,7 +228,7 @@ abstract class Bronto_Api_Abstract
             throw new $exceptionClass("Save method '{$method}' not allowed.");
         }
 
-        $multiple  = true;
+        $multiple = true;
         if (!isset($data[0])) {
             $multiple = false;
             $data     = array($data);
@@ -236,17 +236,19 @@ abstract class Bronto_Api_Abstract
 
         $methodName = '_name' . ucfirst($method);
         $function   = $method . $this->{$methodName};
-        $result     = $this->_doRequest($function, $data);
+        $result     = (array) $this->_doRequest($function, $data);
+
+        $config = array(
+            'apiObject' => $this,
+            'data'      => isset($result['results']) ? $result['results'] : array(),
+            'stored'    => true,
+        );
 
         if ($multiple) {
-            // Return a rowset if adding multiple
-            $config = array(
-                'apiObject' => $this,
-                'data'      => $result->results,
-                'rowClass'  => $this->getRowClass(),
-                'stored'    => true,
-                'params'    => false,
-            );
+            // Return a Rowset if adding multiple
+            $config['errors']   = isset($result['errors'])  ? $result['errors']  : array();
+            $config['rowClass'] = $this->getRowClass();
+            $config['params']   = false;
 
             $rowsetClass = $this->getRowsetClass();
             if (!class_exists($rowsetClass)) {
@@ -255,8 +257,16 @@ abstract class Bronto_Api_Abstract
             }
             return new $rowsetClass($config);
         } else {
-            $row = array_shift($result->results);
-            return array('id' => $row->id);
+            // Return a Row for one
+            $config['data']     = (array) array_shift($config['data']);
+            $config['readOnly'] = false;
+
+            $rowClass = $this->getRowClass();
+            if (!class_exists($rowClass)) {
+                $exceptionClass = $this->getExceptionClass();
+                throw new $exceptionClass("Cannot find Row class: {$rowClass}");
+            }
+            return new $rowClass($config);
         }
     }
 
@@ -333,26 +343,7 @@ abstract class Bronto_Api_Abstract
             }
 
             if (!$error) {
-                // No runtime errors, check for API errors
-                if (isset($result->errors) && $result->errors) {
-                    foreach ($result->results as $row) {
-                        if ($row->errorString && $row->errorCode) {
-                            $exceptionClass = $this->getExceptionClass();
-                            $exception      = new $exceptionClass($row->errorString, $row->errorCode, $tries);
-                            if (!$exception->isRecoverable() || $tries === $maxTries) {
-                                return $this->getApi()->throwException($exception);
-                            } else {
-                                // Attempt to get a new session token
-                                sleep(5);
-                                $this->getApi()->login();
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    // Don't keep re-trying since we were successful
-                    $success = true;
-                }
+                $success = true;
             }
 
         } while (!$success && $tries <= $maxTries);
