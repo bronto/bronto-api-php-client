@@ -8,15 +8,19 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @method \Console\Application getApplication() getApplication()
+ */
 class GetAllCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('lists:get:all')
-             ->setDescription('Returns all Lists')
-             ->setDefinition(array(
+        $this
+            ->setName('lists:get:all')
+            ->setDescription('Returns all Lists')
+            ->setDefinition(array(
                  new InputOption('token', '-t', InputOption::VALUE_OPTIONAL, 'Bronto Token ID (optional)')
-             ));
+            ));
 
         parent::configure();
     }
@@ -33,14 +37,10 @@ class GetAllCommand extends Command
         /* @var $dialog \Symfony\Component\Console\Helper\DialogHelper */
         $dialog = $this->getHelperSet()->get('dialog');
 
-        $force = (bool) $input->getOption('force');
-
         //
         // Token
         if (!$token = $input->getOption('token')) {
-            if (!$force) {
-                $token = $dialog->ask($output, 'Enter Bronto API Token: ', null);
-            }
+            $token = $dialog->ask($output, 'Enter Bronto API Token: ', null);
             if (empty($token)) {
                 throw new \InvalidArgumentException('Bronto API Token is required');
             }
@@ -48,7 +48,7 @@ class GetAllCommand extends Command
         }
 
         /* @var $bronto \Bronto_Api */
-        $bronto = $this->getApplication()->getBootstrap()->getBronto();
+        $bronto = $this->getApplication()->getApi();
         $bronto->setToken($token);
         $bronto->login();
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 
 umask(0000);

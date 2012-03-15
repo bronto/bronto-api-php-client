@@ -10,6 +10,17 @@ class Application extends \Symfony\Component\Console\Application
     protected $api;
 
     /**
+     * Constructor.
+     *
+     * @param string  $name    The name of the application
+     * @param string  $version The version of the application
+     */
+    public function __construct($name = 'Bronto Console Tools', $version = '1.0')
+    {
+        parent::__construct($name, $version);
+    }
+
+    /**
      * @return \Bronto_Api
      */
     public function getApi()
