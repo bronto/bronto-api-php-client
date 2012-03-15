@@ -7,6 +7,7 @@
  * @property int $activeCount
  * @property string $status
  * @property string $visibility
+ * @method Bronto_Api_List_Row delete() delete()
  * @method Bronto_Api_List getApiObject() getApiObject()
  */
 class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
@@ -22,21 +23,18 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
     public function getContacts($includeLists = false, array $fields = array(), $pageNumber = 1)
     {
         $contactObject = $this->getApiObject()->getApi()->getContactObject();
-        $filter = array(
-            'listId' => $this->id,
-        );
+        $filter = array('listId' => $this->id);
         return $contactObject->readAll($filter, $fields, $includeLists, $pageNumber);
     }
 
     /**
-     * @param bool $returnData
      * @return Bronto_Api_List_Row
      */
-    public function read($returnData = false)
+    public function read()
     {
         if ($this->id) {
             $params = array('id' => $this->id);
-        } else {
+        } elseif ($this->name) {
             $params = array(
                 'name' => array(
                     'value'    => $this->name,
@@ -45,7 +43,8 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
             );
         }
 
-        return parent::_read($params, $returnData);
+        parent::_read($params);
+        return $this;
     }
 
     /**
@@ -56,34 +55,41 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
     public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::_save(false, $refresh);
+            parent::_save(false, $refresh);
         }
 
         try {
-            return parent::_save(true, $refresh);
+            parent::_save(true, $refresh);
         } catch (Bronto_Api_List_Exception $e) {
             if ($e->getCode() === Bronto_Api_List_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return $this;
+            } else {
+                $this->getApiObject()->getApi()->throwException($e);
             }
-            $this->getApiObject()->getApi()->throwException($e);
         }
+
+        return $this;
     }
 
     /**
-     * @return bool
-     */
-    public function delete()
-    {
-        return parent::_delete(array('id' => $this->id));
-    }
-
-    /**
-     * @return bool
+     * @return Bronto_Api_List_Row
      */
     public function clear()
     {
-        return $this->getApiObject()->clear(array('id' => $this->id));
+        $data = array();
+        if (!$this->id) {
+            $this->_refresh();
+        }
+
+        if ($this->id) {
+            $data = array('id' => $this->id);
+        } else {
+            $exceptionClass = $this->getApiObject()->getExceptionClass();
+            throw new $exceptionClass('Nothing to clear.');
+        }
+
+        $this->getApiObject()->clear($data);
+        return $this;
     }
 
     /**

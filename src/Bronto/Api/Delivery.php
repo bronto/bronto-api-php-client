@@ -1,9 +1,12 @@
 <?php
 
 /**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/deliveryobject
+ *
  * @method Bronto_Api_Delivery_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_Delivery extends Bronto_Api_Abstract
+class Bronto_Api_Delivery extends Bronto_Api_Object
 {
     /** Status */
     const STATUS_SENT     = 'sent';
@@ -17,6 +20,17 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
     const TYPE_TEST          = 'test';
     const TYPE_TRANSACTIONAL = 'transactional';
     const TYPE_AUTOMATED     = 'automated';
+
+    /**
+     * @var array
+     */
+    protected $_methods = array(
+        'addDeliveries'          => 'add',
+        'readDeliveries'         => 'read',
+        'updateDeliveries'       => 'update',
+        'deleteDeliveries'       => 'delete',
+        'readDeliveryRecipients' => true,
+    );
 
     /**
      * @var array
@@ -38,30 +52,10 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
     );
 
     /**
-     * The object name.
-     *
-     * @var string
-     */
-    protected $_name = 'Deliveries';
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Delivery_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Delivery_Exception';
-
-    /**
      * @param array $filter
      * @param bool $includeRecipients
      * @param bool $includeContent
      * @param int $pageNumber
-     * @throws Bronto_Api_Delivery_Exception
      * @return Bronto_Api_Rowset
      */
     public function readAll(array $filter = array(), $includeRecipients = false, $includeContent = false, $pageNumber = 1)
@@ -75,27 +69,6 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
     }
 
     /**
-     * @param string $startDate
-     * @param bool $includeRecipients
-     * @param bool $includeContent
-     * @param int $pageNumber
-     * @param array $additionalFilter
-     * @throws Bronto_Api_Delivery_Exception
-     * @return Bronto_Api_Rowset
-     */
-    public function readAllAfterDate($startDate, $includeRecipients = false, $includeContent = false, $pageNumber = 1, array $additionalFilter = array())
-    {
-        $filter = array(
-            'start' => array(
-                'operator' => 'After',
-                'value'    => $startDate,
-            )
-        );
-        $filter = array_merge($additionalFilter, $filter);
-        return $this->readAll($filter, $includeRecipients, $includeContent, $pageNumber);
-    }
-
-    /**
      * @param array $filter
      * @param int $pageNumber
      * @return Bronto_Api_Rowset
@@ -105,6 +78,6 @@ class Bronto_Api_Delivery extends Bronto_Api_Abstract
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-        return $this->read($params, 'readDeliveryRecipients');
+        return $this->doRequest('readDeliveryRecipients', $params);
     }
 }

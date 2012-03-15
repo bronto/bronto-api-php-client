@@ -4,13 +4,10 @@
  * @group object
  * @group contact
  */
-class ContactTest extends \PHPUnit_Framework_TestCase
+class ContactTest extends AbstractTest
 {
     /**
-     * @covers Bronto_Api_Abstract::addOrUpdate
-     * @covers Bronto_Api_Rowset_Abstract::count
-     * @covers Bronto_Api_Row_Abstract::hasError
-     * @covers Bronto_Api_Row_Abstract::getErrorCode
+     * @covers Bronto_Api_Object::addOrUpdate
      */
     public function testAddOrUpdateManyContactsWithSomeInvalid()
     {
@@ -45,34 +42,63 @@ class ContactTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Bronto_Api_Abstract::addOrUpdate
-     * @covers Bronto_Api_Row_Abstract::hasError
-     * @covers Bronto_Api_Row_Abstract::getErrorCode
+     * @covers Bronto_Api_Object::addOrUpdate
      */
     public function testAddOrUpdateOneValidContact()
     {
         $contact = array('email' => 'example+onevalid@bronto.com');
-        $contact = $this->getObject()->addOrUpdate($contact);
 
-        $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
-        $this->assertNotEmpty($contact->id);
-        $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
+        /* @var $contacts Bronto_Api_Rowset */
+        $contacts = $this->getObject()->addOrUpdate($contact);
+
+        $this->assertTrue($contacts instanceOf Bronto_Api_Rowset);
+        $this->assertEquals(1, $contacts->count());
+        $this->assertFalse($contacts->hasErrors());
     }
 
     /**
-     * @covers Bronto_Api_Abstract::addOrUpdate
-     * @covers Bronto_Api_Row_Abstract::hasError
-     * @covers Bronto_Api_Row_Abstract::getErrorCode
+     * @covers Bronto_Api_Object::addOrUpdate
      */
     public function testAddOrUpdateOneInvalidContact()
     {
         $contact = array('email' => 'example+oneinvalid@');
-        $contact = $this->getObject()->addOrUpdate($contact);
 
-        $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
-        $this->assertEmpty($contact->id);
-        $this->assertTrue($contact->hasError());
-        $this->assertEquals(Bronto_Api_Contact_Exception::INVALID_EMAIL, $contact->getErrorCode());
+        /* @var $contacts Bronto_Api_Rowset */
+        $contacts = $this->getObject()->addOrUpdate($contact);
+
+        $this->assertTrue($contacts instanceOf Bronto_Api_Rowset);
+        $this->assertEquals(1, $contacts->count());
+        $this->assertTrue($contacts->hasErrors());
+    }
+
+    /**
+     * @covers Bronto_Api_Object::add
+     */
+    public function testAddOneValidContact()
+    {
+        $contact = array('email' => 'example+' . time() . '@bronto.com');
+
+        /* @var $contacts Bronto_Api_Rowset */
+        $contacts = $this->getObject()->add($contact);
+
+        $this->assertTrue($contacts instanceOf Bronto_Api_Rowset);
+        $this->assertEquals(1, $contacts->count());
+        $this->assertFalse($contacts->hasErrors(), 'Has error: ' . var_export($contacts->getError(), true));
+    }
+
+    /**
+     * @covers Bronto_Api_Object::add
+     */
+    public function testAddOneInvalidContact()
+    {
+        $contact = array('email' => 'example+oneinvalid@');
+
+        /* @var $contacts Bronto_Api_Rowset */
+        $contacts = $this->getObject()->add($contact);
+
+        $this->assertTrue($contacts instanceOf Bronto_Api_Rowset);
+        $this->assertEquals(1, $contacts->count());
+        $this->assertTrue($contacts->hasErrors());
     }
 
     /**
@@ -81,13 +107,5 @@ class ContactTest extends \PHPUnit_Framework_TestCase
     public function getObject()
     {
         return $this->getApi()->getContactObject();
-    }
-
-    /**
-     * @return Bronto_Api
-     */
-    public function getApi()
-    {
-        return new Bronto_Api(TEST_API_TOKEN);
     }
 }

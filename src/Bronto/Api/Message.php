@@ -1,28 +1,22 @@
 <?php
 
 /**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/messageobject
+ *
  * @method Bronto_Api_Message_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_Message extends Bronto_Api_Abstract
+class Bronto_Api_Message extends Bronto_Api_Object
 {
     /**
-     * The object name.
-     *
-     * @var string
+     * @var array
      */
-    protected $_name = 'Messages';
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Message_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Message_Exception';
+    protected $_methods = array(
+        'addMessages'    => 'add',
+        'readMessages'   => 'read',
+        'updateMessages' => 'update',
+        'deleteMessages' => 'delete',
+    );
 
     /**
      * @param array $filter

@@ -1,28 +1,31 @@
 <?php
 
 /**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/maillistobject
+ *
  * @method Bronto_Api_List_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_List extends Bronto_Api_Abstract
+class Bronto_Api_List extends Bronto_Api_Object
 {
     /**
      * The object name.
      *
      * @var string
      */
-    protected $_name = 'Lists';
+    protected $_name = 'MailList';
 
     /**
-     * @var string
+     * @var array
      */
-    protected $_rowClass = 'Bronto_Api_List_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_List_Exception';
+    protected $_methods = array(
+        'addLists'           => 'add',
+        'readLists'          => 'read',
+        'updateLists'        => 'update',
+        'deleteLists'        => 'delete',
+        'addToList'          => true,
+        'clearLists'         => true,
+    );
 
     /**
      * @param array $filter
@@ -39,14 +42,13 @@ class Bronto_Api_List extends Bronto_Api_Abstract
 
     /**
      * @param array $data
-     * @return bool
+     * @return Bronto_Api_Rowset
      */
     public function clear(array $data = array())
     {
-        if (!isset($data[0])) {
+        if (array_values($data) !== $data) {
             $data = array($data);
         }
-
-        return $this->_doRequest('clearLists', $data);
+        return $this->doRequest('clearLists', $data);
     }
 }

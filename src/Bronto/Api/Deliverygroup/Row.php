@@ -9,19 +9,18 @@
  * @property array $deliveryIds
  * @property array $messageRuleIds
  * @property array $messageIds
- * @method Bronto_Api_Deliverygroup getApiObject() getApiObject()
+ * @method Bronto_Api_DeliveryGroup getApiObject() getApiObject()
  */
-class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
+class Bronto_Api_DeliveryGroup_Row extends Bronto_Api_Row
 {
     /**
-     * @param bool $returnData
-     * @return Bronto_Api_Deliverygroup_Row|array
+     * @return Bronto_Api_DeliveryGroup_Row
      */
-    public function read($returnData = false)
+    public function read()
     {
         if ($this->id) {
             $params = array('id' => $this->id);
-        } else {
+        } elseif ($this->name) {
             $params = array(
                 'name' => array(
                     'value'    => $this->name,
@@ -30,24 +29,27 @@ class Bronto_Api_Deliverygroup_Row extends Bronto_Api_Row
             );
         }
 
-        return parent::_read($params, $returnData);
+        parent::_read($params);
+        return $this;
     }
 
     /**
      * @param bool $upsert
      * @param bool $refresh
-     * @return Bronto_Api_Deliverygroup_Row
+     * @return Bronto_Api_DeliveryGroup_Row
      */
     public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::_save(false, $refresh);
+            parent::_save(false, $refresh);
         }
 
         try {
-            return parent::_save(true, $refresh);
-        } catch (Bronto_Api_Deliverygroup_Exception $e) {
+            parent::_save(true, $refresh);
+        } catch (Bronto_Api_DeliveryGroup_Exception $e) {
             $this->getApiObject()->getApi()->throwException($e);
         }
+
+        return $this;
     }
 }

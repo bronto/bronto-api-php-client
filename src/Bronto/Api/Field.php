@@ -1,9 +1,12 @@
 <?php
 
 /**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/fieldobject
+ *
  * @method Bronto_Api_Field_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_Field extends Bronto_Api_Abstract
+class Bronto_Api_Field extends Bronto_Api_Object
 {
     /** Type */
     const TYPE_TEXT     = 'text';
@@ -16,6 +19,16 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
     const TYPE_CURRENCY = 'currency';
     const TYPE_FLOAT    = 'float';
     const TYPE_DATE     = 'date';
+
+    /**
+     * @var array
+     */
+    protected $_methods = array(
+        'addFields'           => 'add',
+        'readFields'          => 'read',
+        'updateFields'        => 'update',
+        'deleteFields'        => 'delete',
+    );
 
     /**
      * @var array
@@ -34,25 +47,6 @@ class Bronto_Api_Field extends Bronto_Api_Abstract
             self::TYPE_DATE,
         ),
     );
-
-    /**
-     * The object name.
-     *
-     * @var string
-     */
-    protected $_name = 'Fields';
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Field_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Field_Exception';
 
     /**
      * @var array

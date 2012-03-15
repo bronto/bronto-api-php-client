@@ -1,6 +1,6 @@
 <?php
 
-class Bronto_Api_Messagerule_Exception extends Bronto_Api_Exception
+class Bronto_Api_MessageRule_Exception extends Bronto_Api_Exception
 {
     const INVALID_AUTOMATOR        = 604; // The specified automator is invalid.
     const INVALID_AUTOMATOR_NAME   = 610; // The message rule name is invalid.

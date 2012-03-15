@@ -30,7 +30,7 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
     /**
      * @param string $name
      * @param array $arguments
-     * @return mixed
+     * @return Bronto_Api_Row
      */
     public function __call($name, $arguments)
     {

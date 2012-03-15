@@ -1,6 +1,6 @@
 <?php
 
-class Bronto_Api_Deliverygroup_Exception extends Bronto_Api_Exception
+class Bronto_Api_DeliveryGroup_Exception extends Bronto_Api_Exception
 {
     const INVALID_DELIVERYGROUP                 = 801; // The specified deliverygroup was invalid.
     const DELIVERYGROUP_NO_ID                   = 802; // No ID provided for deliverygroup.

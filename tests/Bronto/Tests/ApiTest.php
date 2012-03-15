@@ -7,34 +7,35 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers Bronto_Api::login
+     * @covers Bronto_Api::isAuthenticated
+     * @expectedException Bronto_Api_Exception
+     * @expectedExceptionCode 99002
      */
     public function testEmptyToken()
     {
         $api = new Bronto_Api();
-        try {
-            $api->login();
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceOf Bronto_Api_Exception);
-            $this->assertTrue($e->getCode() === Bronto_Api_Exception::NO_TOKEN);
-        }
+        $api->login();
+
+        $this->assertFalse($api->isAuthenticated());
     }
 
     /**
      * @covers Bronto_Api::login
+     * @covers Bronto_Api::isAuthenticated
+     * @expectedException Bronto_Api_Exception
+     * @expectedExceptionCode 102
      */
     public function testInvalidToken()
     {
         $api = new Bronto_Api('invalid-token');
-        try {
-            $api->login();
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceOf Bronto_Api_Exception);
-            $this->assertTrue($e->getCode() === Bronto_Api_Exception::INVALID_TOKEN);
-        }
+        $api->login();
+
+        $this->assertFalse($api->isAuthenticated());
     }
 
     /**
      * @covers Bronto_Api::login
+     * @covers Bronto_Api::isAuthenticated
      */
     public function testValidToken()
     {

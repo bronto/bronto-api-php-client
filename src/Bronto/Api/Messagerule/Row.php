@@ -5,15 +5,16 @@
  * @property name
  * @property type
  * @property messagedId
- * @method Bronto_Api_Messagerule getApiObject() getApiObject()
+ * @method Bronto_Api_MessageRule_Row delete() delete()
+ * @method Bronto_Api_MessageRule getApiObject() getApiObject()
  */
-class Bronto_Api_Messagerule_Row extends Bronto_Api_Row
+class Bronto_Api_MessageRule_Row extends Bronto_Api_Row
 {
     /**
      * @param bool $returnData
-     * @return Bronto_Api_Messagerule_Row
+     * @return Bronto_Api_MessageRule_Row
      */
-    public function read($returnData = false)
+    public function read()
     {
         if ($this->id) {
             $params = array('id' => $this->id);
@@ -32,30 +33,24 @@ class Bronto_Api_Messagerule_Row extends Bronto_Api_Row
     /**
      * @param bool $upsert
      * @param bool $refresh
-     * @return Bronto_Api_Messagerule_Row
+     * @return Bronto_Api_MessageRule_Row
      */
     public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::_save(false, $refresh);
+            parent::_save(false, $refresh);
         }
 
         try {
-            return parent::_save(true, $refresh);
-        } catch (Bronto_Api_Messagerule_Exception $e) {
-            if ($e->getCode() === Bronto_Api_Messagerule_Exception::AUTOMATOR_EXISTS) {
+            parent::_save(true, $refresh);
+        } catch (Bronto_Api_MessageRule_Exception $e) {
+            if ($e->getCode() === Bronto_Api_MessageRule_Exception::AUTOMATOR_EXISTS) {
                 $this->_refresh();
-                return $this;
+            } else {
+                $this->getApiObject()->getApi()->throwException($e);
             }
-            $this->getApiObject()->getApi()->throwException($e);
         }
-    }
 
-    /**
-     * @return bool
-     */
-    public function delete()
-    {
-        return parent::_delete(array('id' => $this->id));
+        return $this;
     }
 }

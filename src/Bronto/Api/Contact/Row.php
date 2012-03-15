@@ -18,6 +18,7 @@
  * @property-read int $numClicks
  * @property-read int $numConversions
  * @property-read float $conversionAmount
+ * @method Bronto_Api_Contact_Row delete() delete()
  * @method Bronto_Api_Contact getApiObject() getApiObject()
  */
 class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
@@ -26,8 +27,6 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      * Initialize object
      *
      * Called from {@link __construct()} as final step of object instantiation.
-     *
-     * @return void
      */
     public function init()
     {
@@ -40,14 +39,13 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
     }
 
     /**
-     * @param bool $returnData
      * @return Bronto_Api_Contact_Row
      */
-    public function read($returnData = false)
+    public function read()
     {
         if ($this->id) {
             $params = array('id' => $this->id);
-        } else {
+        } elseif ($this->email) {
             $params = array(
                 'email' => array(
                     'value'    => $this->email,
@@ -56,7 +54,8 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
             );
         }
 
-        return parent::_read($params, $returnData);
+        parent::_read($params);
+        return $this;
     }
 
     /**
@@ -67,26 +66,20 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
     public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::_save(false, $refresh);
+            parent::_save(false, $refresh);
         }
 
         try {
-            return parent::_save(true, $refresh);
+            parent::_save(true, $refresh);
         } catch (Bronto_Api_Contact_Exception $e) {
             if ($e->getCode() === Bronto_Api_Contact_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
-                return $this;
+            } else {
+                $this->getApiObject()->getApi()->throwException($e);
             }
-            $this->getApiObject()->getApi()->throwException($e);
         }
-    }
 
-    /**
-     * @return bool
-     */
-    public function delete()
-    {
-        return parent::_delete(array('id' => $this->id));
+        return $this;
     }
 
     /**

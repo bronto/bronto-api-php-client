@@ -1,25 +1,17 @@
 <?php
 
-class Bronto_Api_Segment extends Bronto_Api_Abstract
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/segmentobject
+ */
+class Bronto_Api_Segment extends Bronto_Api_Object
 {
     /**
-     * The object name.
-     *
-     * @var string
+     * @var array
      */
-    protected $_name = 'Segments';
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Segment_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Segment_Exception';
+    protected $_methods = array(
+        'readSegments' => 'read',
+    );
 
     /**
      * @param array $filter
@@ -36,12 +28,9 @@ class Bronto_Api_Segment extends Bronto_Api_Abstract
 
     /**
      * @param array $data
-     * @throws Bronto_Api_Segment_Exception
-     * @return void
      */
     public function createRow(array $data = array())
     {
-        $exceptionClass = $this->getExceptionClass();
-        throw new $exceptionClass('You cannot create a Segment row.');
+        throw new Bronto_Api_Segment_Exception('You cannot create a Segment row.');
     }
 }

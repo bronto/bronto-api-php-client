@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ */
 class Bronto_Api
 {
     const BASE_WSDL     = 'https://api.bronto.com/v4?wsdl';
@@ -25,18 +28,22 @@ class Bronto_Api
      */
     protected $_options = array(
         // Bronto
-        'refresh_on_save' => false,
-        'retry_limit'     => 5,
-        'debug'           => false,
+        'refresh_on_save'    => false,
+        'retry_limit'        => 5,
+        'debug'              => false,
+        'retryer'            => array(
+            'type' => 'file',
+            'path' => null,
+        ),
         // SoapClient
-        'soap_version' => null,
-        'compression'  => null,
-        'encoding'     => 'UTF-8',
-        'trace'        => true,
-        'exceptions'   => true,
-        'cache_wsdl'   => null,
-        'user_agent'   => 'Bronto_Api <https://github.com/leek/bronto_service>',
-        'features'     => null,
+        'soap_version'       => null,
+        'compression'        => null,
+        'encoding'           => 'UTF-8',
+        'trace'              => false,
+        'exceptions'         => true,
+        'cache_wsdl'         => null,
+        'user_agent'         => 'Bronto_Api <https://github.com/leek/bronto_service>',
+        'features'           => null,
         'connection_timeout' => 30,
     );
 
@@ -58,8 +65,11 @@ class Bronto_Api
     protected $_authenticated = false;
 
     /**
-     * Constructor
-     *
+     * @var Bronto_Api_Retryer_RetryerInterface
+     */
+    protected $_retryer;
+
+    /**
      * @param string $token
      * @param array $options
      */
@@ -79,6 +89,11 @@ class Bronto_Api
 
         if (!empty($options)) {
             $this->setOptions($options);
+        }
+
+        // Turn on trace if debug is enabled
+        if ($this->_options['debug']) {
+            $this->_options['trace'] = true;
         }
 
         // Use SOAP 1.1 as default
@@ -157,6 +172,10 @@ class Bronto_Api
                     $exception = new Bronto_Api_Exception($exception);
                 }
             }
+        }
+
+        if ($exception->isRecoverable()) {
+
         }
 
         if ($this->getDebug()) {
@@ -285,11 +304,11 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
-     * @return Bronto_Api_Deliverygroup
+     * @return Bronto_Api_DeliveryGroup
      */
     public function getDeliveryGroupObject()
     {
-        return $this->getObject('deliverygroup');
+        return $this->getObject('deliveryGroup');
     }
 
     /**
@@ -315,11 +334,11 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
-     * @return Bronto_Api_Messagerule
+     * @return Bronto_Api_MessageRule
      */
     public function getMessageRuleObject()
     {
-        return $this->getObject('messagerule');
+        return $this->getObject('messageRule');
     }
 
     /**
@@ -346,7 +365,7 @@ class Bronto_Api
      * Lazy loads our API objects
      *
      * @param string $object
-     * @return Bronto_Api_Abstract
+     * @return Bronto_Api_Object
      */
     public function getObject($object)
     {
@@ -407,6 +426,27 @@ class Bronto_Api
     public function getDebug()
     {
         return $this->_options['debug'];
+    }
+
+    /**
+     * @param array $options
+     * @return Bronto_Api_Retryer_RetryerInterface
+     */
+    public function getRetryer(array $options = array())
+    {
+        if (!($this->_retryer instanceOf Bronto_Api_Retryer_RetryerInterface)) {
+            $options = array_merge($this->_options['retryer'], $options);
+            switch ($options['type']) {
+                case 'file':
+                    $this->_retryer = new Bronto_Api_Retryer_FileRetryer($options);
+                    break;
+                default:
+                    return false;
+                    break;
+            }
+        }
+
+        return $this->_retryer;
     }
 
     /**
@@ -486,5 +526,16 @@ class Bronto_Api
             return $this->_soapClient->__getLastResponseHeaders();
         }
         return '';
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        return array(
+            '_token',
+            '_options',
+        );
     }
 }

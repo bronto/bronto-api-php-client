@@ -8,12 +8,12 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     /**
      * API Object
      *
-     * @var Bronto_Api_Abstract
+     * @var Bronto_Api_Object
      */
     protected $_apiObject;
 
     /**
-     * @var Bronto_Api_Rowset_Abstract
+     * @var Bronto_Api_Rowset
      */
     protected $_rowset;
 
@@ -84,7 +84,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      *
      * @param array $config
      */
-    public function __construct(Bronto_Api_Rowset_Abstract $rowset)
+    public function __construct(Bronto_Api_Rowset $rowset)
     {
         $this->_apiObject = $rowset->getApiObject();
 
@@ -116,7 +116,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     }
 
     /**
-     * @return Bronto_Api_Abstract
+     * @return Bronto_Api_Object
      */
     public function getApiObject()
     {
@@ -184,7 +184,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      * Similar to the current() function for arrays in PHP
      * Required by interface Iterator.
      *
-     * @return Bronto_Api_Row_Abstract current element from the collection
+     * @return Bronto_Api_Row current element from the collection
      */
     public function current()
     {
@@ -192,7 +192,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
             return null;
         }
 
-        /* @var $row Bronto_Api_Row_Abstract */
+        /* @var $row Bronto_Api_Row */
         $row = $this->_rowset->current();
 
         if ($this->_type == self::TYPE_DATE) {

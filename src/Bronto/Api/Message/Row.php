@@ -6,12 +6,13 @@
  * @property string $status
  * @property string $messageFolderId
  * @property array $content
+ * @method Bronto_Api_Message_Row delete() delete()
  * @method Bronto_Api_Message getApiObject() getApiObject()
  */
 class Bronto_Api_Message_Row extends Bronto_Api_Row
 {
     /**
-     * @param Bronto_Api_Deliverygroup_Row|string $deliveryGroup
+     * @param Bronto_Api_DeliveryGroup_Row|string $deliveryGroup
      * @return bool
      */
     public function addToDeliveryGroup($deliveryGroup)
@@ -22,7 +23,7 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
         }
 
         $deliveryGroupId = $deliveryGroup;
-        if ($deliveryGroup instanceOf Bronto_Api_Deliverygroup_Row) {
+        if ($deliveryGroup instanceOf Bronto_Api_DeliveryGroup_Row) {
             if (!$deliveryGroup->id) {
                 $deliveryGroup = $deliveryGroup->read();
             }
@@ -34,14 +35,13 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
     }
 
     /**
-     * @param bool $returnData
      * @return Bronto_Api_Message_Row
      */
-    public function read($returnData = false)
+    public function read()
     {
         if ($this->id) {
             $params = array('id' => $this->id);
-        } else {
+        } elseif ($this->name) {
             $params = array(
                 'name' => array(
                     'value'    => $this->name,
@@ -50,7 +50,8 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
             );
         }
 
-        return parent::_read($params, $returnData);
+        parent::_read($params);
+        return $this;
     }
 
     /**
@@ -61,25 +62,19 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
     public function save($upsert = true, $refresh = false)
     {
         if (!$upsert) {
-            return parent::_save(false, $refresh);
+            parent::_save(false, $refresh);
         }
 
         try {
-            return parent::_save(true, $refresh);
+            parent::_save(true, $refresh);
         } catch (Bronto_Api_Message_Exception $e) {
             if ($e->getCode() === Bronto_Api_Message_Exception::MESSAGE_EXISTS) {
                 $this->_refresh();
-                return $this;
+            } else {
+                $this->getApiObject()->getApi()->throwException($e);
             }
-            $this->getApiObject()->getApi()->throwException($e);
         }
-    }
 
-    /**
-     * @return bool
-     */
-    public function delete()
-    {
-        return parent::_delete(array('id' => $this->id));
+        return $this;
     }
 }

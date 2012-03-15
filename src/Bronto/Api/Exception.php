@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ */
 class Bronto_Api_Exception extends Exception
 {
     const UNKNOWN_ERROR         = 101; // There was an unknown API error. Please try your request again shortly.
@@ -105,7 +108,7 @@ class Bronto_Api_Exception extends Exception
             $message = "{$code} : {$message}";
         }
 
-        if (!empty($tries)) {
+        if (!empty($tries) && $tries > 1) {
             $message .= " [Tried: {$tries}]";
         }
 

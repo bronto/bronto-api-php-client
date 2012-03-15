@@ -16,14 +16,13 @@ class Bronto_Api_Segment_Row extends Bronto_Api_Row implements Bronto_Api_Delive
     protected $_readOnly = true;
 
     /**
-     * @param bool $returnData
      * @return Bronto_Api_Segment_Row
      */
-    public function read($returnData = false)
+    public function read()
     {
         if ($this->id) {
             $params = array('id' => $this->id);
-        } else {
+        } elseif ($this->name) {
             $params = array(
                 'name' => array(
                     'value'    => $this->name,
@@ -32,7 +31,8 @@ class Bronto_Api_Segment_Row extends Bronto_Api_Row implements Bronto_Api_Delive
             );
         }
 
-        return parent::_read($params, $returnData);
+        parent::_read($params);
+        return $this;
     }
 
     /**

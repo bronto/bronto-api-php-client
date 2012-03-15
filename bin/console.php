@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+umask(0000);
+set_time_limit(0);
+
+if (file_exists($file = __DIR__.'/../autoload.php')) {
+    require_once $file;
+} elseif (file_exists($file = __DIR__.'/../autoload.php.dist')) {
+    require_once $file;
+}
+
+$application = new Console\Application();
+$application->getHelperSet()->set(new Console\Helper\ProgressHelper(), 'progress');
+$application->addCommands(array(
+    new Console\Command\Contacts\UpdateStatusCommand(),
+    new Console\Command\Lists\GetAllCommand(),
+));
+$application->run();

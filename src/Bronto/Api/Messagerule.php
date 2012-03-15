@@ -1,28 +1,29 @@
 <?php
 
 /**
- * @method Bronto_Api_Messagerule_Row createRow() createRow(array $data = array())
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/messageruleobject
+ *
+ * @method Bronto_Api_MessageRule_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_Messagerule extends Bronto_Api_Abstract
+class Bronto_Api_MessageRule extends Bronto_Api_Object
 {
     /**
      * The object name.
      *
      * @var string
      */
-    protected $_name = 'MessageRules';
+    protected $_name = 'MessageRule';
 
     /**
-     * @var string
+     * @var array
      */
-    protected $_rowClass = 'Bronto_Api_Messagerule_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Messagerule_Exception';
+    protected $_methods = array(
+        'addMessageRules'    => 'add',
+        'readMessageRules'   => 'read',
+        'updateMessageRules' => 'update',
+        'deleteMessageRules' => 'delete',
+    );
 
     /**
     * @param array $filter

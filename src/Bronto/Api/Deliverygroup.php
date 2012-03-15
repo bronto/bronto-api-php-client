@@ -1,13 +1,36 @@
 <?php
 
 /**
- * @method Bronto_Api_Deliverygroup_Row createRow() createRow(array $data = array())
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/deliverygroupobject
+ *
+ * @method Bronto_Api_DeliveryGroup_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
+class Bronto_Api_DeliveryGroup extends Bronto_Api_Object
 {
     /** Visibility */
     const VISIBILITY_INTERNAL = 'INTERNAL';
     const VISIBILITY_PUBLIC   = 'PUBLIC';
+
+    /**
+     * The object name.
+     *
+     * @var string
+     */
+    protected $_name = 'DeliveryGroup';
+
+    /**
+     * @var array
+     */
+    protected $_methods = array(
+        'addDeliveryGroup'         => 'add',
+        'readDeliveryGroups'       => 'read',
+        'updateDeliveryGroup'      => 'update',
+        'deleteDeliveryGroup'      => 'delete',
+        'addOrUpdateDeliveryGroup' => 'addOrUpdate',
+        'addToDeliveryGroup'       => true,
+        'deleteFromDeliveryGroup'  => true,
+    );
 
     /**
      * @var array
@@ -20,36 +43,8 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
     );
 
     /**
-     * The object name.
-     *
-     * @var string
-     */
-    protected $_name     = 'DeliveryGroup';
-    protected $_nameRead = 'DeliveryGroups';
-
-    /**
-     * Whether or not this object has an addOrUpdate method
-     *
-     * @var bool
-     */
-    protected $_hasUpsert = true;
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Deliverygroup_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Deliverygroup_Exception';
-
-    /**
      * @param array $filter
      * @param int $pageNumber
-     * @throws Bronto_Api_Deliverygroup_Exception
      * @return Bronto_Api_Rowset
      */
     public function readAll(array $filter = array(), $pageNumber = 1)
@@ -65,7 +60,7 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
      * @param array $deliveryIds
      * @param array $messageIds
      * @param array $messageRuleIds
-     * @return bool
+     * @return Bronto_Api_Rowset
      */
     public function addToDeliveryGroup($deliveryGroupId, array $deliveryIds = array(), array $messageIds = array(), array $messageRuleIds = array())
     {
@@ -85,6 +80,6 @@ class Bronto_Api_Deliverygroup extends Bronto_Api_Abstract
             $data['messageRuleIds'] = $messageRuleIds;
         }
 
-        return $this->_doRequest('addToDeliveryGroup', $data);
+        return $this->doRequest('addToDeliveryGroup', $data);
     }
 }

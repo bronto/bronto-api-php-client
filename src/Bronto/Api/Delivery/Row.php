@@ -65,6 +65,8 @@
  * @property-read int $viewsDigg
  * @property-read int $viewsMySpace
  * @property-read int $numSocialViews
+ * @method Bronto_Api_Delivery_Row read() read()
+ * @method Bronto_Api_Delivery_Row delete() delete()
  * @method Bronto_Api_Delivery getApiObject() getApiObject()
  */
 class Bronto_Api_Delivery_Row extends Bronto_Api_Row
@@ -143,7 +145,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     }
 
     /**
-     * @param Bronto_Api_Deliverygroup_Row|string $$deliveryGroup
+     * @param Bronto_Api_DeliveryGroup_Row|string $$deliveryGroup
      * @return bool
      */
     public function addToDeliveryGroup($deliveryGroup)
@@ -154,7 +156,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
         }
 
         $deliveryGroupId = $deliveryGroup;
-        if ($deliveryGroup instanceOf Bronto_Api_Deliverygroup_Row) {
+        if ($deliveryGroup instanceOf Bronto_Api_DeliveryGroup_Row) {
             if (!$deliveryGroup->id) {
                 $deliveryGroup = $deliveryGroup->read();
             }
@@ -216,20 +218,12 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     }
 
     /**
-     * @param bool $returnData
-     * @return Bronto_Api_Delivery_Row
-     */
-    public function read($returnData = false)
-    {
-        return parent::_read(array('id' => $this->id), $returnData);
-    }
-
-    /**
      * @param bool $refresh
      * @return Bronto_Api_Delivery_Row
      */
     public function save($refresh = false)
     {
-        return parent::_save(false, $refresh);
+        parent::_save(false, $refresh);
+        return $this;
     }
 }

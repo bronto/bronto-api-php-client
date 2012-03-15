@@ -1,34 +1,24 @@
 <?php
 
 /**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/conversionobject
+ *
  * @method Bronto_Api_Conversion_Row createRow() createRow(array $data = array())
  */
-class Bronto_Api_Conversion extends Bronto_Api_Abstract
+class Bronto_Api_Conversion extends Bronto_Api_Object
 {
     /**
-     * The object name.
-     *
-     * @var string
+     * @var array
      */
-    protected $_name     = 'Conversion';
-    protected $_nameRead = 'Conversions';
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Conversion_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Conversion_Exception';
+    protected $_methods = array(
+        'addConversion'   => 'add',
+        'readConversions' => 'read',
+    );
 
     /**
      * @param array $filter
      * @param int $pageNumber
-     * @throws Bronto_Api_Conversion_Exception
      * @return Bronto_Api_Rowset
      */
     public function readAll(array $filter = array(), $pageNumber = 1)

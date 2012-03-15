@@ -1,9 +1,12 @@
 <?php
 
 /**
+ * @author Chris Jones <chris.jones@bronto.com>
+ * @link http://community.bronto.com/api/v4/objects/general/contactobject
+ *
  * @method Bronto_Api_Contact_Row createRow() createRow(array $data)
  */
-class Bronto_Api_Contact extends Bronto_Api_Abstract
+class Bronto_Api_Contact extends Bronto_Api_Object
 {
     /** Status */
     const STATUS_ACTIVE        = 'active';
@@ -23,6 +26,21 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
     const SOURCE_API        = 'api';
     const SOURCE_WEBFORM    = 'webform';
     const SOURCE_SALESFORCE = 'sforcereport';
+
+    /**
+     * @var array
+     */
+    protected $_methods = array(
+        'addContacts'           => 'add',
+        'readContacts'          => 'read',
+        'updateContacts'        => 'update',
+        'deleteContacts'        => 'delete',
+        'addOrUpdateContacts'   => 'addOrUpdate',
+        'addToList'             => true,
+        'removeFromList'        => true,
+        'addContactsToWorkflow' => true,
+        'addContactEvent'       => true,
+    );
 
     /**
      * @var array
@@ -50,32 +68,6 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
     );
 
     /**
-     * The object name.
-     *
-     * @var string
-     */
-    protected $_name = 'Contacts';
-
-    /**
-     * Whether or not this object has an addOrUpdate method
-     *
-     * @var bool
-     */
-    protected $_hasUpsert = true;
-
-    /**
-     * @var string
-     */
-    protected $_rowClass = 'Bronto_Api_Contact_Row';
-
-    /**
-     * Classname for exceptions
-     *
-     * @var string
-     */
-    protected $_exceptionClass = 'Bronto_Api_Contact_Exception';
-
-    /**
      * @param array $filter
      * @param array $fields
      * @param bool $includeLists
@@ -89,6 +81,6 @@ class Bronto_Api_Contact extends Bronto_Api_Abstract
         $params['fields']       = $fields;
         $params['includeLists'] = (bool) $includeLists;
         $params['pageNumber']   = (int)  $pageNumber;
-        return $this->read($params);
+        return parent::read($params);
     }
 }
