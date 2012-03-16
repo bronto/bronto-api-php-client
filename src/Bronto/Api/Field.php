@@ -24,10 +24,10 @@ class Bronto_Api_Field extends Bronto_Api_Object
      * @var array
      */
     protected $_methods = array(
-        'addFields'           => 'add',
-        'readFields'          => 'read',
-        'updateFields'        => 'update',
-        'deleteFields'        => 'delete',
+        'addFields'    => 'add',
+        'readFields'   => 'read',
+        'updateFields' => 'update',
+        'deleteFields' => 'delete',
     );
 
     /**
@@ -87,5 +87,47 @@ class Bronto_Api_Field extends Bronto_Api_Object
             return $this->_objectCache[$index];
         }
         return false;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function normalize($name)
+    {
+        $name = strtolower($name);
+        $name = preg_replace("/[^a-z\d_]/i", '_', $name);
+        $name = trim(preg_replace('/_+/', '_', $name), '_');
+
+        return $name;
+    }
+
+    /**
+     * @param string $name
+     * @param array $values
+     */
+    public function guessType($name, array $values)
+    {
+        // Check predefined fields first
+        if (isset(Bronto_Api_Field_Predefined::$normalizerMap[$name])) {
+            if (isset(Bronto_Api_Field_Predefined::$predefinedFields[$name])) {
+                return array(
+                    $name => Bronto_Api_Field_Predefined::$predefinedFields[$name]
+                );
+            }
+        } else {
+            foreach (Bronto_Api_Field_Predefined::$normalizerMap as $key => $synonyms) {
+                if (in_array($name, $synonyms)) {
+                    return array(
+                        $key => Bronto_Api_Field_Predefined::$predefinedFields[$key]
+                    );
+                }
+            }
+        }
+
+        // Try to type guess
+        $typeGuesser = new Bronto_Api_Field_TypeGuesser();
+        $typeGuesser->processValues($values);
+        return $typeGuesser->getChoice();
     }
 }

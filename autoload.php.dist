@@ -3,6 +3,10 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('BASE_PATH', dirname(__FILE__));
 
+if (file_exists($file = __DIR__.'/functions.php')) {
+    require_once $file;
+}
+
 require_once BASE_PATH . '/vendor/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
 require_once BASE_PATH . '/vendor/symfony/src/Symfony/Component/ClassLoader/ApcUniversalClassLoader.php';
 

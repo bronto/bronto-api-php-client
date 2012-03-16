@@ -8,6 +8,9 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @method \Console\Application getApplication() getApplication()
+ */
 class UpdateStatusCommand extends Command
 {
     protected function configure()
@@ -15,12 +18,12 @@ class UpdateStatusCommand extends Command
         $this->setName('contacts:update:status')
              ->setDescription('Updates the status of Contact records.')
              ->setDefinition(array(
-                 new InputOption('to_status', '-to', InputOption::VALUE_REQUIRED, 'Status to update to (optional)'),
-                 new InputOption('from_status', '-from', InputOption::VALUE_REQUIRED, 'Status to filter by (optional)'),
-                 new InputOption('created_before', null, InputOption::VALUE_REQUIRED, 'Created date to filter by (optional)'),
-                 new InputOption('created_after', null, InputOption::VALUE_REQUIRED, 'Created date to filter by (optional)'),
-                 new InputOption('list', '-l', InputOption::VALUE_REQUIRED, 'List Name or ID to filter by (optional)'),
-                 new InputOption('token', '-t', InputOption::VALUE_OPTIONAL, 'Bronto Token ID (optional)')
+                 new InputOption('to_status', '-to', InputOption::VALUE_REQUIRED, 'Status to update to'),
+                 new InputOption('from_status', '-from', InputOption::VALUE_REQUIRED, 'Status to filter by'),
+                 new InputOption('created_before', null, InputOption::VALUE_REQUIRED, 'Created date to filter by'),
+                 new InputOption('created_after', null, InputOption::VALUE_REQUIRED, 'Created date to filter by'),
+                 new InputOption('list', '-l', InputOption::VALUE_REQUIRED, 'List Name or ID to filter by'),
+                 new InputOption('token', '-t', InputOption::VALUE_REQUIRED, 'Bronto Token ID')
              ));
 
         parent::configure();
@@ -38,14 +41,10 @@ class UpdateStatusCommand extends Command
         /* @var $dialog \Symfony\Component\Console\Helper\DialogHelper */
         $dialog = $this->getHelperSet()->get('dialog');
 
-        $force = (bool) $input->getOption('force');
-
         //
         // Token
         if (!$token = $input->getOption('token')) {
-            if (!$force) {
-                $token = $dialog->ask($output, 'Enter Bronto API Token: ', null);
-            }
+            $token = $dialog->ask($output, 'Enter Bronto API Token: ', null);
             if (empty($token)) {
                 throw new \InvalidArgumentException('Bronto API Token is required');
             }
@@ -53,7 +52,7 @@ class UpdateStatusCommand extends Command
         }
 
         /* @var $bronto \Bronto_Api */
-        $bronto = $this->getApplication()->getBootstrap()->getBronto();
+        $bronto = $this->getApplication()->getApi();
         $bronto->setToken($token);
         $bronto->login();
 
@@ -67,7 +66,7 @@ class UpdateStatusCommand extends Command
         // From Status
         if (!$fromStatus = $input->getOption('from_status')) {
             $statusList = $contactObject->getOptionValues('status');
-            if (!$force && $dialog->askConfirmation($output, '<question>Do you want to filter Contacts by their current status? (y/n)</question> ', false)) {
+            if ($dialog->askConfirmation($output, '<question>Do you want to filter Contacts by their current status? (y/n)</question> ', false)) {
                 $output->writeln('');
                 $output->writeln(sprintf('<info>Available status values: %s</info>', implode(', ', $statusList)));
                 $fromStatus = $dialog->ask($output, 'Enter status to filter by: ', null);
@@ -91,7 +90,7 @@ class UpdateStatusCommand extends Command
         //
         // List
         if (!$list = $input->getOption('list')) {
-            if (!$force && $dialog->askConfirmation($output, '<question>Do you want to filter Contacts by a specific list? (y/n)</question> ', false)) {
+            if ($dialog->askConfirmation($output, '<question>Do you want to filter Contacts by a specific list? (y/n)</question> ', false)) {
                 $output->writeln('');
                 $list = $dialog->ask($output, 'Enter list name or ID to filter by: ', null);
                 $output->writeln('');
@@ -114,7 +113,7 @@ class UpdateStatusCommand extends Command
         //
         // Created After
         if (!$createdAfter = $input->getOption('created_after')) {
-            if (!$force && $dialog->askConfirmation($output, '<question>Do you want to filter Contacts created AFTER a specific date? (y/n)</question> ', false)) {
+            if ($dialog->askConfirmation($output, '<question>Do you want to filter Contacts created AFTER a specific date? (y/n)</question> ', false)) {
                 $output->writeln('');
                 $createdAfter = $dialog->ask($output, 'Enter created AFTER date filter by (e.g. ' . date('Y-m-d', time() - (86400 * 7)) . '): ', null);
                 $output->writeln('');
@@ -133,7 +132,7 @@ class UpdateStatusCommand extends Command
         //
         // Created Before
         if (!$createdBefore = $input->getOption('created_before')) {
-            if (!$force && $dialog->askConfirmation($output, '<question>Do you want to filter Contacts created BEFORE a specific date? (y/n)</question> ', false)) {
+            if ($dialog->askConfirmation($output, '<question>Do you want to filter Contacts created BEFORE a specific date? (y/n)</question> ', false)) {
                 $output->writeln('');
                 $createdBefore = $dialog->ask($output, 'Enter created BEFORE date filter by (e.g. ' . date('Y-m-d') . '): ', null);
             }
@@ -219,7 +218,7 @@ class UpdateStatusCommand extends Command
 
         //
         // Confirm
-        if (!$force && !$dialog->askConfirmation($output, sprintf("<question>Are you sure (y/n)? </question> "), false)) {
+        if (!$dialog->askConfirmation($output, sprintf("<question>Are you sure (y/n)? </question> "), false)) {
             return;
         }
 
@@ -231,9 +230,7 @@ class UpdateStatusCommand extends Command
                 break;
             }
 
-            if (!$force) {
-                $output->writeln('');
-            }
+            $output->writeln('');
             $output->writeln(sprintf('Processing page %d - %d Contact(s)...', $contactsPage, $contacts->count()));
 
             $internalCounter = 0;

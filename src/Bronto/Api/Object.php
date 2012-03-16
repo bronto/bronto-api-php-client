@@ -276,14 +276,15 @@ abstract class Bronto_Api_Object
 
         $result = isset($result->return) ? (array) $result->return : array();
 
-        return $this->_parseResponse($result);
+        return $this->_parseResponse($result, $data);
     }
 
     /**
      * @param array $result
+     * @param array $params
      * @return Bronto_Api_Rowset
      */
-    public function _parseResponse(array $result)
+    public function _parseResponse(array $result, array $params = array())
     {
         $data = array();
         if (isset($result['results'])) {
@@ -300,7 +301,7 @@ abstract class Bronto_Api_Object
             'data'      => $data,
             'errors'    => isset($result['errors']) ? (array) $result['errors'] : array(),
             'stored'    => true,
-            'params'    => $data,
+            'params'    => $params,
         );
 
         $rowsetClass = $this->getRowsetClass();

@@ -180,10 +180,13 @@ class ProgressHelper extends Helper
      * @param integer $step   Number of steps to advance
      * @param Boolean $redraw Whether to redraw or not
      */
-    public function advance($step = 1, $redraw = true)
+    public function advance($step = 1, $redraw = false)
     {
+        if ($this->current === 0) {
+            $redraw = true;
+        }
         $this->current += $step;
-        if ($redraw && $this->current % $this->options['redrawFreq'] === 0) {
+        if ($redraw || $this->current % $this->options['redrawFreq'] === 0) {
             $this->display();
         }
     }
@@ -193,12 +196,14 @@ class ProgressHelper extends Helper
      */
     public function finish()
     {
-        if (!$this->max) {
-            $this->options['barChar'] = $this->options['barCharOriginal'];
-            $this->display(true);
+        if ($this->started) {
+            if (!$this->max) {
+                $this->options['barChar'] = $this->options['barCharOriginal'];
+                $this->display(true);
+            }
+            $this->started = false;
+            $this->output = null;
         }
-        $this->started = false;
-        $this->output = null;
     }
 
     /**
@@ -212,7 +217,7 @@ class ProgressHelper extends Helper
         $vars    = array();
         $percent = 0;
         if ($this->max > 0) {
-            $percent = (double) $this->current / $this->max;
+            $percent = (double) round($this->current / $this->max, 1);
         }
 
         if (isset($this->formatVars['bar'])) {

@@ -1,25 +1,26 @@
 <?php
 
-namespace Console\Command\Lists;
+namespace Console\Command\Fields;
 
 use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
-    Symfony\Component\Console\Output\OutputInterface;
+    Symfony\Component\Console\Output\OutputInterface,
+    Console\Helper\ProgressHelper;
 
 /**
  * @method \Console\Application getApplication() getApplication()
  */
-class GetAllCommand extends Command
+class DeleteAllCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('lists:get:all')
-            ->setDescription('Returns all Lists')
+            ->setName('fields:delete:all')
+            ->setDescription('Deletes all fields')
             ->setDefinition(array(
-                 new InputOption('token', '-t', InputOption::VALUE_REQUIRED, 'Bronto Token ID')
+                new InputOption('token', '-t', InputOption::VALUE_REQUIRED, 'Bronto Token ID'),
             ));
 
         parent::configure();
@@ -37,6 +38,9 @@ class GetAllCommand extends Command
         /* @var $dialog \Symfony\Component\Console\Helper\DialogHelper */
         $dialog = $this->getHelperSet()->get('dialog');
 
+        /* @var $progress \Console\Helper\ProgressHelper */
+        $progress = $this->getHelperSet()->get('progress');
+
         //
         // Token
         if (!$token = $input->getOption('token')) {
@@ -52,31 +56,22 @@ class GetAllCommand extends Command
         $bronto->setToken($token);
         $bronto->login();
 
-        /* @var $listObject \Bronto_Api_List */
-        $listObject = $bronto->getListObject();
-
-        // Get Lists
-        $listCounter = 0;
-        $listPage    = 1;
-        while ($lists = $listObject->readAll(array(), array(), false, $listPage)) {
-            if (!$lists->count()) {
-                break;
+        $iterator = $bronto->getFieldObject()->readAll()->iterate();
+        foreach ($iterator as $field /* @var $field Bronto_Api_Field_Row */) {
+            if ($iterator->isNewPage()) {
+                $progress->finish();
+                $output->writeln('');
+                $progress->start($output, $iterator->count());
             }
 
-            $output->writeln(sprintf('Processing page %d - %d List(s)...', $listPage, $lists->count()));
-
-            $internalCounter = 0;
-            foreach ($lists as $list /* @var $contact Bronto_Api_List_Row */) {
-                $output->writeln(' - ' . $list->name);
-                $listCounter++;
-                $internalCounter++;
-            }
-
-            $listPage++;
-            break;
+            $field->delete();
+            $progress->advance();
         }
 
+        $progress->finish();
+        
         $output->writeln('');
-        $output->writeln('Complete!');
+        $output->writeln('');
+        $output->writeln('<info>Done!</info>');
     }
 }
