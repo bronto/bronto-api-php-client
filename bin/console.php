@@ -13,6 +13,7 @@ $application = new Console\Application();
 $application->getHelperSet()->set(new Console\Helper\ProgressHelper(), 'progress');
 $application->addCommands(array(
     new Console\Command\Contacts\UpdateStatusCommand(),
+    new Console\Command\Contacts\LoadFromCSVCommand(),
     new Console\Command\Lists\GetAllCommand(),
     new Console\Command\Fields\LoadFromCSVCommand(),
     new Console\Command\Fields\DeleteAllCommand(),

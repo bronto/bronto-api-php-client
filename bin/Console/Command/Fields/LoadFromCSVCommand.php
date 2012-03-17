@@ -94,12 +94,11 @@ class LoadFromCSVCommand extends Command
 
         $progress->finish();
         $output->writeln('');
-        $output->writeln('');
 
         // Cleanup...
         unset($count, $bytes, $headers, $filesize);
 
-        /* @var $fieldObject Bronto_Api_Field */
+        /* @var $fieldObject \Bronto_Api_Field */
         $fieldObject = $bronto->getFieldObject();
 
         $fails = 0;
@@ -118,6 +117,7 @@ class LoadFromCSVCommand extends Command
                     if (isset($predefinedOptions['options'])) {
                         $field->options = $predefinedOptions['options'];
                     }
+                    break;
                 }
             } else {
                 $field->name  = $normalizedName;
