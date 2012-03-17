@@ -1,5 +1,9 @@
 <?php
 
+namespace Bronto\Tests;
+
+use \Bronto_Api;
+
 /**
  * @group api
  */

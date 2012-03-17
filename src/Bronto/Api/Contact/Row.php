@@ -75,11 +75,20 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
             if ($e->getCode() === Bronto_Api_Contact_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
             } else {
+                $e->appendToMessage("(Email: {$this->email})");
                 $this->getApiObject()->getApi()->throwException($e);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * @return Bronto_Api_Contact_Row
+     */
+    public function persist()
+    {
+        return parent::_persist('addOrUpdate', $this->email);
     }
 
     /**
@@ -91,12 +100,32 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      */
     public function setField($field, $value)
     {
+        if (empty($value) && $value === "0") {
+            return;
+        }
+
         $fieldId = $field;
         if ($field instanceOf Bronto_Api_Field_Row) {
             if (!$field->id) {
                 $field = $field->read();
             }
             $fieldId = $field->id;
+        }
+
+        switch ($field->type) {
+            case Bronto_Api_Field::TYPE_DATE:
+                if ($value instanceOf DateTime) {
+                    $value = date('c', $value->getTimestamp());
+                } else {
+                    $value = date('c', strtotime($value));
+                }
+                break;
+            case Bronto_Api_Field::TYPE_INTEGER:
+                $value = (int) $value;
+                break;
+            case Bronto_Api_Field::TYPE_FLOAT:
+                $value = (float) $value;
+                break;
         }
 
         $field = array(

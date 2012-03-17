@@ -2,6 +2,12 @@
 
 /**
  * @author Chris Jones <chris.jones@bronto.com>
+ *
+ * @method Bronto_Api_Rowset add() add(array $data)
+ * @method Bronto_Api_Rowset addOrUpdate() addOrUpdate(array $data)
+ * @method Bronto_Api_Rowset update() update(array $data)
+ * @method Bronto_Api_Rowset delete() delete(array $data)
+ * @method Bronto_Api_Rowset read() read(array $data)
  */
 abstract class Bronto_Api_Object
 {
@@ -13,11 +19,15 @@ abstract class Bronto_Api_Object
     protected $_api;
 
     /**
+     * Various options for this object
+     *
      * @var array
      */
     protected $_options = array();
 
     /**
+     * API Methods this object supports
+     *
      * @var array
      */
     protected $_methods = array();
@@ -28,7 +38,7 @@ abstract class Bronto_Api_Object
     protected $_methodsByType = array();
 
     /**
-     * The object name.
+     * The object name
      *
      * @var string
      */
@@ -49,28 +59,47 @@ abstract class Bronto_Api_Object
      *
      * @var string
      */
-    protected $_rowClass = 'Bronto_Api_Row';
+    protected $_rowClass;
 
     /**
      * Classname for rowset
      *
      * @var string
      */
-    protected $_rowsetClass = 'Bronto_Api_Rowset';
+    protected $_rowsetClass;
 
     /**
      * Classname for exceptions
      *
      * @var string
      */
-    protected $_exceptionClass = 'Bronto_Api_Exception';
+    protected $_exceptionClass;
 
     /**
+     * @var string
+     */
+    protected $_defaultRowClass = 'Bronto_Api_Row';
+
+    /**
+     * @var string
+     */
+    protected $_defaultRowsetClass = 'Bronto_Api_Rowset';
+
+    /**
+     * @var string
+     */
+    protected $_defaultExceptionClass = 'Bronto_Api_Exception';
+
+    /**
+     * How to iterate this object (page/date)
+     *
      * @var int
      */
     protected $_iteratorType = Bronto_Api_Rowset_Iterator::TYPE_PAGE;
 
     /**
+     * The key to use when paginating
+     *
      * @var string
      */
     protected $_iteratorParam = 'pageNumber';
@@ -81,19 +110,34 @@ abstract class Bronto_Api_Object
     protected $_iteratorRowField;
 
     /**
+     * Can this object be paginated?
+     *
      * @var bool
      */
     protected $_canIterate = true;
 
     /**
+     * Stored last request method
+     *
      * @var string
      */
     protected $_lastRequestMethod;
 
     /**
+     * Stored last request data
+     *
      * @var array
      */
     protected $_lastRequestData;
+
+    /**
+     * @var array
+     */
+    protected $_writeCache = array(
+        'add'         => array(),
+        'update'      => array(),
+        'addOrUpdate' => array(),
+    );
 
     /**
      * Constructor
@@ -111,6 +155,13 @@ abstract class Bronto_Api_Object
             if (is_string($type)) {
                 $this->_methodsByType[$type] = $method;
             }
+        }
+
+        if (!isset($this->_methodsByType['addOrUpdate'])) {
+            unset($this->_writeCache['addOrUpdate']);
+        } else {
+            unset($this->_writeCache['add']);
+            unset($this->_writeCache['update']);
         }
 
         $this->init();
@@ -141,74 +192,88 @@ abstract class Bronto_Api_Object
         );
 
         $rowClass = $this->getRowClass();
-        if (!class_exists($rowClass)) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass("Cannot find Row class: {$rowClass}");
-        }
-
         return new $rowClass($config);
     }
 
     /**
+     * @param string $type
      * @param array $data
-     * @return Bronto_Api_Rowset
+     * @param mixed $index
+     * @return Bronto_Api_Object
      */
-    public function add(array $data = array())
+    public function addToWriteCache($type, array $data, $index = false)
     {
-        $method = $this->_methodsByType['add'];
-        if (array_values($data) !== $data) {
-            $data = array($data);
+        if ($index) {
+            $this->_writeCache[$type][$index] = $data;
+        } else {
+            $this->_writeCache[$type][] = $data;
         }
-        return $this->doRequest($method, $data, true);
+        return $this;
     }
 
     /**
-     * @param array $data
-     * @return Bronto_Api_Rowset
+     * @return array
      */
-    public function update(array $data = array())
+    public function getWriteCache()
     {
-        $method = $this->_methodsByType['update'];
-        if (array_values($data) !== $data) {
-            $data = array($data);
-        }
-        return $this->doRequest($method, $data, true);
+        return $this->_writeCache;
     }
 
     /**
-     * @param array $data
-     * @return Bronto_Api_Rowset
+     * @return int
      */
-    public function addOrUpdate(array $data = array())
+    public function getWriteCacheSize()
     {
-        $method = $this->_methodsByType['addOrUpdate'];
-        if (array_values($data) !== $data) {
-            $data = array($data);
+        $total = 0;
+        foreach ($this->_writeCache as $type => $data) {
+            $total += count($this->_writeCache[$type]);
         }
-        return $this->doRequest($method, $data, true);
+        return $total;
     }
 
     /**
-     * @param array $data
-     * @return Bronto_Api_Rowset
+     * Flush the write cache
+     * @return Bronto_Api_Rowset|array
      */
-    public function delete(array $data = array())
+    public function flush()
     {
-        $method = $this->_methodsByType['delete'];
-        if (array_values($data) !== $data) {
-            $data = array($data);
+        $result = array();
+        foreach ($this->_writeCache as $type => $data) {
+            if (!empty($data)) {
+                $result[$type] = $this->{$type}(array_values($data));
+                $this->_writeCache[$type] = array();
+            }
         }
-        return $this->doRequest($method, $data, true);
+        return count($result) === 1 ? reset($result) : $result;
     }
 
     /**
-     * @param array $data
+     * @param string $name
+     * @param array $arguments
      * @return Bronto_Api_Rowset
      */
-    public function read(array $data = array())
+    public function __call($name, $arguments)
     {
-        $method = $this->_methodsByType['read'];
-        return $this->doRequest($method, $data, false);
+        switch ($name) {
+            case 'add':
+            case 'update':
+            case 'delete':
+            case 'addOrUpdate':
+                $data   = $arguments[0];
+                $method = $this->_methodsByType[$name];
+                if (array_values($data) !== $data) {
+                    $data = array($data);
+                }
+                return $this->doRequest($method, $data, true);
+                break;
+            case 'read':
+                $data   = $arguments[0];
+                $method = $this->_methodsByType[$name];
+                return $this->doRequest($method, $data, false);
+                break;
+        }
+
+        throw new BadMethodCallException("The method {$name} does not exist");
     }
 
     /**
@@ -275,7 +340,6 @@ abstract class Bronto_Api_Object
         } while (!$success && $tries <= $maxTries);
 
         $result = isset($result->return) ? (array) $result->return : array();
-
         return $this->_parseResponse($result, $data);
     }
 
@@ -305,11 +369,6 @@ abstract class Bronto_Api_Object
         );
 
         $rowsetClass = $this->getRowsetClass();
-        if (!class_exists($rowsetClass)) {
-            $exceptionClass = $this->getExceptionClass();
-            throw new $exceptionClass("Cannot find Rowset class: {$rowsetClass}");
-        }
-
         return new $rowsetClass($config);
     }
 
@@ -349,11 +408,13 @@ abstract class Bronto_Api_Object
      */
     public function getRowClass()
     {
-        if ($this->_rowClass === 'Bronto_Api_Row') {
+        if ($this->_rowClass === null) {
             $className = get_class($this);
-            $rowClass = "{$className}_Row";
+            $rowClass  = "{$className}_Row";
             if (class_exists($rowClass)) {
                 $this->_rowClass = $rowClass;
+            } else {
+                $this->_rowClass = $this->_defaultRowClass;
             }
         }
 
@@ -365,11 +426,13 @@ abstract class Bronto_Api_Object
      */
     public function getRowsetClass()
     {
-        if ($this->_rowsetClass === 'Bronto_Api_Rowset') {
+        if ($this->_rowsetClass === null) {
             $className = get_class($this);
             $rowsetClass = "{$className}_Rowset";
             if (class_exists($rowsetClass)) {
                 $this->_rowsetClass = $rowsetClass;
+            } else {
+                $this->_rowsetClass = $this->_defaultRowsetClass;
             }
         }
 
@@ -381,11 +444,13 @@ abstract class Bronto_Api_Object
      */
     public function getExceptionClass()
     {
-        if ($this->_exceptionClass === 'Bronto_Api_Exception') {
+        if ($this->_exceptionClass === null) {
             $className = get_class($this);
             $exceptionClass = "{$className}_Exception";
             if (class_exists($exceptionClass)) {
                 $this->_exceptionClass = $exceptionClass;
+            } else {
+                $this->_exceptionClass = $this->_defaultExceptionClass;
             }
         }
 

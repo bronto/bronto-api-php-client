@@ -162,7 +162,7 @@ class Bronto_Api
             if ($exception instanceOf Bronto_Api_Exception) {
                 // Good
             } else {
-                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode());
+                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode(), null, $e);
             }
         } else {
             if (is_string($exception)) {
@@ -172,10 +172,6 @@ class Bronto_Api
                     $exception = new Bronto_Api_Exception($exception);
                 }
             }
-        }
-
-        if ($exception->isRecoverable()) {
-
         }
 
         if ($this->getDebug()) {
@@ -367,7 +363,7 @@ class Bronto_Api
      * @param string $object
      * @return Bronto_Api_Object
      */
-    public function getObject($object)
+    protected function getObject($object)
     {
         $object = ucfirst($object);
 

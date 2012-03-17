@@ -1,5 +1,10 @@
 <?php
 
+namespace Bronto\Tests\Api\Retryer;
+
+use Bronto\Tests\AbstractTest;
+use \Bronto_Api_Exception;
+
 /**
  * @group retryer
  */
@@ -29,7 +34,7 @@ class FileRetryerTest extends AbstractTest
 
             // Throw some recoverable error
             throw new Bronto_Api_Exception('The API is currently undergoing maintenance', Bronto_Api_Exception::SHARD_OFFLINE);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($e->isRecoverable()) {
                 $filename = $this->retryer->store($contactObject);
             }

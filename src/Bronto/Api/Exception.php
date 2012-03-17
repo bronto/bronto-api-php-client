@@ -121,6 +121,22 @@ class Bronto_Api_Exception extends Exception
     }
 
     /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * @param string $text
+     */
+    public function appendToMessage($text)
+    {
+        $this->message .= " {$text}";
+    }
+
+    /**
      * @return bool
      */
     public function isRecoverable()

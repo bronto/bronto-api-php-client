@@ -49,6 +49,7 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
             if ($e->getCode() === Bronto_Api_Field_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
             } else {
+                $e->appendToMessage("(Name: {$this->name})");
                 $this->getApiObject()->getApi()->throwException($e);
             }
         }

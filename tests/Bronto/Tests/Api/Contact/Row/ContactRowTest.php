@@ -1,5 +1,10 @@
 <?php
 
+namespace Bronto\Tests\Api\Contact\Row;
+
+use Bronto\Tests\AbstractTest;
+use \Bronto_Api_Contact_Row;
+
 /**
  * @group row
  * @group contact
@@ -101,6 +106,22 @@ class ContactRowTest extends AbstractTest
         $this->assertEquals(1, count($contact->getData()));
     }
 
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     * @covers Bronto_Api_Contact_Exception::__construct
+     * @expectedException Bronto_Api_Contact_Exception
+     * @expectedExceptionCode 315
+     */
+    public function testSaveContactWhoIsOnSuppressionList()
+    {
+        /* @var $contact Bronto_Api_Contact_Row */
+        $contact = $this->getObject()->createRow();
+        $contact->email = 'kendrajanelle@mailinator.com';
+        $contact->save();
+
+        $this->assertEmpty($contact->id);
+        $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
+    }
 
     /**
      * @return Bronto_Api_Contact

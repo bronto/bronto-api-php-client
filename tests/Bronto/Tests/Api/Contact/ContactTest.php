@@ -1,5 +1,9 @@
 <?php
 
+namespace Bronto\Tests\Api\Contact;
+
+use Bronto\Tests\AbstractTest;
+
 /**
  * @group object
  * @group contact

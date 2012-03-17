@@ -233,6 +233,51 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     /**
      * @return Bronto_Api_Row
      */
+    public function persist()
+    {
+        if ($this->_readOnly === true) {
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot persist a %s record.", $this->getApiObject()->getName()));
+        }
+
+        $type = false;
+        if ($this->getApiObject()->hasMethodType('addOrUpdate')) {
+            $type = 'addOrUpdate';
+        } else {
+            if (empty($this->_cleanData)) {
+                $type = 'add';
+            } else {
+                $type = 'update';
+            }
+        }
+
+        return $this->_persist($type);
+    }
+
+    /**
+     * Persist an object for write caching
+     *
+     * @param string $type
+     * @param mixed $defaultIndex
+     * @return Bronto_Api_Row
+     */
+    public function _persist($type, $defaultIndex = false)
+    {
+        $data = array_intersect_key($this->_data, $this->_modifiedFields);
+        $tempPrimaryKey = $this->_primary;
+        if (!empty($this->{$tempPrimaryKey})) {
+            $index = $this->{$tempPrimaryKey};
+            $data  = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $data);
+        } else {
+            $index = $defaultIndex;
+        }
+
+        $this->getApiObject()->addToWriteCache($type, $data, $index);
+        return $this;
+    }
+
+    /**
+     * @return Bronto_Api_Row
+     */
     public function read()
     {
         $data = array();
