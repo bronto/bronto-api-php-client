@@ -32,7 +32,7 @@ class Bronto_Api
         'retry_limit'        => 5,
         'debug'              => false,
         'retryer'            => array(
-            'type' => 'file',
+            'type' => null,
             'path' => null,
         ),
         // SoapClient

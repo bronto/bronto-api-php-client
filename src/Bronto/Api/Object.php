@@ -321,7 +321,7 @@ abstract class Bronto_Api_Object
                 $exception      = new $exceptionClass($e->getMessage(), $e->getCode(), $tries, $e);
                 if (!$exception->isRecoverable() || $tries === $maxTries) {
                     if ($canUseRetryer && $exception->isRecoverable()) {
-                        if ($retryer = $this->getApi()->getRetryer(array('path' => TESTS_TEMP))) {
+                        if ($retryer = $this->getApi()->getRetryer()) {
                             $retryer->store($this);
                         }
                     }

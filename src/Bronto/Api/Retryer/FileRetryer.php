@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ */
 class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterface
 {
     /**
@@ -19,7 +22,7 @@ class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterf
 
     /**
      * @param string $filename
-     * @return string 
+     * @return string
      */
     public function getPath($filename = null)
     {
