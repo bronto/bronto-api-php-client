@@ -30,7 +30,7 @@ class Bronto_Api
         // Bronto
         'refresh_on_save'    => false,
         'retry_limit'        => 5,
-        'debug'              => false,
+        'debug'              => true,
         'retryer'            => array(
             'type' => null,
             'path' => null,
@@ -41,7 +41,7 @@ class Bronto_Api
         'encoding'           => 'UTF-8',
         'trace'              => false,
         'exceptions'         => true,
-        'cache_wsdl'         => null,
+        'cache_wsdl'         => false,
         'user_agent'         => 'Bronto_Api <https://github.com/leek/bronto_service>',
         'features'           => null,
         'connection_timeout' => 30,
@@ -107,7 +107,9 @@ class Bronto_Api
         }
 
         // Turn on the WSDL cache
-        if ($this->_options['cache_wsdl'] == null) {
+        if ($this->_options['cache_wsdl'] === false) {
+            $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
+        } elseif ($this->_options['cache_wsdl'] == null) {
             $this->_options['cache_wsdl'] = WSDL_CACHE_BOTH;
         }
 
@@ -363,7 +365,7 @@ class Bronto_Api
      * @param string $object
      * @return Bronto_Api_Object
      */
-    protected function getObject($object)
+    public function getObject($object)
     {
         $object = ucfirst($object);
 
