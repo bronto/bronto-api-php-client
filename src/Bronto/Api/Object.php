@@ -429,7 +429,7 @@ abstract class Bronto_Api_Object
         if ($this->_rowsetClass === null) {
             $className = get_class($this);
             $rowsetClass = "{$className}_Rowset";
-            if (class_exists($rowsetClass)) {
+            if (class_exists($rowsetClass, false)) {
                 $this->_rowsetClass = $rowsetClass;
             } else {
                 $this->_rowsetClass = $this->_defaultRowsetClass;
