@@ -76,9 +76,10 @@ class Bronto_Api_Activity extends Bronto_Api_Object
      * @param string $startDate
      * @param int $size
      * @param string|array $types
+     * @param string|array $contactIds
      * @return Bronto_Api_Rowset
      */
-    public function readAll($startDate = '2002-01-01T00:00:00+00:00', $size = 100, $types = array())
+    public function readAll($startDate = '2002-01-01T00:00:00+00:00', $size = 100, $types = array(), $contactIds = array())
     {
         $filter = array(
             'start' => $startDate,
@@ -90,6 +91,14 @@ class Bronto_Api_Activity extends Bronto_Api_Object
                 $filter['types'] = $types;
             } else {
                 $filter['types'] = array($types);
+            }
+        }
+
+        if (!empty($contactIds)) {
+            if (is_array($contactIds)) {
+                $filter['contactIds'] = $contactIds;
+            } else {
+                $filter['contactIds'] = array($contactIds, '0bba03e80000000000000000000003c2d448');
             }
         }
 
