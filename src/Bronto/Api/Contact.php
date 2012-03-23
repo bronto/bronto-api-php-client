@@ -74,13 +74,31 @@ class Bronto_Api_Contact extends Bronto_Api_Object
      * @param int $pageNumber
      * @return Bronto_Api_Rowset
      */
-    public function readAll(array $filter = array(), array $fields = array(), $includeLists = true, $pageNumber = 1)
+    public function readAll($filter = array(), $fields = array(), $includeLists = true, $pageNumber = 1)
     {
-        $params = array();
-        $params['filter']       = $filter;
-        $params['fields']       = $fields;
-        $params['includeLists'] = (bool) $includeLists;
-        $params['pageNumber']   = (int)  $pageNumber;
+        $params = array(
+            'filter'       => array(),
+            'fields'       => array(),
+            'includeLists' => (bool) $includeLists,
+            'pageNumber'   => (int) $pageNumber,
+        );
+
+        if (!empty($filter)) {
+            if (is_array($filter)) {
+                $params['filter'] = $filter;
+            } else {
+                $params['filter'] = array($filter);
+            }
+        }
+
+        if (!empty($fields)) {
+            if (is_array($fields)) {
+                $params['fields'] = $fields;
+            } else {
+                $params['fields'] = array($fields);
+            }
+        }
+
         return parent::read($params);
     }
 }

@@ -1,14 +1,9 @@
 <?php
 
-namespace Bronto\Tests\Api;
-
-use Bronto\Tests\AbstractTest;
-use \Bronto_Api_Rowset;
-
 /**
  * @group object
  */
-class ObjectTest extends AbstractTest
+class Bronto_Tests_Api_ObjectTest extends Bronto_Tests_AbstractTest
 {
     public function testFlushWithoutWork()
     {

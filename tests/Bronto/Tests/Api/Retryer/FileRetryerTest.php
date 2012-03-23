@@ -1,14 +1,9 @@
 <?php
 
-namespace Bronto\Tests\Api\Retryer;
-
-use Bronto\Tests\AbstractTest;
-use \Bronto_Api_Exception;
-
 /**
  * @group retryer
  */
-class FileRetryerTest extends AbstractTest
+class Bronto_Tests_Api_Retryer_FileRetryerTest extends Bronto_Tests_AbstractTest
 {
     /**
      * @var Bronto_Api_Retryer_FileRetryer
@@ -18,7 +13,7 @@ class FileRetryerTest extends AbstractTest
     public function setUp()
     {
         $tempPath = realpath(TESTS_BASEPATH . '/../../') . DIRECTORY_SEPARATOR . 'temp';
-        $this->retryer = $this->getApi()->getRetryer(array('path' => $tempPath));
+        $this->retryer = $this->getApi()->getRetryer(array('type' => 'file', 'path' => $tempPath));
     }
 
     /**

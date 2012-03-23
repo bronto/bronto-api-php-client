@@ -20,13 +20,13 @@ if (extension_loaded('apc')) {
 }
 
 $loader->registerNamespaces(array(
-    'Bronto\\Tests' => BASE_PATH . '/tests',
-    'Console'       => BASE_PATH . '/bin',
-    'Symfony'       => BASE_PATH . '/vendor/symfony/src',
+    'Console' => BASE_PATH . '/bin',
+    'Symfony' => BASE_PATH . '/vendor/symfony/src',
 ));
 
 $loader->registerPrefixes(array(
-    'Bronto_' => BASE_PATH . '/src',
+    'Bronto_Tests' => BASE_PATH . '/tests',
+    'Bronto_'      => BASE_PATH . '/src',
 ));
 
 $loader->register();

@@ -7,4 +7,4 @@ if (file_exists($file = __DIR__.'/../autoload.php')) {
 }
 
 define('TESTS_BASEPATH', realpath(dirname(__FILE__) . '/Bronto/Tests'));
-define('TEST_API_TOKEN', '1EA75F27-87EB-4E45-8D05-4CD1A035ED72');
+define('TEST_API_TOKEN', '4EEE0D9E-101E-4E15-99D5-DF4648199C18');

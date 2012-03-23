@@ -1,13 +1,9 @@
 <?php
 
-namespace Bronto\Tests;
-
-use \Bronto_Api;
-
 /**
  * @group api
  */
-class ApiTest extends \PHPUnit_Framework_TestCase
+class Bronto_Tests_ApiTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @covers Bronto_Api::login

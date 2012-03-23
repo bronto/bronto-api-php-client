@@ -164,7 +164,7 @@ class Bronto_Api
             if ($exception instanceOf Bronto_Api_Exception) {
                 // Good
             } else {
-                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode(), null, $e);
+                $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode(), null, $exception);
             }
         } else {
             if (is_string($exception)) {

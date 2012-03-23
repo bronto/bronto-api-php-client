@@ -1,15 +1,10 @@
 <?php
 
-namespace Bronto\Tests\Api\Contact\Row;
-
-use Bronto\Tests\AbstractTest;
-use \Bronto_Api_Contact_Row;
-
 /**
  * @group row
  * @group contact
  */
-class ContactRowTest extends AbstractTest
+class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
 {
     /**
      * @covers Bronto_Api_Contact_Row::save

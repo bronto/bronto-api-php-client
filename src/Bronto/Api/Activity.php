@@ -82,9 +82,19 @@ class Bronto_Api_Activity extends Bronto_Api_Object
     public function readAll($startDate = '2002-01-01T00:00:00+00:00', $size = 100, $types = array(), $contactIds = array())
     {
         $filter = array(
-            'start' => $startDate,
-            'size'  => (int) $size
+            'start'      => '2002-01-01T00:00:00+00:00',
+            'size'       => 100,
+            'types'      => $this->getOptionValues('trackingType'),
+            'contactIds' => array(),
         );
+
+        if (!empty($startDate)) {
+            $filter['start'] = $startDate;
+        }
+
+        if (!empty($size)) {
+            $filter['size'] = (int) $size;
+        }
 
         if (!empty($types)) {
             if (is_array($types)) {
@@ -98,7 +108,7 @@ class Bronto_Api_Activity extends Bronto_Api_Object
             if (is_array($contactIds)) {
                 $filter['contactIds'] = $contactIds;
             } else {
-                $filter['contactIds'] = array($contactIds, '0bba03e80000000000000000000003c2d448');
+                $filter['contactIds'] = array($contactIds);
             }
         }
 
