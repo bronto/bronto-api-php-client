@@ -18,7 +18,7 @@ class LoadFromCSVCommand extends Command
     {
         $this
             ->setName('contacts:load:csv')
-            ->setDescription('Creates fields based on the header of a CSV file')
+            ->setDescription('Loads contacts from a CSV file')
             ->setDefinition(array(
                 new InputOption('token', '-t', InputOption::VALUE_REQUIRED, 'Bronto Token ID'),
                 new InputOption('restart', null, InputOption::VALUE_REQUIRED, 'Restart from a specific point in CSV'),
