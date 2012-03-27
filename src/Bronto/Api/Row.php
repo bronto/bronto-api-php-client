@@ -428,15 +428,13 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
             throw new Bronto_Api_Row_Exception(sprintf("Cannot update this read-only %s record.", $this->getApiObject()->getName()));
         }
 
-        $diff = array_intersect_key($this->_data, $this->_modifiedFields);
-        $data = array();
-
-        if (count($diff) > 0) {
+        $data = array_intersect_key($this->_data, $this->_modifiedFields);
+        if (count($data) > 0) {
             $tempPrimaryKey = $this->_primary;
             if (!empty($this->{$tempPrimaryKey})) {
-                $diffData = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $diffData);
+                $data = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $data);
             }
-            $rowset = $this->getApiObject()->update(array($diffData));
+            $rowset = $this->getApiObject()->update(array($data));
 
             if ($rowset->hasErrors()) {
                 $error = $rowset->getError();
