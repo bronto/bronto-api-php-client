@@ -83,7 +83,7 @@ class Bronto_Api_Field extends Bronto_Api_Object
      */
     public function getFromCache($index)
     {
-        if (isset($this->_objectCache[$index])) {
+        if (isset($this->_objectCache[$index]) && $this->_objectCache[$index] instanceOf Bronto_Api_Field_Row) {
             return $this->_objectCache[$index];
         }
         return false;
