@@ -100,7 +100,11 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
         if (isset($config['stored']) && $config['stored'] === true) {
             $this->_cleanData = $this->_data;
         } else {
-            $this->_isLoaded = false;
+            $this->_isLoaded       = false;
+            $this->_cleanData      = array();
+            foreach ($this->_data as $key => $value) {
+                $this->_modifiedFields[$key] = true;
+            }
         }
 
         if (isset($config['readOnly']) && $config['readOnly'] === true) {

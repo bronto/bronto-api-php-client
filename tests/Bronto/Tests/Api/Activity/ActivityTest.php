@@ -8,6 +8,8 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
 {
     /**
      * @covers Bronto_Api_Activity::readAll
+     * @expectedException Bronto_Api_Activity_Exception
+     * @expectedExceptionCode 1204
      */
     public function testActivityContactIdFilter()
     {
@@ -22,6 +24,8 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
 
     /**
      * @covers Bronto_Api_Activity::readAll
+     * @expectedException Bronto_Api_Activity_Exception
+     * @expectedExceptionCode 1204
      */
     public function testActivityContactIdFilterWithEmptyType()
     {
@@ -36,6 +40,8 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
 
     /**
      * @covers Bronto_Api_Activity::readAll
+     * @expectedException Bronto_Api_Activity_Exception
+     * @expectedExceptionCode 1204
      */
     public function testActivityContactIdFilterWithType()
     {
