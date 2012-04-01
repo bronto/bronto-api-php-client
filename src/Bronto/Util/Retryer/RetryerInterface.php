@@ -1,6 +1,6 @@
 <?php
 
-interface Bronto_Api_Retryer_RetryerInterface
+interface Bronto_Util_Retryer_RetryerInterface
 {
     /**
      * @param Bronto_Api_Object $object

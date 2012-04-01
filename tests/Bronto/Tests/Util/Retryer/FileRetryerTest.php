@@ -1,23 +1,28 @@
 <?php
 
 /**
+ * @group util
  * @group retryer
  */
-class Bronto_Tests_Api_Retryer_FileRetryerTest extends Bronto_Tests_AbstractTest
+class Bronto_Tests_Uril_Retryer_FileRetryerTest extends Bronto_Tests_AbstractTest
 {
     /**
-     * @var Bronto_Api_Retryer_FileRetryer
+     * @var Bronto_Util_Retryer_FileRetryer
      */
     public $retryer;
 
     public function setUp()
     {
-        $tempPath = realpath(TESTS_BASEPATH . '/../../') . DIRECTORY_SEPARATOR . 'temp';
+        $tempPath = null;
+        if (defined('TEMP_PATH') && is_dir(TEMP_PATH)) {
+            $tempPath = TEMP_PATH;
+        }
+
         $this->retryer = $this->getApi()->getRetryer(array('type' => 'file', 'path' => $tempPath));
     }
 
     /**
-     * @covers Bronto_Api_Retryer_FileRetryer::store
+     * @covers Bronto_Util_Retryer_FileRetryer::store
      */
     public function testFileRetryerStore()
     {
@@ -42,7 +47,7 @@ class Bronto_Tests_Api_Retryer_FileRetryerTest extends Bronto_Tests_AbstractTest
     }
 
     /**
-     * @covers Bronto_Api_Retryer_FileRetryer::attempt
+     * @covers Bronto_Util_Retryer_FileRetryer::attempt
      * @depends testFileRetryerStore
      */
     public function testFileRetryerAttempt($filePath)

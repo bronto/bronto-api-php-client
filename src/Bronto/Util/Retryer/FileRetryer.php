@@ -3,7 +3,7 @@
 /**
  * @author Chris Jones <chris.jones@bronto.com>
  */
-class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterface
+class Bronto_Util_Retryer_FileRetryer implements Bronto_Util_Retryer_RetryerInterface
 {
     /**
      * @var string
@@ -15,8 +15,17 @@ class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterf
      */
     public function __construct(array $options = array())
     {
-        if (isset($options['path'])) {
-            $this->_path = $options['path'];
+        $this->_path = sys_get_temp_dir();
+
+        if (isset($options['path']) && !empty($options['path'])) {
+            if (@is_dir($options['path'])) {
+                $this->_path = $options['path'];
+            } else {
+                // Attempt to make it...
+                if (@mkdir($options['path'], 0766, true)) {
+                    $this->_path = $options['path'];
+                }
+            }
         }
     }
 
@@ -37,10 +46,10 @@ class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterf
     public function store(Bronto_Api_Object $object, $attempts = 0)
     {
         if (!@is_dir($this->_path) && !@mkdir($this->_path, 0777, true)) {
-            throw new Bronto_Api_Exception(sprintf('The Retryer path is not a directory: %s', $this->_path));
+            throw new Bronto_Util_RetryerException(sprintf('The Retryer path is not a directory: %s', $this->_path));
         } else {
             if (!@is_writable($this->_path)) {
-                throw new Bronto_Api_Exception(sprintf('The Retryer path is not a writable: %s', $this->_path));
+                throw new Bronto_Util_RetryerException(sprintf('The Retryer path is not a writable: %s', $this->_path));
             }
         }
 
@@ -52,9 +61,9 @@ class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterf
                 (int) $attempts
         );
         $filename = str_replace(' ', '', $filename);
-        $fh = fopen($this->_path . DIRECTORY_SEPARATOR . $filename, 'w');
+        $fh = @fopen($this->_path . DIRECTORY_SEPARATOR . $filename, 'w');
         $serialized = serialize($object);
-        $result = fwrite($fh, sprintf("<?php return unserialize('%s'); ?>", $serialized));
+        $result = @fwrite($fh, sprintf("<?php return unserialize('%s'); ?>", $serialized));
         @fclose($fh);
 
         return $result ? $filename : false;
@@ -66,8 +75,8 @@ class Bronto_Api_Retryer_FileRetryer implements Bronto_Api_Retryer_RetryerInterf
      */
     protected function _loadObject($filePath)
     {
-        if (!file_exists($filePath)) {
-            throw new Bronto_Api_Exception(sprintf('Failed to retry file path: %s', $filePath));
+        if (!@file_exists($filePath)) {
+            throw new Bronto_Util_RetryerException(sprintf('Failed to retry file path: %s', $filePath));
         }
 
         $parts = explode('_', $filePath);
