@@ -3,7 +3,7 @@
 /**
  * @group api
  */
-class Bronto_Tests_ApiTest extends PHPUnit_Framework_TestCase
+class Bronto_Tests_Api_ApiTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @covers Bronto_Api::login
@@ -43,5 +43,17 @@ class Bronto_Tests_ApiTest extends PHPUnit_Framework_TestCase
         $api->login();
 
         $this->assertTrue($api->isAuthenticated());
+    }
+
+    /**
+     * @covers Bronto_Api::getTokenInfo
+     */
+    public function testGetTokenInfo()
+    {
+        $api = new Bronto_Api(TEST_API_TOKEN);
+        $apiToken = $api->getTokenInfo();
+
+        $this->assertInstanceOf('Bronto_Api_ApiToken_Row', $apiToken);
+        $this->assertSame(TEST_API_TOKEN, $apiToken->id);
     }
 }
