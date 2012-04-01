@@ -116,19 +116,19 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
             foreach ($this->recipients as $i => $recipient) {
                 switch ($recipient->type) {
                     case 'list':
-                        $listObject = $this->getApiObject()->getApi()->getListObject();
+                        $listObject = $this->getApi()->getListObject();
                         $list = $listObject->createRow();
                         $list->id = $recipient->id;
                         $this->_recipients[] = $list;
                         break;
                     case 'contact':
-                        $contactObject = $this->getApiObject()->getApi()->getContactObject();
+                        $contactObject = $this->getApi()->getContactObject();
                         $contact = $contactObject->createRow();
                         $contact->id = $recipient->id;
                         $this->_recipients[] = $contact;
                         break;
                     case 'segment':
-                        $segmentObject = $this->getApiObject()->getApi()->getSegmentObject();
+                        $segmentObject = $this->getApi()->getSegmentObject();
                         $segment = $segmentObject->createRow();
                         $segment->id = $recipient->id;
                         $this->_recipients[] = $segment;
@@ -168,7 +168,7 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
             throw new $exceptionClass('Unable to find deliveryGroup');
         }
 
-        $deliveryGroupObject = $this->getApiObject()->getApi()->getDeliveryGroupObject();
+        $deliveryGroupObject = $this->getApi()->getDeliveryGroupObject();
         return $deliveryGroupObject->addToDeliveryGroup($deliveryGroupId, array($this->id));
     }
 

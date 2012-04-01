@@ -60,7 +60,7 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
                                 return $cached;
                             }
                         }
-                        $apiObject = $this->getApiObject()->getApi()->getObject($object);
+                        $apiObject = $this->getApi()->getObject($object);
                         $row       = $apiObject->createRow();
                         $row->id   = $this->{$idField};
                         $row->read();
@@ -74,5 +74,7 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
                     break;
             }
         }
+
+        throw new BadMethodCallException("The method {$name} does not exist");
     }
 }

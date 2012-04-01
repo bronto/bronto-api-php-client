@@ -47,7 +47,7 @@ class Bronto_Api_MessageRule_Row extends Bronto_Api_Row
             if ($e->getCode() === Bronto_Api_MessageRule_Exception::AUTOMATOR_EXISTS) {
                 $this->_refresh();
             } else {
-                $this->getApiObject()->getApi()->throwException($e);
+                $this->getApi()->throwException($e);
             }
         }
 

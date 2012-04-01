@@ -6,6 +6,8 @@
  * @property int $permissions
  * @property bool $active
  * @property string $accountId
+ * @method Bronto_Api_ApiToken_Row save() save()
+ * @method Bronto_Api_ApiToken_Row delete() delete()
  * @method Bronto_Api_ApiToken getApiObject() getApiObject()
  */
 class Bronto_Api_ApiToken_Row extends Bronto_Api_Row
@@ -31,12 +33,23 @@ class Bronto_Api_ApiToken_Row extends Bronto_Api_Row
     }
 
     /**
-     * @param bool $refresh
-     * @return Bronto_Api_ApiToken_Row
+     * @return Bronto_Api_Account_Row
      */
-    public function save($refresh = false)
+    public function getAccount()
     {
-        parent::_save(false, $refresh);
-        return $this;
+        if (!$this->accountId) {
+            if ($this->id || $this->name) {
+                $this->read();
+            }
+            if (!$this->accountId) {
+                throw new Bronto_Api_ApiToken_Exception('No accountId specified to retrieve Account');
+            }
+        }
+
+        $account = $this->getApi()->getAccountObject()->createRow();
+        $account->id = $this->accountId;
+        $account->read();
+
+        return $account;
     }
 }

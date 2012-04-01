@@ -47,7 +47,7 @@ class Bronto_Api_DeliveryGroup_Row extends Bronto_Api_Row
         try {
             parent::_save(true, $refresh);
         } catch (Bronto_Api_DeliveryGroup_Exception $e) {
-            $this->getApiObject()->getApi()->throwException($e);
+            $this->getApi()->throwException($e);
         }
 
         return $this;

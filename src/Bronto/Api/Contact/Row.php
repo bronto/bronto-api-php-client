@@ -76,7 +76,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
                 $this->_refresh();
             } else {
                 $e->appendToMessage("(Email: {$this->email})");
-                $this->getApiObject()->getApi()->throwException($e);
+                $this->getApi()->throwException($e);
             }
         }
 
@@ -321,7 +321,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
         }
 
         /* @var $deliveryObject Bronto_Api_Delivery */
-        $deliveryObject = $this->getApiObject()->getApi()->getDeliveryObject();
+        $deliveryObject = $this->getApi()->getDeliveryObject();
         $filter = array_merge_recursive(array('contactId' => $this->id), $additionalFilter);
         return $deliveryObject->readDeliveryRecipients($filter, $pageNumber);
     }

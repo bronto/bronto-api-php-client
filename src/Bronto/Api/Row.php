@@ -297,6 +297,16 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @param bool $refresh
+     * @return Bronto_Api_Row
+     */
+    public function save($refresh = false)
+    {
+        $this->_save(false, $refresh);
+        return $this;
+    }
+
+    /**
      * @return Bronto_Api_Row
      */
     public function delete()
@@ -388,7 +398,7 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
             }
         }
 
-        $refreshOnSave = $this->getApiObject()->getApi()->getOption('refresh_on_save');
+        $refreshOnSave = $this->getApi()->getOption('refresh_on_save');
         if ($refreshOnSave || $refresh) {
             $this->_refresh();
         }
@@ -549,6 +559,14 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     public function getApiObject()
     {
         return $this->_apiObject;
+    }
+
+    /**
+     * @return Bronto_Api
+     */
+    public function getApi()
+    {
+        return $this->_apiObject->getApi();
     }
 
     /**

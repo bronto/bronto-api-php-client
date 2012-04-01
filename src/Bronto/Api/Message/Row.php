@@ -30,7 +30,7 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
             $deliveryGroupId = $deliveryGroup->id;
         }
 
-        $deliveryGroupObject = $this->getApiObject()->getApi()->getDeliveryGroupObject();
+        $deliveryGroupObject = $this->getApi()->getDeliveryGroupObject();
         return $deliveryGroupObject->addToDeliveryGroup($deliveryGroupId, array(), array($this->id));
     }
 
@@ -71,7 +71,7 @@ class Bronto_Api_Message_Row extends Bronto_Api_Row
             if ($e->getCode() === Bronto_Api_Message_Exception::MESSAGE_EXISTS) {
                 $this->_refresh();
             } else {
-                $this->getApiObject()->getApi()->throwException($e);
+                $this->getApi()->throwException($e);
             }
         }
 

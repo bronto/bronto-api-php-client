@@ -50,7 +50,7 @@ class Bronto_Api_Field_Row extends Bronto_Api_Row
                 $this->_refresh();
             } else {
                 $e->appendToMessage("(Name: {$this->name})");
-                $this->getApiObject()->getApi()->throwException($e);
+                $this->getApi()->throwException($e);
             }
         }
 

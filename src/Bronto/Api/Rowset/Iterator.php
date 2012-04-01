@@ -319,11 +319,19 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     }
 
     /**
+     * @return Bronto_Api
+     */
+    public function getApi()
+    {
+        return $this->_apiObject->getApi();
+    }
+
+    /**
      * @return string
      */
     public function getLastRequest()
     {
-        return $this->getApiObject()->getApi()->getLastRequest();
+        return $this->getApi()->getLastRequest();
     }
 
     /**
@@ -331,6 +339,6 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      */
     public function getLastResponse()
     {
-        return $this->getApiObject()->getApi()->getLastResponse();
+        return $this->getApi()->getLastResponse();
     }
 }

@@ -3,6 +3,8 @@
 /**
  * @author Chris Jones <chris.jones@bronto.com>
  * @link http://community.bronto.com/api/v4/objects/general/accountobject
+ *
+ * @method Bronto_Api_Account_Row createRow() createRow(array $data)
  */
 class Bronto_Api_Account extends Bronto_Api_Object
 {
@@ -45,7 +47,7 @@ class Bronto_Api_Account extends Bronto_Api_Object
         $params['filter']      = $filter;
         $params['includeInfo'] = (bool) $includeInfo;
         if (!empty($status)) {
-            $params['status'] = $status;
+            $params['status']  = $status;
         }
         $params['pageNumber']  = (int) $pageNumber;
         return $this->read($params);

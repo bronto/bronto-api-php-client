@@ -22,7 +22,7 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
      */
     public function getContacts($includeLists = false, array $fields = array(), $pageNumber = 1)
     {
-        $contactObject = $this->getApiObject()->getApi()->getContactObject();
+        $contactObject = $this->getApi()->getContactObject();
         $filter = array('listId' => $this->id);
         return $contactObject->readAll($filter, $fields, $includeLists, $pageNumber);
     }
@@ -64,7 +64,7 @@ class Bronto_Api_List_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_
             if ($e->getCode() === Bronto_Api_List_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
             } else {
-                $this->getApiObject()->getApi()->throwException($e);
+                $this->getApi()->throwException($e);
             }
         }
 
