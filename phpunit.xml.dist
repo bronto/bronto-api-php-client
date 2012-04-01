@@ -1,20 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
+         bootstrap="tests/bootstrap.php"
+         cacheTokens="true"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         mapTestClassNameToCoveredClassName="false"
          processIsolation="false"
+         stopOnError="false"
          stopOnFailure="false"
-         syntaxCheck="false"
-         bootstrap="tests/bootstrap.php"
->
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         syntaxCheck="true"
+         strict="true"
+         verbose="true"
+ >
     <testsuites>
         <testsuite name="Bronto API Test Suite">
             <directory>./tests/Bronto/</directory>
         </testsuite>
     </testsuites>
+
+    <php>
+        <!-- Bronto API Token to use for tests -->
+        <const name="TEST_API_TOKEN" value=""/>
+        <!-- Path used to store files related to tests (defaults to sys_get_temp_dir()) -->
+        <const name="TEMP_PATH" value=""/>
+    </php>
 
     <filter>
         <whitelist>
