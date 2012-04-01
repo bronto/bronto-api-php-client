@@ -9,7 +9,7 @@ class Bronto_Tests_Api_ApiToken_ApiTokenTest extends Bronto_Tests_AbstractTest
     /**
      * @covers Bronto_Api_ApiToken::readAll
      */
-    public function test()
+    public function testReadAllTokens()
     {
         $rowset = $this->getObject()->readAll();
 

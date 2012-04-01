@@ -5,10 +5,15 @@
  */
 class Bronto_Tests_Api_ObjectTest extends Bronto_Tests_AbstractTest
 {
+    /**
+     * @covers Bronto_Api_Object::flush
+     */
     public function testFlushWithoutWork()
     {
         $contactObject = $this->getObject();
-        $contactObject->flush();
+        $result = $contactObject->flush();
+
+        $this->assertEmpty($result);
     }
 
     /**

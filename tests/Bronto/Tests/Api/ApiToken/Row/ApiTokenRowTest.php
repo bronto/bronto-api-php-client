@@ -17,6 +17,19 @@ class Bronto_Tests_Api_ApiToken_Row_ApiTokenRowTest extends Bronto_Tests_Abstrac
 
         $this->assertInstanceOf('Bronto_Api_ApiToken_Row', $apiToken);
         $this->assertSame(TEST_API_TOKEN, $apiToken->id);
+
+        return $apiToken;
+    }
+
+    /**
+     * @depends testRead
+     * @covers Bronto_Api_ApiToken_Row::getAccount
+     */
+    public function testGetAccount(Bronto_Api_ApiToken_Row $apiToken)
+    {
+        $account = $apiToken->getAccount();
+
+        $this->assertInstanceOf('Bronto_Api_Account_Row', $account);
     }
 
     /**
