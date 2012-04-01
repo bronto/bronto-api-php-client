@@ -2,8 +2,8 @@
 
 /**
  * @property string $username
- * @property-write string $password
- * @property array $contactInformation
+ * @property string $password
+ * @property stdClass $contactInformation
  * @property bool $permissionAgencyAdmin
  * @property bool $permissionAdmin
  * @property bool $permissionApi
@@ -26,5 +26,11 @@
  */
 class Bronto_Api_Login_Row extends Bronto_Api_Row
 {
-
+    /**
+     * @return Bronto_Api_Login_ContactInformation
+     */
+    public function getContactInformation()
+    {
+        return new Bronto_Api_Login_ContactInformation($this->contactInformation);
+    }
 }

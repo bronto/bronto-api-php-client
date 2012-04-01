@@ -384,6 +384,16 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
+     * @return Bronto_Api_Login
+     */
+    public function getLoginObject()
+    {
+        return $this->getObject('login');
+    }
+
+    /**
+     * Proxy for intellisense
+     *
      * @return Bronto_Api_Segment
      */
     public function getSegmentObject()

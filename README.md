@@ -4,13 +4,16 @@ ActiveRecord style abstraction of the Bronto SOAP API.
 
 ## Implemented Objects
 
+ * Account
  * Activity
+ * ApiToken
  * Contact
  * Conversion
  * Delivery
  * Deliverygroup
  * Field
  * List
+ * Login
  * Message
  * Messagerule
  * Segment
