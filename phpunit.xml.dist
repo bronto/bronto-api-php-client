@@ -31,6 +31,12 @@
         <const name="TEMP_PATH" value=""/>
     </php>
 
+    <groups>
+        <exclude>
+            <group>performance</group>
+        </exclude>
+    </groups>
+
     <filter>
         <whitelist>
             <directory>./src/Bronto/</directory>
