@@ -65,7 +65,7 @@ class Bronto_Api
     protected $_authenticated = false;
 
     /**
-     * @var Bronto_Api_Retryer_RetryerInterface
+     * @var Bronto_Util_Retryer_RetryerInterface
      */
     protected $_retryer;
 
@@ -208,6 +208,18 @@ class Bronto_Api
     }
 
     /**
+     * @return Bronto_Api_ApiToken_Row
+     */
+    public function getTokenInfo()
+    {
+        $apiToken = $this->getApiTokenObject()->createRow();
+        $apiToken->id = $this->getToken();
+        $apiToken->read();
+
+        return $apiToken;
+    }
+
+    /**
      * @param array $options
      * @return Bronto_Api
      */
@@ -262,11 +274,31 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
+     * @return Bronto_Api_Account
+     */
+    public function getAccountObject()
+    {
+        return $this->getObject('account');
+    }
+
+    /**
+     * Proxy for intellisense
+     *
      * @return Bronto_Api_Activity
      */
     public function getActivityObject()
     {
         return $this->getObject('activity');
+    }
+
+    /**
+     * Proxy for intellisense
+     *
+     * @return Bronto_Api_ApiToken
+     */
+    public function getApiTokenObject()
+    {
+        return $this->getObject('apiToken');
     }
 
     /**
@@ -428,15 +460,15 @@ class Bronto_Api
 
     /**
      * @param array $options
-     * @return Bronto_Api_Retryer_RetryerInterface
+     * @return Bronto_Util_Retryer_RetryerInterface
      */
     public function getRetryer(array $options = array())
     {
-        if (!($this->_retryer instanceOf Bronto_Api_Retryer_RetryerInterface)) {
+        if (!($this->_retryer instanceOf Bronto_Util_Retryer_RetryerInterface)) {
             $options = array_merge($this->_options['retryer'], $options);
             switch ($options['type']) {
                 case 'file':
-                    $this->_retryer = new Bronto_Api_Retryer_FileRetryer($options);
+                    $this->_retryer = new Bronto_Util_Retryer_FileRetryer($options);
                     break;
                 default:
                     return false;
