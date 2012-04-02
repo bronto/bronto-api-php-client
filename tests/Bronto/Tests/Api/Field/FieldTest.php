@@ -37,6 +37,16 @@ class Bronto_Tests_Api_Field_FieldTest extends Bronto_Tests_AbstractTest
     }
 
     /**
+     * @covers Bronto_Api_Field::readAll
+     */
+    public function testReadAllFields()
+    {
+        $rowset = $this->getObject()->readAll();
+
+        $this->assertGreaterThan(0, $rowset->count());
+    }
+
+    /**
      * @return Bronto_Api_Field
      */
     public function getObject()

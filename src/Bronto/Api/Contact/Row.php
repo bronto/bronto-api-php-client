@@ -110,22 +110,22 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
                 $field = $field->read();
             }
             $fieldId = $field->id;
-        }
-
-        switch ($field->type) {
-            case Bronto_Api_Field::TYPE_DATE:
-                if ($value instanceOf DateTime) {
-                    $value = date('c', $value->getTimestamp());
-                } else {
-                    $value = date('c', strtotime($value));
-                }
-                break;
-            case Bronto_Api_Field::TYPE_INTEGER:
-                $value = (int) $value;
-                break;
-            case Bronto_Api_Field::TYPE_FLOAT:
-                $value = (float) $value;
-                break;
+            
+            switch ($field->type) {
+                case Bronto_Api_Field::TYPE_DATE:
+                    if ($value instanceOf DateTime) {
+                        $value = date('c', $value->getTimestamp());
+                    } else {
+                        $value = date('c', strtotime($value));
+                    }
+                    break;
+                case Bronto_Api_Field::TYPE_INTEGER:
+                    $value = (int) $value;
+                    break;
+                case Bronto_Api_Field::TYPE_FLOAT:
+                    $value = (float) $value;
+                    break;
+            }
         }
 
         $field = array(

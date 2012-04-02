@@ -133,10 +133,8 @@ class Bronto_Api
         }
 
         try {
-            $this->_authenticated = false;
-            $this->_soapClient    = null;
-
             // Get a new SoapClient
+            $this->reset();
             $client    = $this->getSoapClient(false);
             $sessionId = $client->login(array('apiToken' => $token))->return;
             $client->__setSoapHeaders(array(
@@ -193,6 +191,7 @@ class Bronto_Api
      */
     public function setToken($token)
     {
+        $this->reset();
         $this->_token = $token;
         return $this;
     }
@@ -443,11 +442,22 @@ class Bronto_Api
             ));
             $this->_soapClient->__setLocation(self::BASE_LOCATION);
             $this->_connected = true;
-            if ($authenticate && !$this->isAuthenticated() && $this->getToken()) {
+            if ($authenticate && !$this->_authenticated && $this->getToken()) {
                 $this->login();
             }
         }
         return $this->_soapClient;
+    }
+
+    /**
+     * @return Bronto_Api
+     */
+    public function reset()
+    {
+        $this->_connected     = false;
+        $this->_authenticated = false;
+        $this->_soapClient    = null;
+        return $this;
     }
 
     /**

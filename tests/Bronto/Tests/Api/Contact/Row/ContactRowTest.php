@@ -119,6 +119,20 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
     }
 
     /**
+     * @covers Bronto_Api_Contact_Row::setField
+     */
+    public function testSetFieldWithFieldId()
+    {
+        /* @var $contact Bronto_Api_Contact_Row */
+        $contact = $this->getObject()->createRow();
+        $contact->setField('0bbd03e900000000000000000000000106ce', 'test');
+
+        $this->assertEquals('0bbd03e900000000000000000000000106ce', $contact->fields[0]['fieldId']);
+        $this->assertEquals('test', $contact->fields[0]['content']);
+        $this->assertEquals('test', $contact->getField('0bbd03e900000000000000000000000106ce'));
+    }
+
+    /**
      * @return Bronto_Api_Contact
      */
     public function getObject()
