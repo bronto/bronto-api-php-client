@@ -13,7 +13,7 @@ class Bronto_Tests_Api_Account_AccountTest extends Bronto_Tests_AbstractTest
     {
         $rowset = $this->getObject()->readAll();
 
-        $this->assertGreaterThan(0, $rowset->count(), 'No Accounts were found.');
+        $this->assertEquals(0, $rowset->count());
     }
 
     /**
