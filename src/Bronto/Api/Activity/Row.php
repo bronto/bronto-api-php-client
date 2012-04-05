@@ -77,4 +77,22 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
 
         throw new BadMethodCallException("The method {$name} does not exist");
     }
+
+    /**
+     * @param mixed $upsert
+     * @param mixed $refresh
+     * @throws Bronto_Api_Activity_Exception
+     */
+    public function save($upsert = null, $refresh = null)
+    {
+        throw new Bronto_Api_Activity_Exception('You cannot create/update an Activity row.');
+    }
+
+    /**
+     * @throws Bronto_Api_Activity_Exception
+     */
+    public function delete()
+    {
+        throw new Bronto_Api_Activity_Exception('You cannot delete an Activity row.');
+    }
 }

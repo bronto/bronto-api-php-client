@@ -18,9 +18,40 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact = $this->getObject()->createRow();
         $contact->email = 'example+newrowinvalid';
         $contact->save();
+    }
+
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     * @covers Bronto_Api_Contact_Exception::__construct
+     */
+    public function testSaveInvalidContactCaughtException()
+    {
+        /* @var $contact Bronto_Api_Contact_Row */
+        $contact = $this->getObject()->createRow();
+        $contact->email = 'example+newrowinvalid';
+        try {
+            $contact->save();
+        } catch (Bronto_Api_Contact_Exception $e) {
+            //
+        }
 
         $this->assertEmpty($contact->id);
         $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
+        $this->assertTrue($contact->hasError());
+        $this->assertTrue($contact->isReadOnly());
+
+        return $contact;
+    }
+
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     * @covers Bronto_Api_Contact_Exception::__construct
+     * @expectedException Bronto_Api_Row_Exception
+     * @depends testSaveInvalidContactCaughtException
+     */
+    public function testDoubleSaveInvalidContact(Bronto_Api_Contact_Row $contact)
+    {
+        $contact->save();
     }
 
     /**
@@ -34,9 +65,31 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact = $this->getObject()->createRow();
         $contact->email = 'example+newrowinvalid';
         $contact->delete();
+    }
 
-        $this->assertEmpty($contact->id);
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     */
+    public function testDoubleSaveContact()
+    {
+        /* @var $contact Bronto_Api_Contact_Row */
+        $contact = $this->getObject()->createRow();
+        $contact->email = 'example+doublesave' . time(). '@bronto.com';
+        $result = $contact->save();
+
         $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
+        $this->assertSame(spl_object_hash($contact), spl_object_hash($result));
+        $this->assertNotEmpty($contact->id);
+        $this->assertFalse($contact->isReadOnly());
+        $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
+
+        $result = $contact->save();
+
+        $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
+        $this->assertSame(spl_object_hash($contact), spl_object_hash($result));
+        $this->assertNotEmpty($contact->id);
+        $this->assertFalse($contact->isReadOnly());
+        $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
     }
 
     /**
@@ -52,7 +105,9 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
         $this->assertSame(spl_object_hash($contact), spl_object_hash($result));
         $this->assertNotEmpty($contact->id);
+        $this->assertFalse($contact->isReadOnly());
         $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
+        $this->assertTrue($contact->isNew());
 
         return $contact;
     }
@@ -68,7 +123,9 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
         $this->assertSame(spl_object_hash($contact), spl_object_hash($result));
         $this->assertNotEmpty($contact->id);
+        $this->assertFalse($contact->isReadOnly());
         $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
+        $this->assertFalse($contact->isNew());
 
         return $contact;
     }
@@ -81,8 +138,10 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
     {
         $contact->delete();
 
-        $this->assertTrue($contact->isReadOnly());
         $this->assertEquals(1, count($contact->getData()));
+        $this->assertTrue($contact->isReadOnly());
+        $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
+        $this->assertFalse($contact->isNew());
 
         return $contact;
     }
@@ -96,9 +155,25 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
     {
         $contact->status = 'transactional';
         $contact->save();
+    }
 
-        $this->assertTrue($contact->isReadOnly());
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     * @depends testDeleteContactAfterRead
+     */
+    public function testSaveContactAfterDeleteCaughtException(Bronto_Api_Contact_Row $contact)
+    {
+        $contact->status = 'transactional';
+        try {
+            $contact->save();
+        } catch (Bronto_Api_Row_Exception $e) {
+            //
+        }
+
         $this->assertEquals(1, count($contact->getData()));
+        $this->assertTrue($contact->isReadOnly());
+        $this->assertFalse($contact->hasError(), 'Contact has error: ' . $contact->getErrorMessage());
+        $this->assertFalse($contact->isNew());
     }
 
     /**
@@ -113,9 +188,26 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact = $this->getObject()->createRow();
         $contact->email = 'kendrajanelle@mailinator.com';
         $contact->save();
+    }
 
-        $this->assertEmpty($contact->id);
-        $this->assertTrue($contact instanceOf Bronto_Api_Contact_Row);
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     * @covers Bronto_Api_Contact_Exception::__construct
+     */
+    public function testSaveContactWhoIsOnSuppressionListCaughtException()
+    {
+        /* @var $contact Bronto_Api_Contact_Row */
+        $contact = $this->getObject()->createRow();
+        $contact->email = 'kendrajanelle@mailinator.com';
+        try {
+            $contact->save();
+        } catch (Bronto_Api_Contact_Exception $e) {
+            //
+        }
+
+        $this->assertTrue($contact->isReadOnly());
+        $this->assertTrue($contact->hasError());
+        $this->assertFalse($contact->isNew());
     }
 
     /**

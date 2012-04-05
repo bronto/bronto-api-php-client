@@ -128,8 +128,10 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
 
         if (isset($data['isError'])) {
             $this->_isError  = (bool) $data['isError'];
-            $this->_readOnly = true;
-            $this->_isLoaded = false;
+            if ($this->_isError) {
+                $this->_readOnly = true;
+                $this->_isLoaded = false;
+            }
             unset($data['isError']);
         }
 
@@ -297,12 +299,13 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @param bool $upsert
      * @param bool $refresh
      * @return Bronto_Api_Row
      */
-    public function save($refresh = false)
+    public function save($upsert = false, $refresh = false)
     {
-        $this->_save(false, $refresh);
+        $this->_save($upsert, $refresh);
         return $this;
     }
 
@@ -354,17 +357,27 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
         $rowset = $this->getApiObject()->readAll($filter);
 
         if ($rowset->hasErrors()) {
+            // Reset class
             $error = $rowset->getError();
+            $this->_readOnly    = true;
+            $this->_isLoaded    = false;
+            $this->_isError     = true;
+            $this->_errorCode   = $error['code'];
+            $this->_errorString = $error['message'];
+
             $exceptionClass = $this->getApiObject()->getExceptionClass();
             throw new $exceptionClass($error['message'], $error['code']);
         }
 
         if ($rowset->count() > 0) {
+            // Reset all fields
+            $this->_isLoaded = true;
+            $this->_readOnly = false;
+            $this->_isError  = false;
+            $this->_isNew    = false;
+
             $data = $rowset->offsetGetData(0);
             $this->setData($data);
-
-            $this->_readOnly = false;
-            $this->_isLoaded = true;
         }
     }
 
@@ -410,7 +423,7 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     protected function _add($upsert = false)
     {
         if ($this->_readOnly === true) {
-            throw new Bronto_Api_Row_Exception(sprintf("Cannot create a %s record.", $this->getApiObject()->getName()));
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot create %s record.", $this->getApiObject()->getName()));
         }
 
         $data = array_intersect_key($this->_data, $this->_modifiedFields);
@@ -425,12 +438,25 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
         }
 
         if ($rowset->hasErrors()) {
+            // Reset class
             $error = $rowset->getError();
+            $this->_readOnly    = true;
+            $this->_isLoaded    = false;
+            $this->_isError     = true;
+            $this->_errorCode   = $error['code'];
+            $this->_errorString = $error['message'];
+
             $exceptionClass = $this->getApiObject()->getExceptionClass();
             throw new $exceptionClass($error['message'], $error['code']);
         }
 
         if ($rowset->count() > 0) {
+            // Reset all fields
+            $this->_isLoaded = true;
+            $this->_readOnly = false;
+            $this->_isError  = false;
+            $this->_isNew    = false;
+
             $data = $rowset->offsetGetData(0);
             $this->setData($data);
         }
@@ -439,7 +465,7 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     protected function _update()
     {
         if ($this->_readOnly === true) {
-            throw new Bronto_Api_Row_Exception(sprintf("Cannot update this read-only %s record.", $this->getApiObject()->getName()));
+            throw new Bronto_Api_Row_Exception(sprintf("Cannot update %s record.", $this->getApiObject()->getName()));
         }
 
         $data = array_intersect_key($this->_data, $this->_modifiedFields);
@@ -451,12 +477,25 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
             $rowset = $this->getApiObject()->update(array($data));
 
             if ($rowset->hasErrors()) {
+                // Reset class
                 $error = $rowset->getError();
+                $this->_readOnly    = true;
+                $this->_isLoaded    = false;
+                $this->_isError     = true;
+                $this->_errorCode   = $error['code'];
+                $this->_errorString = $error['message'];
+
                 $exceptionClass = $this->getApiObject()->getExceptionClass();
                 throw new $exceptionClass($error['message'], $error['code']);
             }
 
             if ($rowset->count() > 0) {
+                // Reset all fields
+                $this->_isLoaded = true;
+                $this->_readOnly = false;
+                $this->_isError  = false;
+                $this->_isNew    = false;
+
                 $data = $rowset->offsetGetData(0);
                 $this->setData($data);
             }
@@ -475,18 +514,28 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
         $rowset = $this->getApiObject()->delete(array($data));
 
         if ($rowset->hasErrors()) {
+            // Reset class
             $error = $rowset->getError();
+            $this->_readOnly    = true;
+            $this->_isLoaded    = false;
+            $this->_isError     = true;
+            $this->_errorCode   = $error['code'];
+            $this->_errorString = $error['message'];
+
             $exceptionClass = $this->getApiObject()->getExceptionClass();
             throw new $exceptionClass($error['message'], $error['code']);
         }
 
-        // Reset all fields to indicate that the row is not there
-        $this->_data           = array();
-        $this->_cleanData      = array();
-        $this->_modifiedFields = array();
-        $this->_isLoaded       = false;
-
         if ($rowset->count() > 0) {
+            // Reset all fields to indicate that the row is not there
+            $this->_data           = array();
+            $this->_cleanData      = array();
+            $this->_modifiedFields = array();
+            $this->_isLoaded       = false;
+            $this->_readOnly       = true;
+            $this->_isError        = false;
+            $this->_isNew          = false;
+
             $data = $rowset->offsetGetData(0);
             $this->setData($data);
         }
