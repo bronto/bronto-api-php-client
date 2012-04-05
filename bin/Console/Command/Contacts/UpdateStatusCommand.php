@@ -6,7 +6,8 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
-    Symfony\Component\Console\Output\OutputInterface;
+    Symfony\Component\Console\Output\OutputInterface,
+    Console\Helper\ProgressHelper;
 
 /**
  * @method \Console\Application getApplication() getApplication()
@@ -40,6 +41,9 @@ class UpdateStatusCommand extends Command
     {
         /* @var $dialog \Symfony\Component\Console\Helper\DialogHelper */
         $dialog = $this->getHelperSet()->get('dialog');
+
+        /* @var $progress \Console\Helper\ProgressHelper */
+        $progress = $this->getHelperSet()->get('progress');
 
         //
         // Token
@@ -232,17 +236,34 @@ class UpdateStatusCommand extends Command
 
             $output->writeln('');
             $output->writeln(sprintf('Processing page %d - %d Contact(s)...', $contactsPage, $contacts->count()));
+            $output->writeln('');
+            $progress->start($output, $contacts->count(), array('format' => ProgressHelper::FORMAT_VERBOSE));
 
             $internalCounter = 0;
             foreach ($contacts as $contact /* @var $contact Bronto_Api_Contact_Row */) {
                 $contact->status = $toStatus;
-                $contact->save();
+                $contact->persist();
 
-                $this->writeProgress($output, $internalCounter, $contacts->count());
+                $progress->advance();
                 $contactsCounter++;
                 $internalCounter++;
+
+                if ($internalCounter % 50 == 0 || $internalCounter >= ($contacts->count() - 1)) {
+                    try {
+                        /* @var $rowset \Bronto_Api_Rowset */
+                        $rowset = $contactObject->flush();
+                        if ($rowset->hasErrors()) {
+                            foreach ($rowset->getErrors() as $error) {
+                                $output->writeln(' <error>' . $error['message'] . '</error>');
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        $output->writeln(' <error>' . $e->getMessage() . '</error>');
+                    }
+                }
             }
 
+            $progress->finish();
             $contactsPage++;
         }
 
