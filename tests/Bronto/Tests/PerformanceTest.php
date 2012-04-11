@@ -9,9 +9,9 @@ class Bronto_Tests_PerformanceTest extends PHPUnit_Framework_TestCase
     {
         $time = microtime(true);
         for ($i = 0, $iterations = 10; $i < $iterations; $i++) {
-            $api = new Bronto_Api(TEST_API_TOKEN);
+            $api = new Bronto_Api(TEST_API_TOKEN_1);
             $apiToken = $api->getApiTokenObject()->createRow();
-            $apiToken->id = TEST_API_TOKEN;
+            $apiToken->id = TEST_API_TOKEN_1;
             $apiToken->read();
         }
         $time = microtime(true) - $time;

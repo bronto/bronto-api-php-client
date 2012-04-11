@@ -39,7 +39,7 @@ class Bronto_Tests_Api_ApiTest extends PHPUnit_Framework_TestCase
      */
     public function testValidToken()
     {
-        $api = new Bronto_Api(TEST_API_TOKEN);
+        $api = new Bronto_Api(TEST_API_TOKEN_1);
         $api->login();
 
         $this->assertTrue($api->isAuthenticated());
@@ -50,10 +50,10 @@ class Bronto_Tests_Api_ApiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetTokenInfo()
     {
-        $api = new Bronto_Api(TEST_API_TOKEN);
+        $api = new Bronto_Api(TEST_API_TOKEN_1);
         $apiToken = $api->getTokenInfo();
 
         $this->assertInstanceOf('Bronto_Api_ApiToken_Row', $apiToken);
-        $this->assertSame(TEST_API_TOKEN, $apiToken->id);
+        $this->assertSame(TEST_API_TOKEN_1, $apiToken->id);
     }
 }

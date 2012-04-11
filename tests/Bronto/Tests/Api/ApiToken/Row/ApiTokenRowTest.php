@@ -12,11 +12,11 @@ class Bronto_Tests_Api_ApiToken_Row_ApiTokenRowTest extends Bronto_Tests_Abstrac
     public function testRead()
     {
         $apiToken = $this->getObject()->createRow();
-        $apiToken->id = TEST_API_TOKEN;
+        $apiToken->id = TEST_API_TOKEN_1;
         $apiToken->read();
 
         $this->assertInstanceOf('Bronto_Api_ApiToken_Row', $apiToken);
-        $this->assertSame(TEST_API_TOKEN, $apiToken->id);
+        $this->assertSame(TEST_API_TOKEN_1, $apiToken->id);
 
         return $apiToken;
     }
