@@ -12,6 +12,12 @@ class Bronto_Api_DeliveryGroup extends Bronto_Api_Object
     const VISIBILITY_INTERNAL = 'INTERNAL';
     const VISIBILITY_PUBLIC   = 'PUBLIC';
 
+    /** memberType */
+    const MEMBER_TYPE_DELIVERIES     = 'DELIVERIES';
+    const MEMBER_TYPE_AUTOMATORS     = 'AUTOMATORS';
+    const MEMBER_TYPE_MESSAGEGROUPS  = 'MESSAGEGROUPS';
+    const MEMBER_TYPE_DELIVERYGROUPS = 'DELIVERYGROUPS';
+
     /**
      * The object name.
      *
@@ -39,6 +45,12 @@ class Bronto_Api_DeliveryGroup extends Bronto_Api_Object
         'visibility' => array(
             self::VISIBILITY_INTERNAL,
             self::VISIBILITY_PUBLIC,
+        ),
+        'memberType' => array(
+            self::MEMBER_TYPE_DELIVERIES,
+            self::MEMBER_TYPE_AUTOMATORS,
+            self::MEMBER_TYPE_MESSAGEGROUPS,
+            self::MEMBER_TYPE_DELIVERYGROUPS,
         ),
     );
 

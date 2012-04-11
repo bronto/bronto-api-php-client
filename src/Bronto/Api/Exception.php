@@ -19,6 +19,8 @@ class Bronto_Api_Exception extends Exception
     const INVALID_FILTER	    = 112; // Invalid filter type (must be AND or OR).
     const READ_ERROR            = 113; // There was an error reading your query results. Please try your request again shortly.
 
+    const INVALID_PAGE_SIZE     = 115; // Page size is lower than the minimum allowed limit of #
+
     /* Misc */
     const HTTP_HEADER_ERROR     = 98001; // Error Fetching http headers
     const NO_XML_DOCUMENT       = 98002;

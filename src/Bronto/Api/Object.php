@@ -11,6 +11,36 @@
  */
 abstract class Bronto_Api_Object
 {
+    /** filterType */
+    const TYPE_AND = 'AND';
+    const TYPE_OR  = 'OR';
+
+    /** filterOperator */
+    const OPER_EQ              = 'EqualTo';
+    const OPER_NE              = 'NotEqualTo';
+    const OPER_GT              = 'GreaterThan';
+    const OPER_LT              = 'LessThan';
+    const OPER_GE              = 'GreaterThanEqualTo';
+    const OPER_LE              = 'LessThanEqualTo';
+    const OPER_CONTAINS        = 'Contains';
+    const OPER_NOT_CONTAINS    = 'DoesNotContain';
+    const OPER_STARTS_WITH     = 'StartsWith';
+    const OPER_ENDS_WITH       = 'EndsWith';
+    const OPER_NOT_STARTS_WITH = 'DoesNotStartWith';
+    const OPER_NOT_ENDS_WITH   = 'DoesNotEndWith';
+    const OPER_SAME_YEAR       = 'SameYear';
+    const OPER_NOT_SAME_YEAR   = 'NotSameYear';
+    const OPER_SAME_DAY        = 'SameDay';
+    const OPER_NOT_SAME_DAY    = 'NotSameDay';
+    const OPER_BEFORE          = 'Before';
+    const OPER_AFTER           = 'After';
+    const OPER_BEFORE_SAME     = 'BeforeOrSameDay';
+    const OPER_AFTER_SAME      = 'AfterOrSameDay';
+
+    /** readDirection */
+    const DIRECTION_FIRST = 'FIRST';
+    const DIRECTION_NEXT  = 'NEXT';
+
     /**
      * Bronto_Api object
      *

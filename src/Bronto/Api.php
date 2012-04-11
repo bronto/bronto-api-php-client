@@ -5,6 +5,7 @@
  */
 class Bronto_Api
 {
+    /** URI */
     const BASE_WSDL     = 'https://api.bronto.com/v4?wsdl';
     const BASE_LOCATION = 'https://api.bronto.com/v4';
     const BASE_URL      = 'http://api.bronto.com/v4';
