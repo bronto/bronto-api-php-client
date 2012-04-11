@@ -2,8 +2,9 @@
 
 class Bronto_Api_Rowset_Iterator implements Iterator, Countable
 {
-    const TYPE_PAGE = 1;
-    const TYPE_DATE = 2;
+    const TYPE_PAGE   = 1;
+    const TYPE_DATE   = 2;
+    const TYPE_STREAM = 3;
 
     /**
      * API Object
@@ -139,6 +140,10 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
             $this->_initialParamValue = $value;
             $this->_lastParamValue    = $value;
             $this->_nextParamValue    = $value + 1;
+        } elseif ($this->_type == self::TYPE_STREAM) {
+            $this->_initialParamValue = $value;
+            $this->_lastParamValue    = $value;
+            $this->_nextParamValue    = Bronto_Api_Object::DIRECTION_NEXT;
         }
     }
 
@@ -282,7 +287,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
 
         // Make request for the new rowset
         unset($this->_rowset);
-        $this->_rowset = $this->getApiObject()->read($params);
+        $this->_rowset = $this->_apiObject->read($params);
 
         // Increments
         $this->_newPage = true;
@@ -292,8 +297,10 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
         if ($this->_type == self::TYPE_PAGE) {
             $this->_lastParamValue = $this->_nextParamValue;
             $this->_nextParamValue = $this->_nextParamValue + 1;
-        } else {
+        } elseif ($this->_type == self::TYPE_DATE) {
             $this->_lastParamValue = clone $this->_nextParamValue;
+        } elseif ($this->_type == self::TYPE_STREAM) {
+            $this->_lastParamValue = $this->_nextParamValue;
         }
 
         return $this->_rowset->valid();
@@ -331,7 +338,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      */
     public function getLastRequest()
     {
-        return $this->getApi()->getLastRequest();
+        return $this->_apiObject->getApi()->getLastRequest();
     }
 
     /**
@@ -339,6 +346,6 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      */
     public function getLastResponse()
     {
-        return $this->getApi()->getLastResponse();
+        return $this->_apiObject->getApi()->getLastResponse();
     }
 }

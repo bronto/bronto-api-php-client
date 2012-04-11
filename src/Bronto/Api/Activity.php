@@ -6,7 +6,7 @@
  */
 class Bronto_Api_Activity extends Bronto_Api_Object
 {
-    /** Type */
+    /** trackingType */
     const TYPE_OPEN        = 'open';
     const TYPE_CLICK       = 'click';
     const TYPE_CONVERSION  = 'conversion';
@@ -35,6 +35,10 @@ class Bronto_Api_Activity extends Bronto_Api_Object
             self::TYPE_UNSUBSCRIBE,
             self::TYPE_VIEW,
         ),
+        'readDirection' => array(
+            self::DIRECTION_FIRST,
+            self::DIRECTION_NEXT,
+        ),
     );
 
     /**
@@ -47,17 +51,12 @@ class Bronto_Api_Activity extends Bronto_Api_Object
     /**
      * @var int
      */
-    protected $_iteratorType = Bronto_Api_Rowset_Iterator::TYPE_DATE;
+    protected $_iteratorType = Bronto_Api_Rowset_Iterator::TYPE_STREAM;
 
     /**
      * @var string
      */
-    protected $_iteratorParam = 'start';
-
-    /**
-     * @var string
-     */
-    protected $_iteratorRowField = 'activityDate';
+    protected $_iteratorParam = 'readDirection';
 
     /**
      * For many activities, caching the row objects saves tons of time.
@@ -76,16 +75,18 @@ class Bronto_Api_Activity extends Bronto_Api_Object
      * @param string $startDate
      * @param int $size
      * @param string|array $types
+     * @param string $direction
      * @param string|array $contactIds
      * @return Bronto_Api_Rowset
      */
-    public function readAll($startDate = '2002-01-01T00:00:00+00:00', $size = 100, $types = array(), $contactIds = array())
+    public function readAll($startDate = '2002-01-01T00:00:00+00:00', $size = 1000, $types = array(), $direction = self::DIRECTION_FIRST, $contactIds = array())
     {
         $filter = array(
-            'start'      => '2002-01-01T00:00:00+00:00',
-            'size'       => 100,
-            'types'      => $this->getOptionValues('trackingType'),
-            'contactIds' => array(),
+            'start'         => '2002-01-01T00:00:00+00:00',
+            'size'          => 1000,
+            'types'         => $this->getOptionValues('trackingType'),
+            'readDirection' => self::DIRECTION_FIRST,
+            'contactIds'    => array(),
         );
 
         if (!empty($startDate)) {
@@ -93,7 +94,7 @@ class Bronto_Api_Activity extends Bronto_Api_Object
         }
 
         if (!empty($size)) {
-            $filter['size'] = (int) $size;
+            $filter['size'] = $size < 1000 ? 1000 : (int) $size;
         }
 
         if (!empty($types)) {
@@ -104,6 +105,11 @@ class Bronto_Api_Activity extends Bronto_Api_Object
             }
         }
 
+        $direction = strtoupper($direction);
+        if (in_array($direction, $this->_options['readDirection'])) {
+            $filter['readDirection'] = $direction;
+        }
+
         if (!empty($contactIds)) {
             if (is_array($contactIds)) {
                 $filter['contactIds'] = $contactIds;
@@ -111,6 +117,9 @@ class Bronto_Api_Activity extends Bronto_Api_Object
                 $filter['contactIds'] = array($contactIds);
             }
         }
+
+        // @todo Remove if the contactIds filter is enabled again
+        unset($filter['contactIds']);
 
         return parent::read(array('filter' => $filter));
     }
