@@ -28,7 +28,7 @@
         <!-- Bronto API Token to use for tests -->
         <const name="TEST_API_TOKEN_1" value=""/>
         <const name="TEST_API_TOKEN_2" value="C19700FF-1DD0-46E1-B0EA-D10B977629BA"/> <!-- brontopssandbox -->
-        <const name="TEST_API_TOKEN_2" value=""/>
+        <const name="TEST_API_TOKEN_3" value=""/>
         <!-- Known Contact UUID to use for various tests -->
         <const name="TEST_CONTACT_ID_1" value=""/>
         <const name="TEST_CONTACT_ID_2" value="49b26776-4a48-432d-89a3-f5afdec11d6e"/>
