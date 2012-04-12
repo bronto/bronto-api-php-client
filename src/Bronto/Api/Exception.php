@@ -26,9 +26,13 @@ class Bronto_Api_Exception extends Exception
     const NO_XML_DOCUMENT       = 98002;
     const INVALID_URL           = 98003;
     const CONNECT_ERROR         = 98004;
-    const WSDL_PARSE_ERROR      = 98005;
+    const WSDL_PARSE_ERROR      = 98005; // SOAP-ERROR: Parsing WSDL
     const REQUEST_ERROR         = 98006;
     const CONNECTION_RESET      = 98007; // SSL: Connection reset by peer
+    const CONNECTION_FAILED     = 98008; // Could not connect to host
+    const SERVICE_UNAVAILABLE   = 98009; // Service Temporarily Unavailable
+    const SOAPCLIENT_ERROR      = 98010; // SoapClient::__doRequest(): %s
+    const SERVER_ERROR          = 98500; // Internal Server Error
 
     /* Custom */
     const EMPTY_RESULT          = 99001;
@@ -49,6 +53,10 @@ class Bronto_Api_Exception extends Exception
         self::CONNECT_ERROR,
         self::WSDL_PARSE_ERROR,
         self::CONNECTION_RESET,
+        self::CONNECTION_FAILED,
+        self::SERVICE_UNAVAILABLE,
+        self::SERVER_ERROR,
+        self::SOAPCLIENT_ERROR,
     );
 
     /**
@@ -103,6 +111,14 @@ class Bronto_Api_Exception extends Exception
                 $code = self::CONNECTION_RESET;
             } else if (stripos($message, 'Unable to parse URL') !== false) {
                 $code = self::INVALID_URL;
+            } else if (stripos($message, 'Could not connect to host') !== false) {
+                $code = self::CONNECTION_FAILED;
+            } else if (stripos($message, 'Service Temporarily Unavailable') !== false) {
+                $code = self::SERVICE_UNAVAILABLE;
+            } else if (stripos($message, 'Internal Server Error') !== false) {
+                $code = self::SERVER_ERROR;
+            } else if (stripos($message, 'SoapClient::__doRequest()') !== false) {
+                $code = self::SOAPCLIENT_ERROR;
             }
         }
 
