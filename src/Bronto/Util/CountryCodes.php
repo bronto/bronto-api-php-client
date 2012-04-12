@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ */
 class Bronto_Util_Country
 {
     public static $codes = array(

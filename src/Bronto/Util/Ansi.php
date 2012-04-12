@@ -1,37 +1,38 @@
 <?php
 
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ */
 class Bronto_Util_Ansi
 {
     /**
      * @var array
      */
     protected $_attributes = array(
-        'clear'           => 0,
-        'reset'           => 0,
-        'bold'            => 1,
-        'dark'            => 2,
-        'faint'           => 2,
-        'underline'       => 4,
-        'underscore'      => 4,
-        'blink'           => 5,
-        'reverse'         => 7,
-        'concealed'       => 8,
-        'black'           => 30, 'onblack'         => 40,
-        'red'             => 31, 'onred'           => 41,
-        'green'           => 32, 'ongreen'         => 42,
-        'yellow'          => 33, 'onyellow'        => 43,
-        'blue'            => 34, 'onblue'          => 44,
-        'magenta'         => 35, 'onmagenta'       => 45,
-        'cyan'            => 36, 'oncyan'          => 46,
-        'white'           => 37, 'onwhite'         => 47,
-        'brightblack'     => 90, 'onbrightblack'   => 100,
-        'brightred'       => 91, 'onbrightred'     => 101,
-        'brightgreen'     => 92, 'onbrightgreen'   => 102,
-        'brightyellow'    => 93, 'onbrightyellow'  => 103,
-        'brightblue'      => 94, 'onbrightblue'    => 104,
-        'brightmagenta'   => 95, 'onbrightmagenta' => 105,
-        'brightcyan'      => 96, 'onbrightcyan'    => 106,
-        'brightwhite'     => 97, 'onbrightwhite'   => 107
+        'black'       => '0;30',
+        'darkgray'    => '1;30',
+        'blue'        => '0;34',
+        'lightblue'   => '1;34',
+        'green'       => '0;32',
+        'lightgreen'  => '1;32',
+        'cyan'        => '0;36',
+        'lightcyan'   => '1;36',
+        'red'         => '0;31',
+        'lightred'    => '1;31',
+        'purple'      => '0;35',
+        'lightpurple' => '1;35',
+        'brown'       => '0;33',
+        'yellow'      => '1;33',
+        'lightgray'   => '0;37',
+        'white'       => '1;37',
+        'onblack'     => '40',
+        'onred'       => '41',
+        'ongreen'     => '42',
+        'onyellow'    => '43',
+        'onblue'      => '44',
+        'onmagenta'   => '45',
+        'oncyan'      => '46',
+        'onlightgray' => '47',
     );
 
     /**
@@ -63,5 +64,20 @@ class Bronto_Util_Ansi
     {
         $attr = $this->color($codes);
         return $attr . $text . chr(27) . "[0m";
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function parse($text = '')
+    {
+        preg_match_all('/(<([\w\s]+)[^>]*>)(.*?)(<\/\\2>)/', $text, $matches, PREG_SET_ORDER);
+        foreach ($matches as $value) {
+            $codes     = explode(' ', trim($value[1], '<>'));
+            $substring = $this->colored($value[3], $codes);
+            $text      = str_replace($value[0], $substring, $text);
+        }
+        return $text;
     }
 }
