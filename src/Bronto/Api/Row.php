@@ -32,6 +32,13 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     protected $_modifiedFields = array();
 
     /**
+     * Tracks columns that are dates.
+     *
+     * @var array
+     */
+    protected $_dateFields = array();
+
+    /**
      * A row is marked read only if it contains columns that are not physically
      * represented within the API schema. This can also be passed as a
      * run-time config options as a means of protecting row data.
@@ -645,6 +652,23 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     public function getData()
     {
         return $this->_data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDateFields()
+    {
+        return $this->_dateFields;
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function isDateField($key)
+    {
+        return (bool) isset($this->_dateFields[$key]);
     }
 
     /**

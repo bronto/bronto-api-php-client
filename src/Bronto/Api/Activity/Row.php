@@ -23,6 +23,15 @@
 class Bronto_Api_Activity_Row extends Bronto_Api_Row
 {
     /**
+     * Tracks columns that are dates.
+     *
+     * @var array
+     */
+    protected $_dateFields = array(
+        'activityDate' => true
+    );
+
+    /**
      * @var bool
      */
     protected $_readOnly = true;

@@ -128,23 +128,13 @@ abstract class Bronto_Api_Object
     protected $_iteratorType = Bronto_Api_Rowset_Iterator::TYPE_PAGE;
 
     /**
-     * The key to use when paginating
+     * The key(s) to use when paginating
      *
-     * @var string
+     * @var array
      */
-    protected $_iteratorParam = 'pageNumber';
-
-    /**
-     * @var mixed
-     */
-    protected $_iteratorRowField;
-
-    /**
-     * Can this object be paginated?
-     *
-     * @var bool
-     */
-    protected $_canIterate = true;
+    protected $_iteratorParams = array(
+        'pageNumber' => false,
+    );
 
     /**
      * Stored last request method
@@ -360,6 +350,10 @@ abstract class Bronto_Api_Object
                     // Attempt to get a new session token
                     sleep(5);
                     $this->getApi()->login();
+                    // If using readDirection, we have to start over
+                    if (isset($data['filter']['readDirection'])) {
+                        $data['filter']['readDirection'] = self::DIRECTION_FIRST;
+                    }
                 }
             }
 
@@ -523,19 +517,11 @@ abstract class Bronto_Api_Object
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getIteratorParam()
+    public function getIteratorParams()
     {
-        return $this->_iteratorParam;
-    }
-
-    /**
-     * @return string|bool
-     */
-    public function getIteratorRowField()
-    {
-        return !empty($this->_iteratorRowField) ? $this->_iteratorRowField : false;
+        return $this->_iteratorParams;
     }
 
     /**
@@ -543,7 +529,7 @@ abstract class Bronto_Api_Object
      */
     public function canIterate()
     {
-        return (bool) $this->_canIterate;
+        return $this->_iteratorType != Bronto_Api_Rowset_Iterator::TYPE_NONE;
     }
 
     /**

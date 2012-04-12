@@ -54,9 +54,14 @@ class Bronto_Api_Activity extends Bronto_Api_Object
     protected $_iteratorType = Bronto_Api_Rowset_Iterator::TYPE_STREAM;
 
     /**
-     * @var string
+     * The key(s) to use when paginating
+     *
+     * @var array
      */
-    protected $_iteratorParam = 'readDirection';
+    protected $_iteratorParams = array(
+        'readDirection' => false,
+        'start'         => 'activityDate',
+    );
 
     /**
      * For many activities, caching the row objects saves tons of time.

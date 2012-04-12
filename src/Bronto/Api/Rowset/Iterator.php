@@ -1,7 +1,12 @@
 <?php
 
+/**
+ * @author Chris Jones <chris.jones@bronto.com>
+ */
 class Bronto_Api_Rowset_Iterator implements Iterator, Countable
 {
+    /** Iterator Types */
+    const TYPE_NONE   = 0;
     const TYPE_PAGE   = 1;
     const TYPE_DATE   = 2;
     const TYPE_STREAM = 3;
@@ -33,7 +38,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      *
      * @var int
      */
-    protected $_count;
+    protected $_count = 0;
 
     /**
      * Iterator pointer
@@ -45,40 +50,35 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     /**
      * @var int
      */
-    protected $_type;
+    protected $_type = self::TYPE_NONE;
 
     /**
-     * Query field for paging
+     * Query field(s) for paging
      *
-     * @var string
+     * @var array
      */
-    protected $_param;
+    protected $_params = array();
 
     /**
-     * @var string
-     */
-    protected $_rowField;
-
-    /**
-     * Initial paging value
+     * Initial paging value(s)
      *
-     * @var int|string
+     * @var array
      */
-    protected $_initialParamValue;
+    protected $_initialParamValues = array();
 
     /**
-     * Last used paging value
+     * Last used paging value(s)
      *
-     * @var int|string
+     * @var array
      */
-    protected $_lastParamValue;
+    protected $_lastParamValues = array();
 
     /**
-     * Next paging value to be used
+     * Next paging value(s) to be used
      *
-     * @var int|string
+     * @var array
      */
-    protected $_nextParamValue;
+    protected $_nextParamValues = array();
 
     /**
      * Constructor
@@ -93,27 +93,13 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
             throw new Bronto_Api_Rowset_Exception(sprintf('Cannot iterate results for %s', $this->_apiObject->getName()));
         }
 
-        $this->_type     = $this->_apiObject->getIteratorType();
-        $this->_param    = $this->_apiObject->getIteratorParam();
-        $this->_rowField = $this->_apiObject->getIteratorRowField();
-        $this->_rowset   = $rowset;
-        $this->_count    = $rowset->count();
+        $this->_type   = $this->_apiObject->getIteratorType();
+        $this->_params = $this->_apiObject->getIteratorParams();
+        $this->_rowset = $rowset;
+        $this->_count  = $rowset->count();
 
         // Set initial/next values
-        $params = $this->_rowset->getParams();
-        if (isset($params[$this->_param])) {
-            $this->_setupInitialValues($params[$this->_param]);
-        } else {
-            foreach ($params as $value) {
-                if (is_array($value) && isset($value[$this->_param])) {
-                    $this->_setupInitialValues($value[$this->_param]);
-                }
-            }
-        }
-
-        if (empty($this->_nextParamValue)) {
-            throw new Bronto_Api_Rowset_Exception('Could not determine next field value');
-        }
+        $this->_setupParamValues();
     }
 
     /**
@@ -124,27 +110,71 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
         return $this->_apiObject;
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     * @return bool
-     */
-    protected function _setupInitialValues($value)
+    protected function _setupParamValues()
     {
-        if ($this->_type == self::TYPE_DATE) {
-            $this->_nextParamValue    = DateTime::createFromFormat(DateTime::ISO8601, $value);
-            $this->_lastParamValue    = clone $this->_nextParamValue;
-            $this->_initialParamValue = clone $this->_nextParamValue;
-            $this->_hashList          = array();
-        } elseif ($this->_type == self::TYPE_PAGE) {
-            $this->_initialParamValue = $value;
-            $this->_lastParamValue    = $value;
-            $this->_nextParamValue    = $value + 1;
-        } elseif ($this->_type == self::TYPE_STREAM) {
-            $this->_initialParamValue = $value;
-            $this->_lastParamValue    = $value;
-            $this->_nextParamValue    = Bronto_Api_Object::DIRECTION_NEXT;
+        $params = $this->_rowset->getParams();
+        $this->_lastParamValues = $params;
+
+        if (empty($this->_initialParamValues)) {
+            $this->_initialParamValues = $params;
         }
+
+        // Loop through each field we have to check/update
+        foreach ($this->_params as $queryParam => $rowField) {
+            // Loop through each initial API query params
+            foreach ($params as $key => $value) {
+                if (!is_array($value)) {
+                    $value = array($value);
+                }
+                foreach ($value as $subkey => $subvalue) {
+                    if ($subkey == $queryParam) {
+                        switch ($queryParam) {
+                            case 'readDirection':
+                                $this->_nextParamValues[$queryParam] = Bronto_Api_Object::DIRECTION_NEXT;
+                                break;
+                            case 'pageNumber':
+                                $this->_nextParamValues[$queryParam] = $subvalue + 1;
+                                break;
+                            default:
+                                $this->_nextParamValues[$queryParam] = $subvalue;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getNextParamValues(array $skipParams = array())
+    {
+        $params = $this->_lastParamValues;
+
+        // Loop through each field we have to update
+        foreach ($this->_params as $queryParam => $rowField) {
+            // Skip fields that are query only
+            if (!$rowField || in_array($queryParam, $skipParams)) {
+                continue;
+            }
+            // Loop through each API query param
+            foreach ($params as $key => $value) {
+                if (!is_array($value)) {
+                    if ($key == $queryParam) {
+                        $params[$key] = $this->_nextParamValues[$queryParam];
+                    }
+                } else {
+                    foreach ($value as $subkey => $subvalue) {
+                        if ($subkey == $queryParam) {
+                            $params[$key][$subkey] = $this->_nextParamValues[$queryParam];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $params;
     }
 
     /**
@@ -206,13 +236,16 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
         /* @var $row Bronto_Api_Row */
         $row = $this->_rowset->current();
 
-        if ($this->_type == self::TYPE_DATE) {
-            $rowField = $this->_rowField;
-            $rowValue = $row->{$rowField};
-            if (!empty($rowValue)) {
-                $dateTime = DateTime::createFromFormat(DateTime::ISO8601, $rowValue);
-                if ($dateTime > $this->_nextParamValue) {
-                    $this->_nextParamValue = $dateTime;
+        // Loop through each field we have to update
+        foreach ($this->_params as $queryParam => $rowField) {
+            // Skip fields that are query only
+            if (!$rowField) {
+                continue;
+            }
+            if (isset($row->{$rowField}) && !empty($row->{$rowField})) {
+                $this->_nextParamValues[$queryParam] = $row->{$rowField};
+                if ($row->isDateField($rowField)) {
+                    $this->_nextParamValues[$queryParam] = date('c', strtotime($row->{$rowField}));
                 }
             }
         }
@@ -268,46 +301,42 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
      */
     protected function _nextRowset()
     {
-        // Special check for DATE type so we don't infinite loop
-        if ($this->_type == self::TYPE_DATE) {
-            if ($this->_nextParamValue <= $this->_lastParamValue) {
-                // We have to add 1 second when next value is == last
-                $this->_nextParamValue->add(new DateInterval('PT1S'));
-            }
-        }
+        unset($this->_rowset);
 
-        // Set params from next request
-        $params = $this->_rowset->getParams();
-        if (isset($params[$this->_param])) {
-            $params[$this->_param] = $this->_nextParamValue;
-        } else {
-            foreach ($params as &$value) {
-                if (is_array($value) && isset($value[$this->_param])) {
-                    $value[$this->_param] = $this->_nextParamValue;
-                    if ($this->_type == self::TYPE_DATE) {
-                        $value[$this->_param] = date('c', $this->_nextParamValue->getTimestamp());
-                    }
-                }
-            }
+        // Skip some fields under certain circumstances
+        $skipParams = array();
+        if ($this->_type == self::TYPE_STREAM) {
+            $skipParams = $this->_params;
+            unset($skipParams['readDirection']);
         }
 
         // Make request for the new rowset
-        unset($this->_rowset);
-        $this->_rowset = $this->_apiObject->read($params);
+        try {
+            $params = $this->_getNextParamValues($skipParams);
+            $this->_rowset = $this->_apiObject->read($params);
+        } catch (Exception $e) {
+            if ($this->_type == self::TYPE_STREAM) {
+                // Reset readDirection
+                $this->_nextParamValues['readDirection'] = Bronto_Api_Object::DIRECTION_FIRST;
+                // Get params again without skipping
+                $params = $this->_getNextParamValues();
+                $this->_rowset = $this->_apiObject->read($params);
+            } else {
+                throw $e;
+            }
+        }
+
+        if (!$this->_rowset) {
+            throw new Bronto_Api_Rowset_Exception('Retrieving the next Rowset failed');
+        }
 
         // Increments
         $this->_newPage = true;
         $this->_page    = $this->_page + 1;
         $this->_count   = $this->_count + $this->_rowset->count();
 
-        if ($this->_type == self::TYPE_PAGE) {
-            $this->_lastParamValue = $this->_nextParamValue;
-            $this->_nextParamValue = $this->_nextParamValue + 1;
-        } elseif ($this->_type == self::TYPE_DATE) {
-            $this->_lastParamValue = clone $this->_nextParamValue;
-        } elseif ($this->_type == self::TYPE_STREAM) {
-            $this->_lastParamValue = $this->_nextParamValue;
-        }
+        // Re-setup params
+        $this->_setupParamValues();
 
         return $this->_rowset->valid();
     }
@@ -321,14 +350,11 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getLastPageFilter()
+    public function getLastParamValues()
     {
-        if ($this->_lastParamValue instanceOf DateTime) {
-            return $this->_lastParamValue->format(DateTime::ISO8601);
-        }
-        return $this->_lastParamValue;
+        return $this->_lastParamValues;
     }
 
     /**
