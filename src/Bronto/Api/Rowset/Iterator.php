@@ -148,10 +148,16 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     }
 
     /**
-     * @return int
+     * @param int $pad
+     * @return int|string
      */
-    public function getCurrentPage()
+    public function getCurrentPage($pad = false)
     {
+        if ($pad !== false) {
+            $pad = (int) $pad;
+            return sprintf("%0{$pad}d", $this->_page);
+        }
+
         return $this->_page;
     }
 

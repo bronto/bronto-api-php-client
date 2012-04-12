@@ -139,6 +139,11 @@ class Bronto_Api_Activity extends Bronto_Api_Object
      */
     public function addToCache($type, $index, Bronto_Api_Row $object)
     {
+        // Conserve memory
+        while (count($this->_objectCache[$type]) >= 25) {
+            array_shift($this->_objectCache[$type]);
+        }
+
         $this->_objectCache[$type][$index] = $object;
         return $this;
     }
