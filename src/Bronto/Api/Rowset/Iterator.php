@@ -154,8 +154,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
 
         // Loop through each field we have to update
         foreach ($this->_params as $queryParam => $rowField) {
-            // Skip fields that are query only
-            if (!$rowField || in_array($queryParam, $skipParams)) {
+            if (in_array($queryParam, $skipParams)) {
                 continue;
             }
             // Loop through each API query param
@@ -312,7 +311,7 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
 
         // Make request for the new rowset
         try {
-            $params = $this->_getNextParamValues($skipParams);
+            $params = $this->_getNextParamValues(array_keys($skipParams));
             $this->_rowset = $this->_apiObject->read($params);
         } catch (Exception $e) {
             if ($this->_type == self::TYPE_STREAM) {
@@ -355,6 +354,27 @@ class Bronto_Api_Rowset_Iterator implements Iterator, Countable
     public function getLastParamValues()
     {
         return $this->_lastParamValues;
+    }
+
+    /**
+     * @param string $param
+     * @return mixed
+     */
+    public function getLastParamValue($param)
+    {
+        if (isset($this->_lastParamValues[$param])) {
+            return $this->_lastParamValues[$param];
+        }
+
+        foreach ($this->_lastParamValues as $key => $value) {
+            if (is_array($value)) {
+                if (isset($value[$param])) {
+                    return $value[$param];
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

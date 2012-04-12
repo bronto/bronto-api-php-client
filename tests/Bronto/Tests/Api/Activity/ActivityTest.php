@@ -26,10 +26,11 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
                 $currentPage++;
                 $this->assertSame($currentPage, $iterator->getCurrentPage());
                 if ($currentPage == 1) {
-                    $this->assertEquals(Bronto_Api_Object::DIRECTION_FIRST, $iterator->getLastPageFilter());
+                    $this->assertEquals(Bronto_Api_Object::DIRECTION_FIRST, $iterator->getLastParamValue('readDirection'));
                 } else {
+                    $this->assertGreaterThan(1000, $currentActivity);
                     $this->assertEquals(0, ($currentActivity - 1) % 1000, '$currentActivity (' . ($currentActivity - 1) . ') is not 1000 divisible.');
-                    $this->assertEquals(Bronto_Api_Object::DIRECTION_NEXT, $iterator->getLastPageFilter(), 'Current page (' . $currentPage . ') does not have NEXT as last filter.');
+                    $this->assertEquals(Bronto_Api_Object::DIRECTION_NEXT, $iterator->getLastParamValue('readDirection'), 'Current page (' . $currentPage . ') does not have NEXT as last filter.');
                 }
             }
 
