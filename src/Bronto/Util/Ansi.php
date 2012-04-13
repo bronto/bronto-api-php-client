@@ -6,6 +6,7 @@
 class Bronto_Util_Ansi
 {
     /**
+     * @see http://media.if-not-true-then-false.com/2010/01/PHP_CLI_Coloring_Class_Example.png
      * @var array
      */
     protected $_attributes = array(
@@ -79,5 +80,35 @@ class Bronto_Util_Ansi
             $text      = str_replace($value[0], $substring, $text);
         }
         return $text;
+    }
+
+    /**
+     * Simple output to show all colors available
+     */
+    public function test()
+    {
+        $foreground = $this->_attributes;
+        $background = array();
+
+        // Break apart
+        foreach ($foreground as $label => $code) {
+            if (stripos($label, 'on') === 0) {
+                $background[$label] = $code;
+                unset($foreground[$label]);
+            }
+        }
+
+        foreach ($background as $bgLabel => $bgCode) {
+            $count = 1;
+            foreach ($foreground as $fgLabel => $fgCode) {
+                $output  = str_pad($count, 2, ' ', STR_PAD_LEFT) . ': ';
+                $output .= "<{$fgLabel} {$bgLabel}>{$fgLabel} {$bgLabel}</{$fgLabel} {$bgLabel}>";
+                echo $this->parse($output) . PHP_EOL;
+                $count++;
+            }
+            echo PHP_EOL;
+        }
+
+        echo PHP_EOL;
     }
 }
