@@ -71,6 +71,11 @@ class Bronto_Api
     protected $_retryer;
 
     /**
+     * @var Bronto_Util_Uuid
+     */
+    protected $_uuid;
+
+    /**
      * @param string $token
      * @param array $options
      */
@@ -498,6 +503,18 @@ class Bronto_Api
         }
 
         return $this->_retryer;
+    }
+
+    /**
+     * @return Bronto_Util_Retryer_RetryerInterface
+     */
+    public function getUuid()
+    {
+        if (!$this->_uuid) {
+            $this->_uuid = new Bronto_Util_Uuid();
+        }
+
+        return $this->_uuid;
     }
 
     /**
