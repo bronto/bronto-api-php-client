@@ -40,6 +40,7 @@
     <groups>
         <exclude>
             <group>performance</group>
+            <group>disabled</group>
         </exclude>
     </groups>
 

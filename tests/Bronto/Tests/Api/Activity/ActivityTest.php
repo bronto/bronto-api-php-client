@@ -91,6 +91,7 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
     }
 
     /**
+     * @group disabled
      * @covers Bronto_Api_Activity::readAll
      */
     public function testActivityContactIdFilter()
@@ -107,6 +108,7 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
     }
 
     /**
+     * @group disabled
      * @covers Bronto_Api_Activity::readAll
      */
     public function testActivityContactIdFilterWithEmptyType()
@@ -123,6 +125,7 @@ class Bronto_Tests_Api_Activity_ActivityTest extends Bronto_Tests_AbstractTest
     }
 
     /**
+     * @group disabled
      * @covers Bronto_Api_Activity::readAll
      */
     public function testActivityContactIdFilterWithType()
