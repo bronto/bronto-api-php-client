@@ -218,10 +218,11 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
     }
 
     /**
+     * @param bool $upsert Ignored
      * @param bool $refresh
      * @return Bronto_Api_Delivery_Row
      */
-    public function save($refresh = false)
+    public function save($upsert = null, $refresh = false)
     {
         parent::_save(false, $refresh);
         return $this;

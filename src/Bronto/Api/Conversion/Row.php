@@ -49,10 +49,11 @@ class Bronto_Api_Conversion_Row extends Bronto_Api_Row
     }
 
     /**
+     * @param bool $upsert Ignored
      * @param bool $refresh
      * @return Bronto_Api_Conversion_Row
      */
-    public function save($refresh = false)
+    public function save($upsert = null, $refresh = false)
     {
         /**
          * If the _cleanData array is empty,
