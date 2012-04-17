@@ -100,7 +100,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      */
     public function setField($field, $value)
     {
-        if (empty($value) && $value === "0") {
+        if ($value === '') {
             return;
         }
 
@@ -110,7 +110,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
                 $field = $field->read();
             }
             $fieldId = $field->id;
-            
+
             switch ($field->type) {
                 case Bronto_Api_Field::TYPE_DATE:
                     if ($value instanceOf DateTime) {
