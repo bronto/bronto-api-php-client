@@ -17,6 +17,7 @@
  * @property string listId
  * @property string segmentId
  * @property string deliveryType
+ * @property-write string tid
  * @method Bronto_Api_Conversion getApiObject() getApiObject()
  */
 class Bronto_Api_Conversion_Row extends Bronto_Api_Row
@@ -67,5 +68,13 @@ class Bronto_Api_Conversion_Row extends Bronto_Api_Row
         }
 
         return $this;
+    }
+
+    /**
+     * @return Bronto_Api_Conversion_Row
+     */
+    public function persist()
+    {
+        return parent::_persist('add', false);
     }
 }
