@@ -9,6 +9,7 @@
 class Bronto_Api_ApiToken extends Bronto_Api_Object
 {
     /** Permissions */
+    const PERMISSION_NONE  = 0;
     const PERMISSION_READ  = 1;
     const PERMISSION_WRITE = 2;
     const PERMISSION_SEND  = 4;
@@ -18,6 +19,7 @@ class Bronto_Api_ApiToken extends Bronto_Api_Object
     const PERMISSIONS_READ_SEND       = 5;
     const PERMISSIONS_WRITE_SEND      = 6;
     const PERMISSIONS_READ_WRITE_SEND = 7;
+    const PERMISSIONS_ALL             = self::PERMISSIONS_READ_WRITE_SEND;
 
     /**
      * @var array
@@ -55,5 +57,41 @@ class Bronto_Api_ApiToken extends Bronto_Api_Object
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
         return $this->read($params);
+    }
+
+    /**
+     * @param int $permissions
+     * @return array
+     */
+    public function getPermissionsLabels($permissions)
+    {
+        switch ($permissions) {
+            case Bronto_Api_ApiToken::PERMISSION_READ:
+                return array('read');
+                break;
+            case Bronto_Api_ApiToken::PERMISSION_WRITE:
+                return array('write');
+                break;
+            case Bronto_Api_ApiToken::PERMISSION_SEND:
+                return array('send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_READ_WRITE:
+                return array('read', 'write');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_READ_SEND:
+                return array('read', 'send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_WRITE_SEND:
+                return array('write', 'send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_READ_WRITE_SEND:
+                return array('read', 'write', 'send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSION_NONE:
+                return array('none');
+                break;
+        }
+
+        return false;
     }
 }
