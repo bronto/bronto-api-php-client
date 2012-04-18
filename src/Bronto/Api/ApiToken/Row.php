@@ -52,4 +52,53 @@ class Bronto_Api_ApiToken_Row extends Bronto_Api_Row
 
         return $account;
     }
+
+    /**
+     * @param int $permissions
+     * @return bool
+     */
+    public function hasPermissions($permissions)
+    {
+        if ($this->permissions === null) {
+            $this->read();
+        }
+
+        return $this->permissions >= $permissions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionsLabels()
+    {
+        if ($this->permissions === null) {
+            $this->read();
+        }
+
+        switch ($this->permissions) {
+            case Bronto_Api_ApiToken::PERMISSION_READ:
+                return array('read');
+                break;
+            case Bronto_Api_ApiToken::PERMISSION_WRITE:
+                return array('write');
+                break;
+            case Bronto_Api_ApiToken::PERMISSION_SEND:
+                return array('send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_READ_WRITE:
+                return array('read', 'write');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_READ_SEND:
+                return array('read', 'send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_WRITE_SEND:
+                return array('write', 'send');
+                break;
+            case Bronto_Api_ApiToken::PERMISSIONS_READ_WRITE_SEND:
+                return array('read', 'write', 'send');
+                break;
+        }
+
+        return false;
+    }
 }

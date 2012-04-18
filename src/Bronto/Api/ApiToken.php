@@ -13,6 +13,27 @@ class Bronto_Api_ApiToken extends Bronto_Api_Object
     const PERMISSION_WRITE = 2;
     const PERMISSION_SEND  = 4;
 
+    /** Permissions Shortcuts */
+    const PERMISSIONS_READ_WRITE      = 3;
+    const PERMISSIONS_READ_SEND       = 5;
+    const PERMISSIONS_WRITE_SEND      = 6;
+    const PERMISSIONS_READ_WRITE_SEND = 7;
+
+    /**
+     * @var array
+     */
+    protected $_options = array(
+        'permissions' => array(
+            self::PERMISSION_READ,
+            self::PERMISSION_WRITE,
+            self::PERMISSION_SEND,
+            self::PERMISSIONS_READ_WRITE,
+            self::PERMISSIONS_READ_SEND,
+            self::PERMISSIONS_WRITE_SEND,
+            self::PERMISSIONS_READ_WRITE_SEND,
+        ),
+    );
+
     /**
      * @var array
      */
