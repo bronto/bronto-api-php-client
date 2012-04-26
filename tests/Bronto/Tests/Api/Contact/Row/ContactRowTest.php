@@ -7,6 +7,16 @@
 class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
 {
     /**
+     * @covers Bronto_Api_Contact_Row::read
+     * @expectedException Bronto_Api_Contact_Exception
+     */
+    public function testReadEmptyContact()
+    {
+        $contact = $this->getObject()->createRow();
+        $contact->read();
+    }
+
+    /**
      * @covers Bronto_Api_Contact_Row::save
      * @covers Bronto_Api_Contact_Exception::__construct
      * @expectedException Bronto_Api_Contact_Exception

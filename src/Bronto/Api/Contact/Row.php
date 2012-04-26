@@ -43,6 +43,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      */
     public function read()
     {
+        $params = array();
         if ($this->id) {
             $params = array('id' => $this->id);
         } elseif ($this->email) {
@@ -52,6 +53,8 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
                     'operator' => 'EqualTo',
                 )
             );
+        } else {
+            throw new Bronto_Api_Contact_Exception('Trying to read Contact without Id or Email for lookup');
         }
 
         parent::_read($params);
