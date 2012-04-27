@@ -77,4 +77,22 @@ class Bronto_Api_Conversion_Row extends Bronto_Api_Row
     {
         return parent::_persist('add', false);
     }
+
+    /**
+     * Set row field value
+     *
+     * @param  string $columnName The column key.
+     * @param  mixed  $value      The value for the property.
+     */
+    public function __set($columnName, $value)
+    {
+        switch (strtolower($columnName)) {
+            case 'email':
+                // Trim whitespace
+                $value = preg_replace('/\s+/', '', $value);
+                break;
+        }
+
+        return parent::__set($columnName, $value);
+    }
 }

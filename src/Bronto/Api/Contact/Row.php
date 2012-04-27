@@ -330,6 +330,24 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
     }
 
     /**
+     * Set row field value
+     *
+     * @param  string $columnName The column key.
+     * @param  mixed  $value      The value for the property.
+     */
+    public function __set($columnName, $value)
+    {
+        switch (strtolower($columnName)) {
+            case 'email':
+                // Trim whitespace
+                $value = preg_replace('/\s+/', '', $value);
+                break;
+        }
+
+        return parent::__set($columnName, $value);
+    }
+
+    /**
      * Required by Bronto_Api_Delivery_Recipient
      *
      * @return false
