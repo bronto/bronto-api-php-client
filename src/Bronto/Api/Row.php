@@ -297,8 +297,7 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
         if ($this->id) {
             $data = array('id' => $this->id);
         } else {
-            $exceptionClass = $this->getApiObject()->getExceptionClass();
-            throw new $exceptionClass('Nothing to read.');
+            throw new Bronto_Api_Row_Exception('Trying to read Row without unique identifier for lookup');
         }
 
         $this->_read($data);
@@ -335,7 +334,7 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
             $data = array('id' => $this->id);
         } else {
             $exceptionClass = $this->getApiObject()->getExceptionClass();
-            throw new $exceptionClass('Nothing to delete.');
+            throw new $exceptionClass('Trying to delete Row without unique identifier for lookup');
         }
 
         $this->_delete($data);
@@ -360,6 +359,11 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
      */
     protected function _read(array $filter = array())
     {
+        if (empty($filter)) {
+            $exceptionClass = $this->getApiObject()->getExceptionClass();
+            throw new $exceptionClass('Trying to read Row without unique identifier for lookup');
+        }
+
         /* @var $rowset Bronto_Api_Rowset */
         $rowset = $this->getApiObject()->readAll($filter);
 

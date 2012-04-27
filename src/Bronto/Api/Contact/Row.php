@@ -43,6 +43,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      */
     public function read()
     {
+        $params = array();
         if ($this->id) {
             $params = array('id' => $this->id);
         } elseif ($this->email) {
@@ -52,6 +53,8 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
                     'operator' => 'EqualTo',
                 )
             );
+        } else {
+            throw new Bronto_Api_Contact_Exception('Trying to read Contact without Id or Email for lookup');
         }
 
         parent::_read($params);
@@ -324,6 +327,24 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
         $deliveryObject = $this->getApi()->getDeliveryObject();
         $filter = array_merge_recursive(array('contactId' => $this->id), $additionalFilter);
         return $deliveryObject->readDeliveryRecipients($filter, $pageNumber);
+    }
+
+    /**
+     * Set row field value
+     *
+     * @param  string $columnName The column key.
+     * @param  mixed  $value      The value for the property.
+     */
+    public function __set($columnName, $value)
+    {
+        switch (strtolower($columnName)) {
+            case 'email':
+                // Trim whitespace
+                $value = preg_replace('/\s+/', '', $value);
+                break;
+        }
+
+        return parent::__set($columnName, $value);
     }
 
     /**
