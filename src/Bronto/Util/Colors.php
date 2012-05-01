@@ -123,13 +123,18 @@ class Bronto_Util_Colors
             $code = strtolower($code);
             if ($html) {
                 if (isset($this->_attributes[$code]['hex'])) {
-                    if (!empty($attribute)) {
-                        $attribute .= ' ';
-                    }
                     if (stripos($code, 'on') === 0) {
-                        $attribute .= "background-color: {$this->_attributes[$code]['ansi']};";
+                        $attribute .= "background-color: {$this->_attributes[$code]['hex']};";
                     } else {
-                        $attribute .= "color: {$this->_attributes[$code]['ansi']};";
+                        $attribute .= "color: {$this->_attributes[$code]['hex']};";
+                    }
+                } else {
+                    switch ($code) {
+                        case 'bold':
+                            $attribute .= 'font-weight: bold;';
+                            break;
+                        default:
+                            break;
                     }
                 }
             } else {
@@ -158,7 +163,11 @@ class Bronto_Util_Colors
         $attr = $this->color($codes, $html);
 
         if ($html) {
-            return "<span style=\"{$attr}\">{$text}</span>";
+            if (empty($attr)) {
+                return false;
+            } else {
+                return "<span style=\"{$attr}\">{$text}</span>";
+            }
         } else {
             return $attr . $text . chr(27) . "[0m";
         }
@@ -174,9 +183,10 @@ class Bronto_Util_Colors
         $matches = array();
         preg_match_all('/(<([\w\s]+)[^>]*>)(.*?)(<\/\\2>)/', $text, $matches, PREG_SET_ORDER);
         foreach ($matches as $value) {
-            $codes     = explode(' ', trim($value[1], '<>'));
-            $substring = $this->colored($value[3], $codes, $html);
-            $text      = str_replace($value[0], $substring, $text);
+            $codes = explode(' ', trim($value[1], '<>'));
+            if ($substring = $this->colored($value[3], $codes, $html)) {
+                $text = str_replace($value[0], $substring, $text);
+            }
         }
         return $text;
     }
