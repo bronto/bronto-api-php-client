@@ -9,6 +9,19 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
     /**
      * @covers Bronto_Api_Contact_Row::__set
      */
+    public function testTruncatedEmail()
+    {
+        $contact = $this->getObject()->createRow();
+        $contact->email = 'generalmail@marshallinteriors.';
+        $contact->save();
+
+        // Just testing that we didn't throw an Exception
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @covers Bronto_Api_Contact_Row::__set
+     */
     public function testEmailWithSpaces()
     {
         $contact = $this->getObject()->createRow();

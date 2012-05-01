@@ -90,6 +90,10 @@ class Bronto_Api_Conversion_Row extends Bronto_Api_Row
             case 'email':
                 // Trim whitespace
                 $value = preg_replace('/\s+/', '', $value);
+                // Check if email got truncated
+                if (substr($value, -1) === '.') {
+                    $value .= 'com';
+                }
                 break;
         }
 

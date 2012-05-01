@@ -341,6 +341,10 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
             case 'email':
                 // Trim whitespace
                 $value = preg_replace('/\s+/', '', $value);
+                // Check if email got truncated
+                if (substr($value, -1) === '.') {
+                    $value .= 'com';
+                }
                 break;
         }
 
