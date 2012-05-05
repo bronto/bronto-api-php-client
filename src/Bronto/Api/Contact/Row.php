@@ -24,6 +24,15 @@
 class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delivery_Recipient
 {
     /**
+     * @var array
+     */
+    protected $_data = array(
+        'status'          => Bronto_Api_Contact::STATUS_ONBOARDING,
+        'messagePrefence' => Bronto_Api_Contact::MSGPREF_HTML,
+        'source'          => Bronto_Api_Contact::SOURCE_API,
+    );
+
+    /**
      * Initialize object
      *
      * Called from {@link __construct()} as final step of object instantiation.

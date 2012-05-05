@@ -403,23 +403,23 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
      */
     protected function _save($upsert = true, $refresh = false)
     {
-        if ($upsert && !$this->getApiObject()->hasMethodType('addOrUpdate')) {
-            $upsert = false;
-        }
-
-        if ($upsert) {
-            $this->_add(true);
-        } else {
-            /**
-             * If the _cleanData array is empty,
-             * this is an ADD of a new row.
-             * Otherwise it is an UPDATE.
-             */
-            if (empty($this->_cleanData)) {
-                $this->_add(false);
+        /**
+         * If the _cleanData array is empty,
+         * this is an ADD of a new row.
+         * Otherwise it is an UPDATE.
+         */
+        if (empty($this->_cleanData)) {
+            if ($upsert) {
+                if ($this->getApiObject()->hasMethodType('addOrUpdate')) {
+                    $this->_add(true);
+                } else {
+                    $this->_add(false);
+                }
             } else {
-                $this->_update();
+                $this->_add(false);
             }
+        } else {
+            $this->_update();
         }
 
         $refreshOnSave = $this->getApi()->getOption('refresh_on_save');

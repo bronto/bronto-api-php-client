@@ -7,6 +7,34 @@
 class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
 {
     /**
+     * @covers Bronto_Api_Contact_Row::save
+     */
+    public function testUpdateStatus()
+    {
+        /* @var $contact1 Bronto_Api_Contact_Row */
+        $contact1 = $this->getObject()->createRow();
+        $contact1->email = 'example+updatestatus' . time(). '@bronto.com';
+        $contact1->save();
+
+        $this->assertEquals(Bronto_Api_Contact::STATUS_ONBOARDING, $contact1->status, 'Contact initial status was not `onboarding`.');
+
+        /* @var $contact2 Bronto_Api_Contact_Row */
+        $contact2 = $this->getObject()->createRow();
+        $contact2->email  = $contact1->email;
+        $contact2->read();
+        
+        $contact2->status = Bronto_Api_Contact::STATUS_TRANSACTIONAL;
+        $contact2->save();
+
+        /* @var $contact3 Bronto_Api_Contact_Row */
+        $contact3 = $this->getObject()->createRow();
+        $contact3->email  = $contact1->email;
+        $contact3->read();
+
+        $this->assertEquals(Bronto_Api_Contact::STATUS_TRANSACTIONAL, $contact3->status, 'Contact updated status is: ' . $contact3->status);
+    }
+
+    /**
      * @covers Bronto_Api_Contact_Row::__set
      */
     public function testTruncatedEmail()
@@ -17,6 +45,8 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
 
         // Just testing that we didn't throw an Exception
         $this->assertTrue(true);
+
+        return $contact;
     }
 
     /**
