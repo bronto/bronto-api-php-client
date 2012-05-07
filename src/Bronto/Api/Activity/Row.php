@@ -46,8 +46,8 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
         // Check is{Type}
         if (substr($name, 0, 2) == 'is') {
             $type = strtolower(substr($name, 2));
-            if (in_array($type, $this->_options['trackingType'])) {
-                return $this->trackingType == strtoupper($type);
+            if ($this->getApiObject()->isValidOptionValue('trackingType', $type)) {
+                return $this->trackingType == $type;
             }
         }
 
