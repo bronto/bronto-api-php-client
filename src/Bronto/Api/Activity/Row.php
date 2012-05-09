@@ -6,7 +6,12 @@
  * @property-read string $deliveryId
  * @property-read string $messageId
  * @property-read string $listId
+ * @property-read string $segmentId
  * @property-read string $trackingType
+ * @property-read string $bounceReason
+ * @property-read string $bounceType
+ * @property-read string $linkName
+ * @property-read string $linkUrl
  * @method bool isOpen() isOpen()
  * @method bool isClick() isClick()
  * @method bool isConversion() isConversion()
@@ -85,6 +90,30 @@ class Bronto_Api_Activity_Row extends Bronto_Api_Row
         }
 
         throw new BadMethodCallException("The method {$name} does not exist");
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSoftBounce()
+    {
+        if ($this->isBounce()) {
+            return $this->getApiObject()->isBounceSoft($this->bounceType);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isHardBounce()
+    {
+        if ($this->isBounce()) {
+            return $this->getApiObject()->isBounceHard($this->bounceType);
+        }
+
+        return false;
     }
 
     /**

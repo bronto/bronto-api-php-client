@@ -15,6 +15,15 @@ class Bronto_Api_Activity extends Bronto_Api_Object
     const TYPE_UNSUBSCRIBE = 'unsubscribe';
     const TYPE_VIEW        = 'view';
 
+    /** bounceType */
+    const BOUNCE_HARD_CONN_PERM    = 'conn_perm';
+    const BOUNCE_HARD_SUB_PERM     = 'sub_perm';
+    const BOUNCE_HARD_CONTENT_PERM = 'content_perm';
+    const BOUNCE_SOFT_CONN_TEMP    = 'conn_temp';
+    const BOUNCE_SOFT_SUB_TEMP     = 'sub_temp';
+    const BOUNCE_SOFT_CONTENT_TEMP = 'content_temp';
+    const BOUNCE_SOFT_OTHER        = 'other';
+
     /**
      * @var array
      */
@@ -38,6 +47,15 @@ class Bronto_Api_Activity extends Bronto_Api_Object
         'readDirection' => array(
             self::DIRECTION_FIRST,
             self::DIRECTION_NEXT,
+        ),
+        'bounceType' => array(
+            self::BOUNCE_HARD_CONN_PERM,
+            self::BOUNCE_HARD_SUB_PERM,
+            self::BOUNCE_HARD_CONTENT_PERM,
+            self::BOUNCE_SOFT_CONN_TEMP,
+            self::BOUNCE_SOFT_SUB_TEMP,
+            self::BOUNCE_SOFT_CONTENT_TEMP,
+            self::BOUNCE_SOFT_OTHER,
         ),
     );
 
@@ -164,5 +182,32 @@ class Bronto_Api_Activity extends Bronto_Api_Object
             return $this->_objectCache[$type][$index];
         }
         return false;
+    }
+
+    /**
+     * @param string $bounceType
+     * @return bool
+     */
+    public function isBounceHard($bounceType)
+    {
+        return (
+            $bounceType === self::BOUNCE_HARD_CONN_PERM ||
+            $bounceType === self::BOUNCE_HARD_SUB_PERM ||
+            $bounceType === self::BOUNCE_HARD_CONTENT_PERM
+        );
+    }
+
+    /**
+     * @param string $bounceType
+     * @return bool
+     */
+    public function isBounceSoft($bounceType)
+    {
+        return (
+            $bounceType === self::BOUNCE_SOFT_CONN_TEMP ||
+            $bounceType === self::BOUNCE_SOFT_SUB_TEMP ||
+            $bounceType === self::BOUNCE_SOFT_CONTENT_TEMP ||
+            $bounceType === self::BOUNCE_SOFT_OTHER
+        );
     }
 }

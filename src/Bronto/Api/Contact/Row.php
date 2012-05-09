@@ -191,15 +191,22 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
 
         // We don't, so request it
         if ($this->id) {
-            $params = array('id' => $this->id);
-            $rowset = $this->getApiObject()->readAll($params, array($fieldId));
-            if ($rowset->count() > 0) {
-                $data = $rowset->current()->getData();
-                $this->_data['fields'] = array_merge(
-                    isset($this->_data['fields']) ? $this->_data['fields'] : array(),
-                    $data['fields']
-                );
-                $this->_cleanData = $this->_data;
+            try {
+                if ($rowset = $this->getApiObject()->readAll(array('id' => $this->id), array($fieldId))) {
+                    foreach ($rowset as $row) {
+                        $data = $row->getData();
+                        if (is_array($data) && !empty($data) && isset($data['fields'])) {
+                            $this->_data['fields'] = array_merge(
+                                isset($this->_data['fields']) ? $this->_data['fields'] : array(),
+                                $data['fields']
+                            );
+                            $this->_cleanData = $this->_data;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                return false;
             }
         }
 
