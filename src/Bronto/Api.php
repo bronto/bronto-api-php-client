@@ -399,6 +399,16 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
+     * @return Bronto_Api_Order
+     */
+    public function getOrderObject()
+    {
+        return $this->getObject('order');
+    }
+
+    /**
+     * Proxy for intellisense
+     *
      * @return Bronto_Api_Segment
      */
     public function getSegmentObject()

@@ -177,11 +177,11 @@ abstract class Bronto_Api_Object
             }
         }
 
-        if (!isset($this->_methodsByType['addOrUpdate'])) {
-            unset($this->_writeCache['addOrUpdate']);
-        } else {
+        if (isset($this->_methodsByType['addOrUpdate'])) {
             unset($this->_writeCache['add']);
             unset($this->_writeCache['update']);
+        } else {
+            unset($this->_writeCache['addOrUpdate']);
         }
 
         $this->init();

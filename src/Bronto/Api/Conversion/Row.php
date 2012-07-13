@@ -1,23 +1,23 @@
 <?php
 
 /**
- * @property-read string id
- * @property string contactId
- * @property string email
- * @property string orderId
- * @property string item
- * @property string description
- * @property int quantity
- * @property float amount
- * @property float orderTotal
- * @property string createdDate
- * @property string deliveryId
- * @property string messageId
- * @property string automatorId
- * @property string listId
- * @property string segmentId
- * @property string deliveryType
- * @property-write string tid
+ * @property-read string $id
+ * @property string $contactId
+ * @property string $email
+ * @property string $orderId
+ * @property string $item
+ * @property string $description
+ * @property int $quantity
+ * @property float $amount
+ * @property float $orderTotal
+ * @property string $createdDate
+ * @property string $deliveryId
+ * @property string $messageId
+ * @property string $automatorId
+ * @property string $listId
+ * @property string $segmentId
+ * @property string $deliveryType
+ * @property-write string $tid
  * @method Bronto_Api_Conversion getApiObject() getApiObject()
  */
 class Bronto_Api_Conversion_Row extends Bronto_Api_Row
