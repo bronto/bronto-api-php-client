@@ -329,8 +329,8 @@ abstract class Bronto_Api_Object
 
             try {
                 // Store this request in case we need to retry later
-                $this->_lastRequestMethod = $method; d($method);
-                $this->_lastRequestData   = $data; d($data);
+                $this->_lastRequestMethod = $method;
+                $this->_lastRequestData   = $data;
 
                 // Attempt
                 $client = $this->getApi()->getSoapClient();
