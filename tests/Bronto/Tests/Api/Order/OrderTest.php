@@ -15,7 +15,7 @@ class Bronto_Tests_Api_Order_OrderTest extends Bronto_Tests_AbstractTest
         /* @var $brontoOrder Bronto_Api_Order_Row */
         $brontoOrder = $orderObject->createRow();
         $brontoOrder->email       = 'leeked@gmail.com';
-        $brontoOrder->id          = 1;
+        $brontoOrder->id          = rand();
         $brontoOrder->createdDate = date('c', time());
         $brontoOrder->items       = array(
             array(
@@ -50,7 +50,7 @@ class Bronto_Tests_Api_Order_OrderTest extends Bronto_Tests_AbstractTest
         /* @var $brontoOrder Bronto_Api_Order_Row */
         $brontoOrder = $orderObject->createRow();
         $brontoOrder->email       = 'leeked+addupdateorder' . rand() . '@gmail.com';
-        $brontoOrder->id          = 2;
+        $brontoOrder->id          = rand();
         $brontoOrder->createdDate = date('c', time());
         $brontoOrder->items       = array(
             array(
@@ -85,7 +85,7 @@ class Bronto_Tests_Api_Order_OrderTest extends Bronto_Tests_AbstractTest
         /* @var $brontoOrder Bronto_Api_Order_Row */
         $brontoOrder = $orderObject->createRow();
         $brontoOrder->contactId   = '551dea25e-0b54-402a-af4c-c8947cf549a8';
-        $brontoOrder->id          = 2;
+        $brontoOrder->id          = rand();
         $brontoOrder->createdDate = date('c', time());
         $brontoOrder->items       = array(
             array(
