@@ -4,7 +4,6 @@
  * @property-read string $id
  * @property string $contactId
  * @property string $email
- * @property string $orderId
  * @property array $items
  * @property string $createdDate
  * @property string $deliveryId
@@ -26,7 +25,6 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
     public function save($upsert = true, $refresh = false)
     {
         parent::_add(true);
-
         return $this;
     }
 
