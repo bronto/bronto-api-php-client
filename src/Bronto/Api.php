@@ -230,7 +230,7 @@ class Bronto_Api
                     }
                     break;
                 case 'debug':
-                    if ($value === true) {
+                    if ($value) {
                         $this->_options['trace'] = true;
                     } else {
                         $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
