@@ -1,5 +1,7 @@
 <?php
 
+include ('BrontoSoapClient.php');
+
 /**
  * @author Chris Jones <chris.jones@bronto.com>
  */
@@ -11,7 +13,7 @@ class Bronto_Api
     const BASE_URL      = 'http://api.bronto.com/v4';
 
     /**
-     * SoapClient object
+     * BrontoSoapClient object
      *
      * @var SoapClient
      */
@@ -29,22 +31,22 @@ class Bronto_Api
      */
     protected $_options = array(
         // Bronto
-        'refresh_on_save' => false,
-        'retry_limit'     => 5,
-        'debug'           => false,
-        'retryer'         => array(
+        'refresh_on_save'    => false,
+        'retry_limit'        => 5,
+        'debug'              => true,
+        'retryer'            => array(
             'type' => null,
             'path' => null,
         ),
         // SoapClient
-        'soap_version'       => SOAP_1_1,
-        'compression'        => true,
+        'soap_version'       => null,
+        'compression'        => null,
         'encoding'           => 'UTF-8',
         'trace'              => false,
         'exceptions'         => true,
-        'cache_wsdl'         => WSDL_CACHE_BOTH,
+        'cache_wsdl'         => false,
         'user_agent'         => 'Bronto_Api <https://github.com/leek/bronto_service>',
-        'features'           => SOAP_SINGLE_ELEMENT_ARRAYS,
+        'features'           => null,
         'connection_timeout' => 30,
     );
 
@@ -89,11 +91,38 @@ class Bronto_Api
             throw new Bronto_Api_Exception('OpenSSL extension is not loaded.');
         }
 
-        $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
-        $this->_setOptions($options);
-
         if ($token !== null) {
             $this->setToken($token);
+        }
+
+        if (!empty($options)) {
+            $this->setOptions($options);
+        }
+
+        // Turn on trace if debug is enabled
+        if ($this->_options['debug']) {
+            $this->_options['trace'] = true;
+        }
+
+        // Use SOAP 1.1 as default
+        if ($this->_options['soap_version'] == null) {
+            $this->_options['soap_version'] = SOAP_1_1;
+        }
+
+        // Accept GZIP compression
+        if ($this->_options['compression'] == null) {
+            $this->_options['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
+        }
+
+        // Turn on the WSDL cache
+        if ($this->_options['cache_wsdl'] === false) {
+            $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
+        } elseif ($this->_options['cache_wsdl'] == null) {
+            $this->_options['cache_wsdl'] = WSDL_CACHE_BOTH;
+        }
+
+        if ($this->_options['features'] == null) {
+            $this->_options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
         }
 
         ini_set('default_socket_timeout', 120);
@@ -201,10 +230,10 @@ class Bronto_Api
      * @param array $options
      * @return Bronto_Api
      */
-    protected function _setOptions(array $options = array())
+    public function setOptions(array $options = array())
     {
         foreach ($options as $name => $value) {
-            $this->_setOption($name, $value);
+            $this->setOption($name, $value);
         }
         return $this;
     }
@@ -214,7 +243,7 @@ class Bronto_Api
      * @param mixed $value
      * @return Bronto_Api
      */
-    protected function _setOption($name, $value)
+    public function setOption($name, $value)
     {
         if (isset($this->_options[$name])) {
             // Some settings need checked
@@ -227,13 +256,6 @@ class Bronto_Api
                 case 'cache_wsdl':
                     if (!in_array($value, array(WSDL_CACHE_NONE, WSDL_CACHE_DISK, WSDL_CACHE_MEMORY, WSDL_CACHE_BOTH))) {
                         throw new Bronto_Api_Exception('Invalid cache_wsdl value specified.');
-                    }
-                    break;
-                case 'debug':
-                    if ($value) {
-                        $this->_options['trace'] = true;
-                    } else {
-                        $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
                     }
                     break;
             }
@@ -379,16 +401,6 @@ class Bronto_Api
     /**
      * Proxy for intellisense
      *
-     * @return Bronto_Api_Order
-     */
-    public function getOrderObject()
-    {
-        return $this->getObject('order');
-    }
-
-    /**
-     * Proxy for intellisense
-     *
      * @return Bronto_Api_Segment
      */
     public function getSegmentObject()
@@ -420,13 +432,13 @@ class Bronto_Api
 
     /**
      * @param bool $authenticate
-     * @return SoapClient
+     * @return BrontoSoapClient
      */
     public function getSoapClient($authenticate = true)
     {
         if ($this->_soapClient == null) {
             $this->_connected = false;
-            $this->_soapClient = new SoapClient(self::BASE_WSDL, array(
+            $this->_soapClient = new BrontoSoapClient(self::BASE_WSDL, array(
                 'soap_version' => $this->_options['soap_version'],
                 'compression'  => $this->_options['compression'],
                 'encoding'     => $this->_options['encoding'],
@@ -462,7 +474,8 @@ class Bronto_Api
      */
     public function setDebug($value)
     {
-        return $this->_setOption('debug', (bool) $value);
+        $this->_options['debug'] = (bool) $value;
+        return $this;
     }
 
     /**
@@ -470,7 +483,7 @@ class Bronto_Api
      */
     public function getDebug()
     {
-        return (bool) $this->_options['debug'];
+        return $this->_options['debug'];
     }
 
     /**
