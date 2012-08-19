@@ -11,8 +11,6 @@ class Bronto_Api
     const BASE_URL      = 'http://api.bronto.com/v4';
 
     /**
-     * SoapClient object
-     *
      * @var SoapClient
      */
     protected $_soapClient;
@@ -29,6 +27,7 @@ class Bronto_Api
      */
     protected $_options = array(
         // Bronto
+        'soap_client'     => 'Bronto_SoapClient',
         'refresh_on_save' => false,
         'retry_limit'     => 5,
         'debug'           => false,
@@ -141,6 +140,7 @@ class Bronto_Api
             if ($exception instanceOf Bronto_Api_Exception) {
                 // Good
             } else {
+                // Convert
                 $exception = new Bronto_Api_Exception($exception->getMessage(), $exception->getCode(), null, $exception);
             }
         } else {
@@ -153,6 +153,7 @@ class Bronto_Api
             }
         }
 
+        // For tracking request/response in debug mode
         if ($this->getDebug()) {
             /* @var $exception Bronto_Api_Exception */
             $exception->setRequest($this->getLastRequest());
@@ -219,18 +220,23 @@ class Bronto_Api
         if (isset($this->_options[$name])) {
             // Some settings need checked
             switch ($name) {
+                case 'soap_client':
+                    if (!class_exists($value)) {
+                        $this->throwException("Unable to load class: {$value} as SoapClient.");
+                    }
+                    break;
                 case 'soap_version':
                     if (!in_array($value, array(SOAP_1_1, SOAP_1_2))) {
-                        throw new Bronto_Api_Exception('Invalid soap_version value specified. Use SOAP_1_1 or SOAP_1_2 constants.');
+                        $this->throwException('Invalid soap_version value specified. Use SOAP_1_1 or SOAP_1_2 constants.');
                     }
                     break;
                 case 'cache_wsdl':
                     if (!in_array($value, array(WSDL_CACHE_NONE, WSDL_CACHE_DISK, WSDL_CACHE_MEMORY, WSDL_CACHE_BOTH))) {
-                        throw new Bronto_Api_Exception('Invalid cache_wsdl value specified.');
+                        $this->throwException('Invalid cache_wsdl value specified.');
                     }
                     break;
                 case 'debug':
-                    if ($value) {
+                    if ($value === true) {
                         $this->_options['trace'] = true;
                     } else {
                         $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
@@ -426,7 +432,8 @@ class Bronto_Api
     {
         if ($this->_soapClient == null) {
             $this->_connected = false;
-            $this->_soapClient = new SoapClient(self::BASE_WSDL, array(
+            $soapClientClass  = $this->getOption('soap_client', 'Bronto_SoapClient');
+            $this->_soapClient = new $soapClientClass(self::BASE_WSDL, array(
                 'soap_version' => $this->_options['soap_version'],
                 'compression'  => $this->_options['compression'],
                 'encoding'     => $this->_options['encoding'],
