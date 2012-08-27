@@ -69,7 +69,7 @@ class Bronto_Api_Login_ContactInformation
     /**
      * @param stdClass $data
      */
-    public function __construct(stdClass $data = array())
+    public function __construct($data = array())
     {
         $data = (array) $data;
         foreach ($data as $key => $value) {

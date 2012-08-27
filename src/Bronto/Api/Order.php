@@ -12,6 +12,7 @@ class Bronto_Api_Order extends Bronto_Api_Object
      * @var array
      */
     protected $_methods = array(
-        'addUpdateOrder' => 'addOrUpdate',
+        'addOrUpdateOrders' => 'addOrUpdate',
+        'deleteOrders'      => 'delete',
     );
 }

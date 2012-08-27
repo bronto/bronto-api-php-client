@@ -4,8 +4,8 @@
  * @property-read string $id
  * @property string $contactId
  * @property string $email
- * @property array $items
- * @property string $createdDate
+ * @property array $products
+ * @property string $orderDate
  * @property string $deliveryId
  * @property string $messageId
  * @property string $automatorId
@@ -13,6 +13,7 @@
  * @property string $segmentId
  * @property string $deliveryType
  * @property-write string $tid
+ * @method Bronto_Api_Order_Row delete() delete()
  * @method Bronto_Api_Order getApiObject() getApiObject()
  */
 class Bronto_Api_Order_Row extends Bronto_Api_Row
@@ -56,5 +57,26 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
         }
 
         return parent::__set($columnName, $value);
+    }
+
+    /**
+     * @param array $data
+     * @return Bronto_Api_Order_Product
+     */
+    public function addProduct(array $data = array())
+    {
+        $product   = new Bronto_Api_Order_Product($data);
+        $productId = $product->id;
+
+        if (empty($productId)) {
+            throw new Bronto_Api_Order_Exception('Product must have a value for ID.');
+        }
+
+        if (isset($this->products[$productId])) {
+            throw new Bronto_Api_Order_Exception("Product already exists in Order with ID: {$productId}");
+        }
+
+        $this->products[$productId] = $product;
+        return $product;
     }
 }
