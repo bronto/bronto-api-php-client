@@ -234,11 +234,14 @@ class Bronto_Api
                     if (!in_array($value, array(WSDL_CACHE_NONE, WSDL_CACHE_DISK, WSDL_CACHE_MEMORY, WSDL_CACHE_BOTH))) {
                         $this->throwException('Invalid cache_wsdl value specified.');
                     }
+                    // If debug mode, ignore WSDL cache setting
+                    if ($this->getDebug()) {
+                        $value = WSDL_CACHE_NONE;
+                    }
                     break;
                 case 'debug':
-                    if ($value === true) {
-                        $this->_options['trace'] = true;
-                    } else {
+                    if ($value == true) {
+                        $this->_options['trace']      = true;
                         $this->_options['cache_wsdl'] = WSDL_CACHE_NONE;
                     }
                     break;

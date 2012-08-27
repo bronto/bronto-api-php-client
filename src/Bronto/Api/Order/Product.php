@@ -23,7 +23,7 @@ class Bronto_Api_Order_Product
     /**
      * @var string
      */
-    public $descriptions;
+    public $description;
 
     /**
      * @var string
