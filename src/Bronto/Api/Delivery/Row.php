@@ -182,6 +182,11 @@ class Bronto_Api_Delivery_Row extends Bronto_Api_Row
      */
     public function setField($field, $value, $type = 'html')
     {
+        if (strlen($field) > 25) {
+            // Make sure we don't pass a field name longer than 25 characters
+            $field = substr($field, 0, 25);
+        }
+
         $messageField = array(
             'name'    => $field,
             'type'    => $type,
