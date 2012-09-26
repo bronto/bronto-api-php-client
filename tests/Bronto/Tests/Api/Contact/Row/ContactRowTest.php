@@ -9,6 +9,20 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
     /**
      * @covers Bronto_Api_Contact_Row::save
      */
+    public function testSaveWithoutUpsert()
+    {
+        /* @var $contact Bronto_Api_Contact_Row */
+        $contact = $this->getObject()->createRow();
+        $contact->email = 'example+addcontacts' . time(). '@bronto.com';
+        $contact->save(false);
+
+        var_dump($contact);
+        exit;
+    }
+
+    /**
+     * @covers Bronto_Api_Contact_Row::save
+     */
     public function testUpdateStatus()
     {
         /* @var $contact1 Bronto_Api_Contact_Row */
@@ -22,7 +36,7 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact2 = $this->getObject()->createRow();
         $contact2->email  = $contact1->email;
         $contact2->read();
-        
+
         $contact2->status = Bronto_Api_Contact::STATUS_TRANSACTIONAL;
         $contact2->save();
 

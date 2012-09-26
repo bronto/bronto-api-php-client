@@ -2,7 +2,7 @@
 
 abstract class Bronto_Tests_AbstractTest extends PHPUnit_Framework_TestCase
 {
-    protected $apiToken  = TEST_API_TOKEN_1;
+    protected $apiToken  = TEST_API_TOKEN_3;
     protected $contactId = TEST_CONTACT_ID_1;
 
     /**
