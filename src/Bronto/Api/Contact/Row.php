@@ -3,6 +3,7 @@
 /**
  * @property-read string $id
  * @property string $email
+ * @property string $mobileNumber
  * @property string $status
  * @property string $msgPref
  * @property string $source
@@ -77,12 +78,8 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      */
     public function save($upsert = true, $refresh = false)
     {
-        if (!$upsert) {
-            parent::_save(false, $refresh);
-        }
-
         try {
-            parent::_save(true, $refresh);
+            parent::_save($upsert, $refresh);
         } catch (Bronto_Api_Contact_Exception $e) {
             if ($e->getCode() === Bronto_Api_Contact_Exception::ALREADY_EXISTS) {
                 $this->_refresh();
