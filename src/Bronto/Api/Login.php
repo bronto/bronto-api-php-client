@@ -25,9 +25,20 @@ class Bronto_Api_Login extends Bronto_Api_Object
      */
     public function readAll(array $filter = array(), $pageNumber = 1)
     {
+        if (empty($filter)) {
+            $filter = array(
+                'type'     => 'OR',
+                'username' => array(
+                    'operator' => 'StartsWith',
+                    'value' => ''
+                ),
+            );
+        }
+
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-        return $this->read($params);
+
+        return parent::read($params);
     }
 }
