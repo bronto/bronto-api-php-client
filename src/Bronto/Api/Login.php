@@ -27,10 +27,9 @@ class Bronto_Api_Login extends Bronto_Api_Object
     {
         if (empty($filter)) {
             $filter = array(
-                'type'     => 'OR',
                 'username' => array(
                     'operator' => 'StartsWith',
-                    'value' => ''
+                    'value'    => ''
                 ),
             );
         }
