@@ -19,6 +19,8 @@ class Bronto_Api_ApiToken_Row extends Bronto_Api_Row
     {
         if ($this->id) {
             $params = array('id' => $this->id);
+        } elseif ($this->accountId) {
+            $params = array('accountId' => $this->accountId);
         } elseif ($this->name) {
             $params = array(
                 'name' => array(
@@ -26,6 +28,8 @@ class Bronto_Api_ApiToken_Row extends Bronto_Api_Row
                     'operator' => 'EqualTo',
                 )
             );
+        } else {
+            throw new Bronto_Api_ApiToken_Exception('Trying to read ApiToken without Id or Name for lookup');
         }
 
         parent::_read($params);

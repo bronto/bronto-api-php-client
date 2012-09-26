@@ -56,7 +56,36 @@ class Bronto_Api_ApiToken extends Bronto_Api_Object
         $params = array();
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
-        return $this->read($params);
+
+        $this->_validateParams($params);
+
+        return parent::read($params);
+    }
+
+    /**
+     * @param  array  $params
+     * @return bool
+     */
+    protected function _validateParams(array $params)
+    {
+        if (!isset($params['filter']) || !is_array($params['filter'])) {
+            throw new Bronto_Api_Exception('readApiTokens requires an filter array.');
+        }
+
+        $validFilters   = array('id', 'accountId', 'name');
+        $hasValidFilter = false;
+        foreach ($params['filter'] as $key => $value) {
+            if (in_array($key, $validFilters)) {
+                $hasValidFilter = true;
+                break;
+            }
+        }
+
+        if (!$hasValidFilter) {
+            throw new Bronto_Api_Exception('readApiTokens requires a filter by one of: ' . implode(', ', $validFilters));
+        }
+
+        return true;
     }
 
     /**
