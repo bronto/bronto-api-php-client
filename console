@@ -1,1 +1,23 @@
-<?php require_once 'bin/console.php';
+#!/usr/bin/env php
+<?php
+
+umask(0000);
+set_time_limit(0);
+
+if (file_exists($file = __DIR__.'/autoload.php')) {
+    require_once $file;
+} elseif (file_exists($file = __DIR__.'/autoload.php.dist')) {
+    require_once $file;
+}
+
+$application = new Console\Application();
+$application->getHelperSet()->set(new Console\Helper\ProgressHelper(), 'progress');
+$application->addCommands(array(
+    new Console\Command\Contacts\UpdateStatusCommand(),
+    new Console\Command\Contacts\LoadFromCSVCommand(),
+    new Console\Command\Lists\GetAllCommand(),
+    new Console\Command\Fields\LoadFromCSVCommand(),
+    new Console\Command\Fields\DeleteAllCommand(),
+    new Console\Command\Orders\DeleteAllCommand(),
+));
+$application->run();
