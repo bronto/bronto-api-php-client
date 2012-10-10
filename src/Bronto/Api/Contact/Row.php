@@ -28,7 +28,7 @@ class Bronto_Api_Contact_Row extends Bronto_Api_Row implements Bronto_Api_Delive
      * @var array
      */
     protected $_data = array(
-        'status'          => Bronto_Api_Contact::STATUS_ONBOARDING,
+        'status'          => Bronto_Api_Contact::STATUS_TRANSACTIONAL,
         'messagePrefence' => Bronto_Api_Contact::MSGPREF_HTML,
         'source'          => Bronto_Api_Contact::SOURCE_API,
     );

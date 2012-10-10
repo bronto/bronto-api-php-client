@@ -16,8 +16,7 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact->email = 'example+addcontacts' . time(). '@bronto.com';
         $contact->save(false);
 
-        var_dump($contact);
-        exit;
+        $this->assertNotEmpty($contact->id);
     }
 
     /**
@@ -30,14 +29,14 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact1->email = 'example+updatestatus' . time(). '@bronto.com';
         $contact1->save();
 
-        $this->assertEquals(Bronto_Api_Contact::STATUS_ONBOARDING, $contact1->status, 'Contact initial status was not `onboarding`.');
+        $this->assertEquals(Bronto_Api_Contact::STATUS_TRANSACTIONAL, $contact1->status, 'Contact initial status was not `transactional`.');
 
         /* @var $contact2 Bronto_Api_Contact_Row */
         $contact2 = $this->getObject()->createRow();
         $contact2->email  = $contact1->email;
         $contact2->read();
 
-        $contact2->status = Bronto_Api_Contact::STATUS_TRANSACTIONAL;
+        $contact2->status = Bronto_Api_Contact::STATUS_ONBOARDING;
         $contact2->save();
 
         /* @var $contact3 Bronto_Api_Contact_Row */
@@ -45,7 +44,7 @@ class Bronto_Tests_Api_Row_ContactRowTest extends Bronto_Tests_AbstractTest
         $contact3->email  = $contact1->email;
         $contact3->read();
 
-        $this->assertEquals(Bronto_Api_Contact::STATUS_TRANSACTIONAL, $contact3->status, 'Contact updated status is: ' . $contact3->status);
+        $this->assertEquals(Bronto_Api_Contact::STATUS_ONBOARDING, $contact3->status, 'Contact updated status is: ' . $contact3->status);
     }
 
     /**
