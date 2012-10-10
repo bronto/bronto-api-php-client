@@ -23,9 +23,21 @@ class Bronto_Api_Conversion extends Bronto_Api_Object
      */
     public function readAll(array $filter = array(), $pageNumber = 1)
     {
-        $params = array();
-        $params['filter']     = $filter;
-        $params['pageNumber'] = (int) $pageNumber;
-        return $this->read($params);
+        $params = array(
+            'filter'     => array(),
+            'pageNumber' => (int) $pageNumber,
+        );
+
+        if (!empty($filter)) {
+            if (is_array($filter)) {
+                $params['filter'] = $filter;
+            } else {
+                $params['filter'] = array($filter);
+            }
+        } else {
+            $params['filter'] = array('contactId' => array());
+        }
+
+        return parent::read($params);
     }
 }

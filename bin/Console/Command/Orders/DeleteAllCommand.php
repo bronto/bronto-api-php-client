@@ -21,6 +21,7 @@ class DeleteAllCommand extends Command
             ->setDescription('Deletes all Orders')
             ->setDefinition(array(
                 new InputOption('token', '-t', InputOption::VALUE_REQUIRED, 'Bronto Token ID'),
+                new InputOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run only, no data is changed'),
             ));
 
         parent::configure();
@@ -51,25 +52,39 @@ class DeleteAllCommand extends Command
             $output->writeln('');
         }
 
+        // Is testing mode?
+        $dryRun = $input->getOption('dry-run');
+        if ($dryRun) {
+            $output->writeln('<info>Dry Run is enabled. No data will be changed within Bronto...</info>');
+        }
+
         /* @var $bronto \Bronto_Api */
         $bronto = $this->getApplication()->getApi();
+        if ($dryRun) {
+            $bronto->setDebug(true);
+        }
         $bronto->setToken($token);
         $bronto->login();
 
+        $contactObject    = $bronto->getContactObject();
         $orderObject      = $bronto->getOrderObject();
         $conversionObject = $bronto->getConversionObject();
 
-        $iterator = $conversionObject->readAll()->iterate();
-        foreach ($iterator as $conversion /* @var $conversion Bronto_Api_Conversion_Row */) {
+        $iterator = $contactObject->readAll(array(), array(), false)->iterate();
+        foreach ($iterator as $contact /* @var $contact Bronto_Api_Contact_Row */) {
             if ($iterator->isNewPage()) {
                 $progress->finish();
                 $output->writeln('');
                 $progress->start($output, $iterator->count());
             }
 
-            $order = $orderObject->createRow();
-            $order->id = $conversion->orderId;
-            $order->delete();
+            foreach ($conversionObject->readAll(array('contactId' => $contact->id))->iterate() as $conversion /* @var $conversion Bronto_Api_Conversion_Row */) {
+                if (!$dryRun) {
+                    $order = $orderObject->createRow();
+                    $order->id = $conversion->orderId;
+                    $order->delete();
+                }
+            }
 
             $progress->advance();
         }
