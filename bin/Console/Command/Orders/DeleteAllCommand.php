@@ -78,17 +78,23 @@ class DeleteAllCommand extends Command
                 $progress->start($output, $iterator->count());
             }
 
-            foreach ($conversionObject->readAll(array('contactId' => $contact->id))->iterate() as $conversion /* @var $conversion Bronto_Api_Conversion_Row */) {
+            $conversionIterator = $conversionObject->readAll(array('contactId' => $contact->id))->iterate();
+            foreach ($conversionIterator as $conversion /* @var $conversion Bronto_Api_Conversion_Row */) {
                 if (!$dryRun) {
                     $order = $orderObject->createRow();
                     $order->id = $conversion->orderId;
-                    $order->delete();
+                    $order->persistDelete();
+
+                    if ($conversionIterator->getCurrentKey() % 50 === 0) {
+                        $orderObject->flush();
+                    }
                 }
             }
 
             $progress->advance();
         }
 
+        $orderObject->flush();
         $progress->finish();
 
         $output->writeln('');

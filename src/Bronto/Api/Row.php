@@ -267,6 +267,19 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
     }
 
     /**
+     * @return Bronto_Api_Row
+     */
+    public function persistDelete()
+    {
+        if (!$this->getApiObject()->hasMethodType('delete')) {
+            $exceptionClass = $this->getApiObject()->getExceptionClass();
+            throw new $exceptionClass('Cannot delete a row of type: ' . $this->getApiObject()->getName());
+        }
+
+        return $this->_persist('delete');
+    }
+
+    /**
      * Persist an object for write caching
      *
      * @param string $type
@@ -275,11 +288,14 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
      */
     public function _persist($type, $defaultIndex = false)
     {
-        $data = array_intersect_key($this->_data, $this->_modifiedFields);
         $tempPrimaryKey = $this->_primary;
         if (!empty($this->{$tempPrimaryKey})) {
             $index = $this->{$tempPrimaryKey};
-            $data  = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $data);
+            if ($type === 'delete') {
+                $data = array($this->_primary => $this->{$tempPrimaryKey});
+            } else {
+                $data = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $data);
+            }
         } else {
             $index = $defaultIndex;
         }
