@@ -22,6 +22,7 @@ class DeleteAllCommand extends Command
             ->setDefinition(array(
                 new InputOption('token', '-t', InputOption::VALUE_REQUIRED, 'Bronto Token ID'),
                 new InputOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run only, no data is changed'),
+                new InputOption('limit', '-l', InputOption::VALUE_OPTIONAL, 'Limit to X Orders per run', 1000),
             ));
 
         parent::configure();
@@ -58,6 +59,10 @@ class DeleteAllCommand extends Command
             $output->writeln('<info>Dry Run is enabled. No data will be changed within Bronto...</info>');
         }
 
+        // Is testing mode?
+        $limit = (int) $input->getOption('limit');
+        $output->writeln("Sending <info>{$limit}</info> number of Orders at a time.");
+
         /* @var $bronto \Bronto_Api */
         $bronto = $this->getApplication()->getApi();
         if ($dryRun) {
@@ -85,7 +90,7 @@ class DeleteAllCommand extends Command
                     $order->id = $conversion->orderId;
                     $order->persistDelete();
 
-                    if ($conversionIterator->getCurrentKey() % 50 === 0) {
+                    if ($conversionIterator->getCurrentKey() % $limit === 0) {
                         $orderObject->flush();
                     }
                 }
