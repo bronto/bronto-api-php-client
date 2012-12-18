@@ -288,14 +288,11 @@ abstract class Bronto_Api_Row implements ArrayAccess, IteratorAggregate
      */
     public function _persist($type, $defaultIndex = false)
     {
+        $data = array();
         $tempPrimaryKey = $this->_primary;
         if (!empty($this->{$tempPrimaryKey})) {
             $index = $this->{$tempPrimaryKey};
-            if ($type === 'delete') {
-                $data = array($this->_primary => $this->{$tempPrimaryKey});
-            } else {
-                $data = array_merge(array($this->_primary => $this->{$tempPrimaryKey}), $data);
-            }
+            $data  = array($this->_primary => $this->{$tempPrimaryKey});
         } else {
             $index = $defaultIndex;
         }
