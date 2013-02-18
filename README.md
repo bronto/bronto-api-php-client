@@ -161,6 +161,28 @@ try {
 }
 ```
 
+### Clear List(s)
+```php
+<?php
+
+/* @var $listObject \Bronto_Api_List /
+$listObject = $bronto->getListObject();
+
+/ @var $listids \Array */
+$listIds = array(array(id => '0bbd03ec000000000000000000000003c2a1'));
+try {
+    $response = $listObject->clear($listIds);
+  
+    // Check for errors
+    if ($response->hasErrors()) {
+        $error = $response->getError();
+        throw new Exception($error['message']);
+    }
+} catch (Exception $e) {
+    // Handle error
+}
+```
+
 ### Create new Field
 
 ```php
