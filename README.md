@@ -168,7 +168,7 @@ try {
 /* @var $listObject \Bronto_Api_List /
 $listObject = $bronto->getListObject();
 
-/ @var $listids \Array */
+/ @var $listIds \Array */
 $listIds = array(array(id => '0bbd03ec000000000000000000000003c2a1'));
 try {
     $response = $listObject->clear($listIds);
