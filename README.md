@@ -165,7 +165,7 @@ try {
 ```php
 <?php
 
-/* @var $listObject \Bronto_Api_List /
+/* @var $listObject \Bronto_Api_List */
 $listObject = $bronto->getListObject();
 
 / @var $listIds \Array */
