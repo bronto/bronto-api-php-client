@@ -12,7 +12,14 @@ class Bronto_SoapClient extends SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
         $result = parent::__doRequest($request, $location, $action, $version);
-        $result = preg_replace('/[\x{0}-\x{8}\x{B}-\x{C}\x{E}-\x{1F}\x{D800}-\x{DFFF}]/u', '', $result);
+        
+        // If PCRE version is 8.30 or above, no need to replace
+        $pcreVersion = explode(' ', PCRE_VERSION);
+        $pcreVersion = str_replace('PCRE v:', '', $pcreVersion[0]);
+        if ($pcreVersion < 8.30) {
+            $result = preg_replace('/[\x{0}-\x{8}\x{B}-\x{C}\x{E}-\x{1F}\x{D800}-\x{DFFF}]/u', '', $result);
+        }
+        
         return $result;
     }
 }
