@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @copyright  2011-2013 Bronto Software, Inc.
+ * @license http://opensource.org/licenses/OSL-3.0 Open Software License v. 3.0 (OSL-3.0)
+ */
 abstract class Bronto_Tests_AbstractTest extends PHPUnit_Framework_TestCase
 {
     protected $apiToken  = TEST_API_TOKEN_3;
