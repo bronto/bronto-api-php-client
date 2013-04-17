@@ -1,6 +1,6 @@
 # Bronto_Api
 
-ActiveRecord style abstraction of the Bronto SOAP API.
+Client Library for PHP - ActiveRecord Style Abstraction of the Bronto SOAP API.
 
 ## Implemented Objects
 
