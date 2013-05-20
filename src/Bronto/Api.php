@@ -306,6 +306,16 @@ class Bronto_Api
     {
         return $this->getObject('contact');
     }
+    
+    /**
+     * Proxy for intellisense
+     *
+     * @return Bronto_Api_ContentTag
+     */
+    public function getContentTagObject()
+    {
+        return $this->getObject('contentTag');
+    }
 
     /**
      * Proxy for intellisense
