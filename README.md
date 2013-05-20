@@ -8,6 +8,7 @@ Client Library for PHP - ActiveRecord Style Abstraction of the Bronto SOAP API.
  * Activity
  * ApiToken
  * Contact
+ * ContentTag
  * Conversion
  * Delivery
  * Deliverygroup
@@ -196,6 +197,24 @@ $field = $fieldObject->createRow();
 $field->name = $name;
 try {
     $field->save();
+} catch (Exception $e) {
+    // Handle error
+}
+```
+
+### Retrieve a ContentTag
+
+```php
+<?php
+
+/* @var $contentTagObject \Bronto_Api_ContentTag */
+$contentTagObject  = $bronto->getContentTagObject();
+
+/* @var $contentTag \Bronto_Api_ContentTag_Row */
+$contentTag = $contentTagObject->createRow();
+$contentTag->id = '123';
+try {
+    $contentTag = $contentTag->read();
 } catch (Exception $e) {
     // Handle error
 }
