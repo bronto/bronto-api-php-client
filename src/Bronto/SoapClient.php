@@ -14,6 +14,12 @@ class Bronto_SoapClient extends SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
         $result = parent::__doRequest($request, $location, $action, $version);
+
+        // Logging for reminders
+        if (strpos($request, 'addDeliveries')) {
+            Mage::helper('bronto_reminder')->writeDebug('  Sending Delivery: ' . var_export($request, true));
+            Mage::helper('bronto_reminder')->writeDebug('  Success: ' . var_export($result, true));
+        }
         
         // Only replace unicode characters if PCRE version is less than 8.30
         if (version_compare(strstr(constant('PCRE_VERSION'), ' ', true), '8.30', '<')) {
