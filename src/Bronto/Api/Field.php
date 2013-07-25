@@ -54,6 +54,11 @@ class Bronto_Api_Field extends Bronto_Api_Object
     /**
      * @var array
      */
+    public $allFields=array();
+
+    /**
+     * @var array
+     */
     protected $_objectCache = array();
 
     /**
@@ -67,6 +72,51 @@ class Bronto_Api_Field extends Bronto_Api_Object
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
         return $this->read($params);
+    }
+
+    /**
+     * @param bool $keep_case
+     * @return array (by_name => array , by_id => array)
+     */
+    public function getAll($keep_case=false)
+    {
+        if (empty($this->allFields)) {
+            $filter=array('name'=>array(
+                    'operator'=>'NotEqualTo',
+                    'value'=>'this-will-definitely-match-all-fields'.rand(0,9999),
+                ),
+            );
+            $all_fields=array();
+            foreach ($this->readAll($filter)->iterate() as $field) {
+                $field_name=$keep_case ? $field->name : strtolower($field->name);
+                $all_fields['by_name'][$field_name]=$field->id;
+                $all_fields['by_id'][$field->id]=$field_name;
+            }
+            $this->allFields=$all_fields;
+        }
+        else {
+            $all_fields=$this->allFields;
+        }
+        return $all_fields;
+    }
+
+    /**
+     * @param array $input_fields
+     * @param array $all_fields
+     * @return array
+     */
+    public function fieldsFromArray(array $input_fields,array $all_fields=null) {
+        if ($all_fields===null) {
+            $all_fields=$this->getAll();
+        }
+        $return_fields=array();
+        foreach ($input_fields as $field_name => $content) {
+            $return_fields[]=array(
+                'fieldId'=>$all_fields['by_name'][$field_name],
+                'content'=>$content,
+            );
+        }
+        return $return_fields;
     }
 
     /**
