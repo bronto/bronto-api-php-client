@@ -119,6 +119,17 @@ class Bronto_Api_Field extends Bronto_Api_Object
         return $return_fields;
     }
 
+    public function fieldNamesInErrors(array $errors) {
+        foreach ($errors as &$error) {
+            $message=&$error['message'];
+            preg_match("|field '([a-f0-9]*)'|",$message,$field_id_search);
+            if (!empty($field_id_search[1])) {
+                $message=str_replace($field_id_search[1],$this->allFields['by_id'][$field_id_search[1]],$message);
+            }
+        }
+        return $errors;
+    }
+
     /**
      * @param string $index
      * @param Bronto_Api_Field_Row $field
