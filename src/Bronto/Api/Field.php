@@ -54,11 +54,6 @@ class Bronto_Api_Field extends Bronto_Api_Object
     /**
      * @var array
      */
-    public $allFields=array();
-
-    /**
-     * @var array
-     */
     protected $_objectCache = array();
 
     /**
@@ -72,32 +67,6 @@ class Bronto_Api_Field extends Bronto_Api_Object
         $params['filter']     = $filter;
         $params['pageNumber'] = (int) $pageNumber;
         return $this->read($params);
-    }
-
-    /**
-     * @param bool $keep_case
-     * @return array (by_name => array , by_id => array)
-     */
-    public function getAll($keep_case=false)
-    {
-        if (empty($this->allFields)) {
-            $filter=array('name'=>array(
-                    'operator'=>'NotEqualTo',
-                    'value'=>'this-will-definitely-match-all-fields'.rand(0,9999),
-                ),
-            );
-            $all_fields=array();
-            foreach ($this->readAll($filter)->iterate() as $field) {
-                $field_name=$keep_case ? $field->name : strtolower($field->name);
-                $all_fields['by_name'][$field_name]=$field->id;
-                $all_fields['by_id'][$field->id]=$field_name;
-            }
-            $this->allFields=$all_fields;
-        }
-        else {
-            $all_fields=$this->allFields;
-        }
-        return $all_fields;
     }
 
     /**

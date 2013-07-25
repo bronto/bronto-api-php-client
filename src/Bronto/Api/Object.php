@@ -155,6 +155,11 @@ abstract class Bronto_Api_Object
     /**
      * @var array
      */
+    public $allFields=array();
+
+    /**
+     * @var array
+     */
     protected $_writeCache = array(
         'add'         => array(),
         'update'      => array(),
@@ -231,6 +236,32 @@ abstract class Bronto_Api_Object
             $this->_writeCache[$type][] = $data;
         }
         return $this;
+    }
+
+    /**
+     * @param bool $keep_case
+     * @return array (by_name => array , by_id => array)
+     */
+    public function getAll($keep_case=false)
+    {
+        if (empty($this->allFields)) {
+            $filter=array('name'=>array(
+                    'operator'=>'NotEqualTo',
+                    'value'=>'this-will-definitely-match-all-fields'.rand(0,9999),
+                ),
+            );
+            $all_fields=array();
+            foreach ($this->readAll($filter)->iterate() as $row) {
+                $row_name=$keep_case ? $row->name : strtolower($row->name);
+                $all_fields['by_name'][$row_name]=$row->id;
+                $all_fields['by_id'][$row->id]=$row_name;
+            }
+            $this->allFields=$all_fields;
+        }
+        else {
+            $all_fields=$this->allFields;
+        }
+        return $all_fields;
     }
 
     /**
