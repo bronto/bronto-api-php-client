@@ -418,12 +418,13 @@ abstract class Bronto_Api_Object
 
         if (!empty($result['errors'])) {
             foreach ($data as $key => &$item) {
+                $item=(array)$item;
                 if (!empty($item['isError'])) {
                     preg_match("|field '([a-f0-9]*)'|",$item['errorString'],$field_id_search);
                     if (!empty($field_id_search)) {
                         foreach ($params[$key]['fields'] as $field) {
-                            if ($field['fieldId']==$field_id_search) {
-                                $item['errorString'].=' Data is '.$field['content'].'.';
+                            if ($field['fieldId']==$field_id_search[1]) {
+                                $item['errorString'].='. The data for this field was "'.$field['content'].'".';
                             }
                         }
                     }
