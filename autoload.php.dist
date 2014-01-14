@@ -1,5 +1,7 @@
 <?php
-
+/*
+ * Use vendor/autoload.php if you are using composer!
+ */
 define('DS', DIRECTORY_SEPARATOR);
 define('BASE_PATH', dirname(__FILE__));
 
