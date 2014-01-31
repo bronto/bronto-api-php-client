@@ -27,5 +27,5 @@
         }
     },
     "target-dir"       : "Symfony/Component/Console",
-    "minimum-stability": "dist"
+    "minimum-stability": "stable"
 }
