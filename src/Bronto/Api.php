@@ -540,6 +540,13 @@ class Bronto_Api
         if (!($this->_retryer instanceOf Bronto_Util_Retryer_RetryerInterface)) {
             $options = array_merge($this->_options['retryer'], $options);
             switch ($options['type']) {
+                case 'custom':
+                    if ($options['object']) {
+                        $this->_retryer = $options['object'];
+                    } else {
+                        $this->_retryer = new $options['path'];
+                    }
+                    break;
                 case 'file':
                     $this->_retryer = new Bronto_Util_Retryer_FileRetryer($options);
                     break;
