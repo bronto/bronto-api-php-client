@@ -14,12 +14,12 @@ class Bronto_SoapClient extends SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
         $result = parent::__doRequest($request, $location, $action, $version);
-        
+
         // Only replace unicode characters if PCRE version is less than 8.30
-        if (version_compare(strstr(constant('PCRE_VERSION'), ' ', true), '8.30', '<')) {
+        $version = reset(explode(' ', constant('PCRE_VERSION')));
+        if (version_compare($version, '8.30', '<')) {
             $result = preg_replace('/[\x{0}-\x{8}\x{B}-\x{C}\x{E}-\x{1F}\x{D800}-\x{DFFF}]/u', '', $result);
         }
-        
         return $result;
     }
 }
