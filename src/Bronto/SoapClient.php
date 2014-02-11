@@ -16,7 +16,8 @@ class Bronto_SoapClient extends SoapClient
         $result = parent::__doRequest($request, $location, $action, $version);
 
         // Only replace unicode characters if PCRE version is less than 8.30
-        $version = reset(explode(' ', constant('PCRE_VERSION')));
+        $parts = explode(' ', constant('PCRE_VERSION'));
+        $version = reset($parts);
         if (version_compare($version, '8.30', '<')) {
             $result = preg_replace('/[\x{0}-\x{8}\x{B}-\x{C}\x{E}-\x{1F}\x{D800}-\x{DFFF}]/u', '', $result);
         }
