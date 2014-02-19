@@ -26,6 +26,5 @@
             "Bronto_Tests_": "tests/"
         }
     },
-    "target-dir"       : "Symfony/Component/Console",
     "minimum-stability": "stable"
 }
