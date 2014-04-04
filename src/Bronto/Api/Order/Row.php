@@ -22,6 +22,61 @@
  */
 class Bronto_Api_Order_Row extends Bronto_Api_Row
 {
+	/**
+	 * @var string
+	 */
+	public $id;
+	
+	/**
+	 * @var string
+	 */
+	public $contactId;
+	
+	/**
+	 * @var string
+	 */
+	public $email;
+	
+	/**
+	 * @var array
+	 */
+	public $products = array();
+	
+	/**
+	 * @var string
+	 */
+	public $orderDate;
+	
+	/**
+	 * @var string
+	 */
+	public $deliveryId;
+	
+	/**
+	 * @var string
+	 */
+	public $messageId;
+	
+	/**
+	 * @var string
+	 */
+	public $automatorId;
+	
+	/**
+	 * @var string
+	 */
+	public $listId;
+	
+	/**
+	 * @var string
+	 */
+	public $segmentId;
+	
+	/**
+	 * @var string
+	 */
+	public $deliveryType;
+	
     /**
      * @param bool $upsert Ignored
      * @param bool $refresh
