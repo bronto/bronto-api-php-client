@@ -22,60 +22,6 @@
  */
 class Bronto_Api_Order_Row extends Bronto_Api_Row
 {
-	/**
-	 * @var string
-	 */
-	public $id;
-	
-	/**
-	 * @var string
-	 */
-	public $contactId;
-	
-	/**
-	 * @var string
-	 */
-	public $email;
-	
-	/**
-	 * @var array
-	 */
-	public $products = array();
-	
-	/**
-	 * @var string
-	 */
-	public $orderDate;
-	
-	/**
-	 * @var string
-	 */
-	public $deliveryId;
-	
-	/**
-	 * @var string
-	 */
-	public $messageId;
-	
-	/**
-	 * @var string
-	 */
-	public $automatorId;
-	
-	/**
-	 * @var string
-	 */
-	public $listId;
-	
-	/**
-	 * @var string
-	 */
-	public $segmentId;
-	
-	/**
-	 * @var string
-	 */
-	public $deliveryType;
 	
     /**
      * @param bool $upsert Ignored
@@ -124,6 +70,8 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
      */
     public function addProduct(array $data = array())
     {
+    	$products = $this->products;
+    	
         $product   = new Bronto_Api_Order_Product($data);
         $productId = $product->id;
 
@@ -131,11 +79,12 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
             throw new Bronto_Api_Order_Exception('Product must have a value for ID.');
         }
 
-        if (isset($this->products[$productId])) {
+        if (isset($products[$productId])) {
             throw new Bronto_Api_Order_Exception("Product already exists in Order with ID: {$productId}");
         }
-
-        $this->products[$productId] = $product;
+		
+        $products[$productId] = $product;
+        $this->products = $products;
         return $product;
     }
 }
