@@ -2,6 +2,9 @@
 
 Client Library for PHP - ActiveRecord Style Abstraction of the Bronto SOAP API.
 
+This library was created and is maintained by the Bronto Professional Services Engineering team.<br/>
+It is free to use, but comes with no official support.
+
 ## Implemented Objects
 
  * Account

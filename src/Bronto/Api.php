@@ -37,6 +37,7 @@ class Bronto_Api
             'type' => null,
             'path' => null,
         ),
+        'observer'        => false,
         // SoapClient
         'soap_version'       => SOAP_1_1,
         'compression'        => true,
@@ -75,6 +76,11 @@ class Bronto_Api
      * @var Bronto_Util_Uuid
      */
     protected $_uuid;
+
+    /**
+     * @var Bronto_Observer
+     */
+    protected $_observer;
 
     /**
      * @param string $token
@@ -116,15 +122,40 @@ class Bronto_Api
             // Get a new SoapClient
             $this->reset();
             $client    = $this->getSoapClient(false);
-            $sessionId = $client->login(array('apiToken' => $token))->return;
-            $client->__setSoapHeaders(array(
-                new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
-            ));
-            $this->_authenticated = true;
+            // Allow observer to inject a session before login
+            if ($this->getObserver()) {
+                $this->getObserver()->onBeforeLogin($this);
+            }
+            // Check for auth changes
+            if (!$this->isAuthenticated()) {
+                $sessionId = $client->login(array('apiToken' => $token))->return;
+                $this->setSessionId($sessionId);
+
+                // Allow observer to store session
+                if ($this->getObserver()) {
+                    $this->getObserver()->onAfterLogin($this, $sessionId);
+                }
+            }
         } catch (Exception $e) {
             $this->throwException($e);
         }
 
+        return $this;
+    }
+
+    /**
+     * Resuse an existing session, if possible
+     *
+     * @param string $sessionId
+     * @return Bronto_Api
+     */
+    public function setSessionId($sessionId)
+    {
+        $client = $this->getSoapClient(false);
+        $client->__setSoapHeaders(array(
+            new SoapHeader(self::BASE_URL, 'sessionHeader', array('sessionId' => $sessionId))
+        ));
+        $this->_authenticated = true;
         return $this;
     }
 
@@ -160,6 +191,11 @@ class Bronto_Api
             /* @var $exception Bronto_Api_Exception */
             $exception->setRequest($this->getLastRequest());
             $exception->setResponse($this->getLastResponse());
+        }
+
+        // Allow observer to handle exception cases
+        if ($this->getObserver()) {
+            $this->getObserver()->onError($this, $exception);
         }
 
         throw $exception;
@@ -504,6 +540,13 @@ class Bronto_Api
         if (!($this->_retryer instanceOf Bronto_Util_Retryer_RetryerInterface)) {
             $options = array_merge($this->_options['retryer'], $options);
             switch ($options['type']) {
+                case 'custom':
+                    if ($options['object']) {
+                        $this->_retryer = $options['object'];
+                    } else {
+                        $this->_retryer = new $options['path'];
+                    }
+                    break;
                 case 'file':
                     $this->_retryer = new Bronto_Util_Retryer_FileRetryer($options);
                     break;
@@ -514,6 +557,27 @@ class Bronto_Api
         }
 
         return $this->_retryer;
+    }
+
+    /**
+     * Gets the observer for the API client
+     *
+     * @return Bronto_Observer
+     */
+    public function getObserver()
+    {
+        if (!$this->_observer) {
+            if (isset($this->_options['observer'])) {
+                $observer = $this->_options['observer'];
+                if (is_string($observer) && class_exists($observer)) {
+                    $observer = new $observer();
+                }
+                if ($observer instanceOf Bronto_Observer) {
+                    $this->_observer = $observer;
+                }
+            }
+        }
+        return $this->_observer;
     }
 
     /**

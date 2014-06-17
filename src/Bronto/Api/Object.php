@@ -381,7 +381,7 @@ abstract class Bronto_Api_Object
                     return $this->getApi()->throwException($exception);
                 } else {
                     // Attempt to get a new session token
-                    sleep(5);
+                    // sleep(5);
                     $this->getApi()->login();
                     // If using readDirection, we have to start over
                     if (isset($data['filter']['readDirection'])) {

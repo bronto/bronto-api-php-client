@@ -19,10 +19,11 @@ class Bronto_SoapClient extends SoapClient
             log_file($result,'Bronto soap result','logs/soap.log');
         }
         // Only replace unicode characters if PCRE version is less than 8.30
-        if (version_compare(strstr(constant('PCRE_VERSION'), ' ', true), '8.30', '<')) {
+        $parts = explode(' ', constant('PCRE_VERSION'));
+        $version = reset($parts);
+        if (version_compare($version, '8.30', '<')) {
             $result = preg_replace('/[\x{0}-\x{8}\x{B}-\x{C}\x{E}-\x{1F}\x{D800}-\x{DFFF}]/u', '', $result);
         }
-        
         return $result;
     }
 }
