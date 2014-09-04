@@ -22,6 +22,8 @@
  */
 class Bronto_Api_Order_Row extends Bronto_Api_Row
 {
+    public $products = array();
+    
     /**
      * @param bool $upsert Ignored
      * @param bool $refresh
