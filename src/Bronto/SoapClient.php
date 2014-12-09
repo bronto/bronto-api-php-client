@@ -14,7 +14,10 @@ class Bronto_SoapClient extends SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0) {
         $result = parent::__doRequest($request, $location, $action, $version);
-
+        if (function_exists('log_file')){
+            log_file($request,'Bronto soap request','logs/soap.log');
+            log_file($result,'Bronto soap result','logs/soap.log');
+        }
         // Only replace unicode characters if PCRE version is less than 8.30
         $parts = explode(' ', constant('PCRE_VERSION'));
         $version = reset($parts);
