@@ -70,7 +70,7 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
      */
     public function addProduct(array $data = array())
     {
-    	$products = $this->products;
+        $products = is_null($this->products) ? array() : $this->products;
     	
         $product   = new Bronto_Api_Order_Product($data);
         $productId = $product->id;
