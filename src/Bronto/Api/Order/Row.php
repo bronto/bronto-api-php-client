@@ -22,6 +22,7 @@
  */
 class Bronto_Api_Order_Row extends Bronto_Api_Row
 {
+	
     /**
      * @param bool $upsert Ignored
      * @param bool $refresh
@@ -69,6 +70,8 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
      */
     public function addProduct(array $data = array())
     {
+        $products = is_null($this->products) ? array() : $this->products;
+    	
         $product   = new Bronto_Api_Order_Product($data);
         $productId = $product->id;
 
@@ -76,11 +79,12 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
             throw new Bronto_Api_Order_Exception('Product must have a value for ID.');
         }
 
-        if (isset($this->products[$productId])) {
+        if (isset($products[$productId])) {
             throw new Bronto_Api_Order_Exception("Product already exists in Order with ID: {$productId}");
         }
-
-        $this->products[$productId] = $product;
+		
+        $products[$productId] = $product;
+        $this->products = $products;
         return $product;
     }
 }
