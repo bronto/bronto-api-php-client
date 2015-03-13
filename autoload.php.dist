@@ -9,24 +9,19 @@ if (file_exists($file = __DIR__.'/functions.php')) {
     require_once $file;
 }
 
-require_once BASE_PATH . '/vendor/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
-require_once BASE_PATH . '/vendor/symfony/src/Symfony/Component/ClassLoader/ApcUniversalClassLoader.php';
+require_once BASE_PATH . '/vendor/symfony/src/Symfony/Component/ClassLoader/ClassLoader.php';
+require_once BASE_PATH . '/vendor/symfony/src/Symfony/Component/ClassLoader/ApcClassLoader.php';
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Symfony\Component\ClassLoader\ApcUniversalClassLoader;
+use Symfony\Component\ClassLoader\ClassLoader;
+use Symfony\Component\ClassLoader\ApcClassLoader;
 
 if (extension_loaded('apc')) {
-    $loader = new ApcUniversalClassLoader('bronto.');
+    $loader = new ApcClassLoader('bronto.');
 } else {
-    $loader = new UniversalClassLoader();
+    $loader = new ClassLoader();
 }
 
-$loader->registerNamespaces(array(
-    'Console' => BASE_PATH . '/bin',
-    'Symfony' => BASE_PATH . '/vendor/symfony/src',
-));
-
-$loader->registerPrefixes(array(
+$loader->addPrefixes(array(
     'Bronto_Tests' => BASE_PATH . '/tests',
     'Bronto_'      => BASE_PATH . '/src',
 ));
