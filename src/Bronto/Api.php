@@ -2,8 +2,8 @@
 
 /**
  * @author Chris Jones <chris.jones@bronto.com>
- * @copyright  2011-2013 Bronto Software, Inc.
- * @license http://opensource.org/licenses/OSL-3.0 Open Software License v. 3.0 (OSL-3.0)
+ * @copyright  2011-2015 Bronto Software, Inc.
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 class Bronto_Api
 {
@@ -484,16 +484,19 @@ class Bronto_Api
         if ($this->_soapClient == null) {
             $this->_connected = false;
             $soapClientClass  = $this->getOption('soap_client', 'Bronto_SoapClient');
-            $this->_soapClient = new $soapClientClass(self::BASE_WSDL, array(
+            $_options = array(
                 'soap_version' => $this->_options['soap_version'],
-                'compression'  => $this->_options['compression'],
                 'encoding'     => $this->_options['encoding'],
                 'trace'        => $this->_options['trace'],
                 'exceptions'   => $this->_options['exceptions'],
                 'cache_wsdl'   => $this->_options['cache_wsdl'],
                 'user_agent'   => $this->_options['user_agent'],
                 'features'     => $this->_options['features'],
-            ));
+            );
+            if (!defined('HHVM_VERSION')) {
+                $_options['compression'] = $this->_options['compression'];
+            }
+            $this->_soapClient = new $soapClientClass(self::BASE_WSDL, $_options);
             $this->_soapClient->__setLocation(self::BASE_LOCATION);
             $this->_connected = true;
             if ($authenticate && !$this->_authenticated && $this->getToken()) {

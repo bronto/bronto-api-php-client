@@ -2,8 +2,8 @@
 
 /**
  * @author Chris Jones <chris.jones@bronto.com>
- * @copyright  2011-2013 Bronto Software, Inc.
- * @license http://opensource.org/licenses/OSL-3.0 Open Software License v. 3.0 (OSL-3.0)
+ * @copyright  2011-2015 Bronto Software, Inc.
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  * 
  */
 class Bronto_Util_Uuid
