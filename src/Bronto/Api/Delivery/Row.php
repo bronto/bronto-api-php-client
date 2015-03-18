@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  2011-2013 Bronto Software, Inc.
+ * @copyright  2011-2015 Bronto Software, Inc.
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * 
  * @property-read string $id

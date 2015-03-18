@@ -3,7 +3,7 @@
 /**
  * @author Chris Jones <chris.jones@bronto.com>
  * @link http://community.bronto.com/api/v4/objects/general/segmentobject
- * @copyright  2011-2013 Bronto Software, Inc.
+ * @copyright  2011-2015 Bronto Software, Inc.
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 class Bronto_Api_Segment extends Bronto_Api_Object
