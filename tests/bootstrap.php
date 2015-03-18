@@ -3,7 +3,10 @@
  * @copyright  2011-2015 Bronto Software, Inc.
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-if (file_exists($file = __DIR__.'/../autoload.php')) {
+if (file_exists($file = __DIR__.'/../vendor/autoload.php')) {
+    $loader = require $file;
+    $loader->set('Bronto_Tests_', __DIR__ . '/');
+} else if (file_exists($file = __DIR__.'/../autoload.php')) {
     require_once $file;
 } elseif (file_exists($file = __DIR__.'/../autoload.php.dist')) {
     require_once $file;
