@@ -22,8 +22,6 @@
  */
 class Bronto_Api_Order_Row extends Bronto_Api_Row
 {
-    public $products = array();
-    
     /**
      * @param bool $upsert Ignored
      * @param bool $refresh
@@ -71,6 +69,11 @@ class Bronto_Api_Order_Row extends Bronto_Api_Row
      */
     public function addProduct(array $data = array())
     {
+        if(empty($this->products) === true)
+        {
+            $this->products = array();
+        }
+
         $product   = new Bronto_Api_Order_Product($data);
         $productId = $product->id;
 
