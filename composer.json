@@ -1,28 +1,23 @@
 {
-    "name"             : "bronto/bronto-api-php-client",
-    "type"             : "library",
-    "description"      : "Client Library for PHP",
-    "keywords"         : ["bronto"],
-    "homepage"         : "http://bronto.com",
-    "license"          : "OSL-3.0",
-    "authors"          : [
-        {
-            "name"    : "Bronto Professional Services Engineering team",
-            "homepage": "http://bronto.com",
-            "email"   : "info@bronto.com"
-        }
-    ],
-    "require"          : {
-        "php"                 : ">=5.3.3"
-    },
-    "require-dev"      : {
-        "phpunit/phpunit": "3.7.*"
-    },
-    "autoload"         : {
-        "psr-0": {
-            "Bronto_"      : "src/",
-            "Bronto_Tests_": "tests/"
-        }
-    },
-    "minimum-stability": "stable"
+  "name": "bronto/bronto-api-php-client",
+  "description": "Client Library for PHP",
+  "keywords": ["bronto", "apiv4", "soap"],
+  "homepage": "http://dev.bronto.com/api/v4",
+  "license": "Apache-2.0",
+  "version": "1.0.0",
+  "require-dev": {
+    "phpunit/phpunit": "4.5.*",
+    "symfony/class-loader": "2.6.*",
+    "symfony/console": "2.6.*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Bronto_": "src/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "target-dir": "Symfony/Component/Console",
+  "minimum-stability": "stable"
 }

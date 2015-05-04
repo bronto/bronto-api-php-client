@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @author Philip Cali <philip.cali@bronto.com>
+ * @author Philip Cali <philip.cali@gmail.com>
  * @copyright  2011-2014 Bronto Software, Inc.
- * @license http://opensource.org/licenses/OSL-3.0 Open Software License v. 3.0 (OSL-3.0)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 interface Bronto_Observer
 {
