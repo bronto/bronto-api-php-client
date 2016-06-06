@@ -1,5 +1,5 @@
 {
-  "name": "bronto/bronto-api-php-client",
+  "name": "deseretdigital/bronto-api-php-client",
   "description": "Client Library for PHP",
   "keywords": ["bronto", "apiv4", "soap"],
   "homepage": "http://dev.bronto.com/api/v4",
@@ -18,6 +18,5 @@
   "scripts": {
     "test": "phpunit"
   },
-  "target-dir": "Symfony/Component/Console",
   "minimum-stability": "stable"
 }

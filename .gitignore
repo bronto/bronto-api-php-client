@@ -1,5 +1,5 @@
 /load/*
-/nbproject/private
+/nbproject/*
 /tests/temp/*
 /vendor/*
 autoload.php
