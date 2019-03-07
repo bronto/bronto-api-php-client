@@ -1,5 +1,7 @@
 # Bronto_Api
 
+**This project is no longer maintained and should be used for historical purposes only.**
+
 Client Library for PHP - ActiveRecord Style Abstraction of the Bronto SOAP API.
 
 This library was created and is maintained by the Bronto Professional Services Engineering team.<br/>
