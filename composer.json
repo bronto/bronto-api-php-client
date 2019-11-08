@@ -18,6 +18,5 @@
   "scripts": {
     "test": "phpunit"
   },
-  "target-dir": "Symfony/Component/Console",
   "minimum-stability": "stable"
 }
