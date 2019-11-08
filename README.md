@@ -249,7 +249,7 @@ $deliveryObject = $bronto->getDeliveryObject();
 /* @var $delivery \Bronto_Api_Delivery_Row */
 $delivery = $deliveryObject->createRow();
 $delivery->start      = date('c'); // Today
-$delivery->type       = \Bronto_Api_Delivery_Row::TYPE_TRANSACTIONAL;
+$delivery->type       = \Bronto_Api_Delivery::TYPE_TRANSACTIONAL;
 $delivery->messageId  = $message->id;
 $delivery->fromEmail  = 'user@example.com';
 $delivery->fromName   = 'Example Sender';
